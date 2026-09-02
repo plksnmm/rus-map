@@ -5,10 +5,21 @@
 - Git;
 - uv;
 - Docker Desktop с Linux containers;
+- Node.js 24 и npm;
 - PyCharm или другой редактор с поддержкой Python.
 
 Python отдельно устанавливать не обязательно: `uv` установит версию из файла
 `.python-version` и создаст изолированное окружение `.venv`.
+
+На Windows Node.js можно установить через NVM for Windows. В текущем локальном
+окружении NVM, Node.js и npm cache находятся на диске `D:`. Проверка:
+
+```powershell
+nvm current
+node --version
+npm --version
+npm config get cache
+```
 
 ## Подготовка проекта
 
@@ -32,6 +43,16 @@ docker compose ps
 В Git хранится только безопасный шаблон `.env.example`. Локальный `.env` не
 отслеживается. Подробные команды приведены в `docs/DATABASE.md`.
 
+Установить frontend-зависимости строго из lock-файла:
+
+```powershell
+cd frontend
+npm ci
+cd ..
+```
+
+Подробный запуск и устранение проблем описаны в `docs/FRONTEND.md`.
+
 ## Настройка PyCharm
 
 Открыть корневую папку проекта и выбрать существующий интерпретатор:
@@ -51,6 +72,10 @@ uv run pytest
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src
+cd frontend
+npm test
+npm run lint
+npm run build
 ```
 
 Все команды должны завершаться без ошибок и предупреждений.

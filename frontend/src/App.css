@@ -1,0 +1,60 @@
+.app-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  min-height: 64px;
+  background: #8f1d1d;
+  z-index: 2;
+}
+
+.app-subtitle {
+  color: rgb(255 255 255 / 72%);
+  font-size: 0.9rem;
+}
+
+.map-layout {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.map-container {
+  position: absolute;
+  inset: 0;
+}
+
+.map-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #6c757d;
+  background: #e9ecef;
+}
+
+.place-panel {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  left: 1rem;
+  width: min(22rem, calc(100% - 2rem));
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgb(255 255 255 / 94%);
+}
+
+@media (max-width: 575.98px) {
+  .app-header {
+    min-height: 56px;
+  }
+
+  .place-panel {
+    top: 0.75rem;
+    left: 0.75rem;
+    width: calc(100% - 1.5rem);
+  }
+}
