@@ -7,7 +7,8 @@
 утраченные заводы, фотографии, публикации и прогулочные маршруты.
 
 Проект находится на ранней стадии разработки. Сейчас реализованы каркас
-FastAPI-приложения, проверка работоспособности API и первый автоматический тест.
+FastAPI-приложения, контракт списка мест, автоматические проверки и локальное
+окружение PostgreSQL/PostGIS.
 
 ## Быстрый запуск
 
@@ -15,6 +16,8 @@ FastAPI-приложения, проверка работоспособност�
 
 ```powershell
 uv sync
+Copy-Item .env.example .env
+docker compose up -d db
 uv run uvicorn rus_map.main:app --reload
 ```
 
@@ -39,6 +42,7 @@ uv run mypy src
 - [Рабочий процесс разработчика](docs/DEVELOPMENT.md)
 - [Архитектура](docs/ARCHITECTURE.md)
 - [HTTP API](docs/API.md)
+- [База данных](docs/DATABASE.md)
 - [Тестирование](docs/TESTING.md)
 - [Журнал проекта](docs/PROJECT_LOG.md)
 - [Архитектурные решения](docs/decisions/)
