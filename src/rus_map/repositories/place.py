@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from uuid import UUID
+from datetime import datetime
+from uuid import UUID, uuid4
 
-from sqlalchemy import Float, func, select
+from sqlalchemy import Float, func, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from rus_map.models import Place
@@ -18,6 +19,29 @@ class PlaceRecord:
 
 
 @dataclass(frozen=True, slots=True)
+class NewPlace:
+    """Validated place data ready to be persisted."""
+
+    title: str
+    description: str | None
+    latitude: float
+    longitude: float
+
+
+@dataclass(frozen=True, slots=True)
+class PlaceDetailRecord:
+    """Complete place data returned after persistence."""
+
+    id: UUID
+    title: str
+    description: str | None
+    latitude: float
+    longitude: float
+    created_at: datetime
+    updated_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
 class PlacePage:
     """A collection of places and its total size."""
 
@@ -26,7 +50,7 @@ class PlacePage:
 
 
 class PlaceRepository:
-    """Read places from PostgreSQL without depending on the HTTP layer."""
+    """Persist places without depending on the HTTP layer."""
 
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
@@ -58,3 +82,41 @@ class PlaceRepository:
         total = rows[0][4] if rows else 0
 
         return PlacePage(items=items, total=total)
+
+    async def create(self, new_place: NewPlace) -> PlaceDetailRecord:
+        """Insert a place and return its database-generated values."""
+        statement = (
+            insert(Place)
+            .values(
+                id=uuid4(),
+                title=new_place.title,
+                description=new_place.description,
+                location=func.ST_SetSRID(
+                    func.ST_MakePoint(
+                        new_place.longitude,
+                        new_place.latitude,
+                    ),
+                    4326,
+                ),
+            )
+            .returning(
+                Place.id,
+                Place.title,
+                Place.description,
+                func.ST_Y(Place.location, type_=Float).label("latitude"),
+                func.ST_X(Place.location, type_=Float).label("longitude"),
+                Place.created_at,
+                Place.updated_at,
+            )
+        )
+        row = (await self._session.execute(statement)).tuples().one()
+
+        return PlaceDetailRecord(
+            id=row[0],
+            title=row[1],
+            description=row[2],
+            latitude=row[3],
+            longitude=row[4],
+            created_at=row[5],
+            updated_at=row[6],
+        )
