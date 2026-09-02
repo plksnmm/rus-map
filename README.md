@@ -62,6 +62,7 @@ npm run build
 - [HTTP API](docs/API.md)
 - [База данных](docs/DATABASE.md)
 - [Frontend](docs/FRONTEND.md)
+- [Развёртывание staging](docs/DEPLOYMENT.md)
 - [Тестирование](docs/TESTING.md)
 - [Журнал проекта](docs/PROJECT_LOG.md)
 - [Архитектурные решения](docs/decisions/)

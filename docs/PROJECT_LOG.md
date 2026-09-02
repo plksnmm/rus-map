@@ -3,6 +3,35 @@
 Журнал помогает восстановить контекст после перерыва. Новые записи добавляются
 сверху, чтобы последнее состояние было видно сразу.
 
+## 2026-09-03 — production-контейнеры и HTTPS gateway
+
+### Сделано
+
+- создана Issue №18 и ветка `chore/deploy-staging`;
+- добавлены multi-stage Dockerfile для FastAPI и React/Nginx;
+- backend запускается непривилегированным пользователем с UID 10001;
+- создан production Compose с healthcheck, автоматической миграцией и постоянным volume PostgreSQL;
+- PostgreSQL не публикуется, внутренние HTTP-порты привязаны только к loopback;
+- локально проверены healthcheck, API, frontend и SPA fallback;
+- исправлена упаковка Alembic: runtime-образу необходим `pyproject.toml` с `script_location`;
+- добавлены bootstrap и постоянный Nginx gateway для HTTPS по публичному IP;
+- публичный gateway разрешает чтение API и блокирует изменяющие методы;
+- описаны получение и автоматическое продление короткоживущего IP-сертификата;
+- CI расширен валидацией production Compose и сборкой обоих образов.
+
+### Найдено в процессе
+
+Alembic завершался с `No 'script_location' key found in configuration`, потому что настройки, созданные шаблоном
+`pyproject_async`, находятся в `pyproject.toml`, а первоначальный runtime-образ копировал только `alembic.ini`.
+После добавления `pyproject.toml` миграционный контейнер завершился с кодом 0.
+
+Команда `docker compose port db 5432` в используемой версии Compose возвращала `invalid IP:0` для отсутствующей
+привязки. Отсутствие публикации подтверждено через `docker inspect` и пустой вывод `docker port`.
+
+### Следующий шаг
+
+Проверить изменения в CI, слить Pull Request по Issue №18 и выполнить первый запуск на Ubuntu-сервере.
+
 ## 2026-09-02 — первый экран интерактивной карты
 
 ### Сделано
