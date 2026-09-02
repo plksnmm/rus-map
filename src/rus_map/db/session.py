@@ -32,6 +32,12 @@ def get_session_factory() -> async_sessionmaker[AsyncSession]:
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
-    """Provide one database session and close it after use."""
+    """Provide a transactional session for one request."""
     async with get_session_factory()() as session:
-        yield session
+        try:
+            yield session
+        except BaseException:
+            await session.rollback()
+            raise
+        else:
+            await session.commit()
