@@ -2,12 +2,13 @@ import asyncio
 from logging.config import fileConfig
 
 from alembic import context
+from geoalchemy2 import alembic_helpers
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from rus_map.config import get_settings
-from rus_map.db.base import Base
+from rus_map.models import Place
 
 config = context.config
 
@@ -15,7 +16,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 database_url = get_settings().database_url
-target_metadata = Base.metadata
+target_metadata = Place.metadata
 APPLICATION_SCHEMA = "app"
 
 
@@ -43,6 +44,9 @@ def run_migrations_offline() -> None:
         compare_type=True,
         include_schemas=True,
         include_name=include_name,
+        include_object=alembic_helpers.include_object,
+        process_revision_directives=alembic_helpers.writer,
+        render_item=alembic_helpers.render_item,
     )
 
     with context.begin_transaction():
@@ -57,6 +61,9 @@ def do_run_migrations(connection: Connection) -> None:
         compare_type=True,
         include_schemas=True,
         include_name=include_name,
+        include_object=alembic_helpers.include_object,
+        process_revision_directives=alembic_helpers.writer,
+        render_item=alembic_helpers.render_item,
     )
 
     with context.begin_transaction():

@@ -15,6 +15,8 @@
 отклонение четырёх значений за пределами земных координат.
 `tests/test_config.py` проверяет загрузку переменных, сборку database URL и
 маскирование пароля.
+`tests/test_place_model.py` проверяет ORM-таблицу места, PostGIS Point и
+пространственный индекс.
 
 Запуск:
 
@@ -44,12 +46,14 @@ uv run mypy src
 ```powershell
 docker compose up -d db
 $env:RUN_INTEGRATION_TESTS = "1"
-uv run pytest tests/integration/test_database.py
+uv run pytest tests/integration
 Remove-Item Env:RUN_INTEGRATION_TESTS
 ```
 
-Тест устанавливает реальное асинхронное соединение через SQLAlchemy и проверяет
-имя базы и доступность PostGIS 3.6.
+Тесты устанавливают реальное асинхронное соединение через SQLAlchemy, проверяют
+PostGIS 3.6, актуальную ревизию Alembic, геометрию `POINT(4326)` и GiST-индекс.
+Они не выполняют автоматический downgrade, чтобы случайно не удалить данные из
+локальной базы разработчика.
 
 ## Непрерывная интеграция
 
