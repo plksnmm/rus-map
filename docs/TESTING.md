@@ -13,6 +13,8 @@
 `tests/test_places.py` проверяет HTTP-контракт списка мест.
 `tests/test_place_schema.py` проверяет допустимые границы широты и долготы и
 отклонение четырёх значений за пределами земных координат.
+`tests/test_config.py` проверяет загрузку переменных, сборку database URL и
+маскирование пароля.
 
 Запуск:
 
@@ -34,6 +36,21 @@ uv run mypy src
 - Ruff выполняет статический анализ и проверку стиля;
 - mypy проверяет согласованность типов.
 
+## Integration-тесты базы данных
+
+Обычный `uv run pytest` не требует Docker: database-тест помечен как пропущенный.
+Для явного запуска сначала нужно поднять базу, затем установить флаг:
+
+```powershell
+docker compose up -d db
+$env:RUN_INTEGRATION_TESTS = "1"
+uv run pytest tests/integration/test_database.py
+Remove-Item Env:RUN_INTEGRATION_TESTS
+```
+
+Тест устанавливает реальное асинхронное соединение через SQLAlchemy и проверяет
+имя базы и доступность PostGIS 3.6.
+
 ## Непрерывная интеграция
 
 Workflow `.github/workflows/ci.yml` запускается для каждого Pull Request в
@@ -52,7 +69,7 @@ Workflow `.github/workflows/ci.yml` запускается для каждого
 ## Будущие уровни тестирования
 
 - unit-тесты бизнес-правил;
-- интеграционные тесты API и PostgreSQL/PostGIS;
+- интеграционные тесты API с транзакционной изоляцией;
 - проверки схемы OpenAPI и контрактов;
 - E2E-сценарии пользовательского интерфейса;
 - тесты ролей, доступа и модерации;

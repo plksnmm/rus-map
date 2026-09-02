@@ -37,6 +37,44 @@ docker compose exec db psql -U rus_map -d rus_map -c "SELECT current_database(),
 
 Запрос должен вернуть базу и пользователя `rus_map`, а также версию PostGIS.
 
+Та же проверка через асинхронный Python-слой:
+
+```powershell
+uv run python -m rus_map.db.check
+```
+
+## SQLAlchemy
+
+`src/rus_map/db/session.py` предоставляет:
+
+- `get_engine()` — общий асинхронный engine с проверкой соединений;
+- `get_session_factory()` — фабрику SQLAlchemy sessions;
+- `get_session()` — одну session для будущей FastAPI dependency.
+
+Используется драйвер `asyncpg`. Изначально рассматривался Psycopg 3, но его
+асинхронный режим несовместим со стандартным `ProactorEventLoop` Windows.
+
+## Миграции Alembic
+
+```powershell
+# Показать текущую ревизию базы
+uv run alembic current
+
+# Применить все миграции
+uv run alembic upgrade head
+
+# Проверить, есть ли изменения ORM без миграции
+uv run alembic check
+```
+
+Alembic читает подключение из `.env` через общий класс `Settings`. Фиктивный или
+настоящий URL с паролем не хранится в `alembic.ini`.
+
+Таблицы приложения размещаются в отдельной схеме PostgreSQL `app`. Alembic
+проверяет только эту схему и не управляет служебными объектами расширений PostGIS
+в схемах `public`, `tiger` и `topology`. Поэтому вывод команды `alembic check` не
+должен предлагать удаление `spatial_ref_sys` или таблиц геокодера PostGIS.
+
 ## Диагностика
 
 ```powershell
