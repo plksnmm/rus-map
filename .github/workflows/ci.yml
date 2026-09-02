@@ -76,3 +76,23 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+  deployment:
+    name: Production container images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Validate production Docker Compose configuration
+        run: docker compose --env-file .env.production.example -f compose.production.yml config --quiet
+
+      - name: Build backend image
+        run: docker build --file docker/backend.Dockerfile --tag rus-map-backend:ci .
+
+      - name: Verify backend runs as a non-root user
+        run: test "$(docker run --rm rus-map-backend:ci id -u)" = "10001"
+
+      - name: Build frontend image
+        run: docker build --file docker/frontend.Dockerfile --tag rus-map-frontend:ci .
