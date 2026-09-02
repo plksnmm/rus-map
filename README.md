@@ -28,6 +28,7 @@ uv run uvicorn rus_map.main:app --reload
 
 ```powershell
 uv run pytest
+uv run ruff format --check .
 uv run ruff check .
 uv run mypy src
 ```
@@ -37,6 +38,7 @@ uv run mypy src
 - [Установка и настройка](docs/SETUP.md)
 - [Рабочий процесс разработчика](docs/DEVELOPMENT.md)
 - [Архитектура](docs/ARCHITECTURE.md)
+- [HTTP API](docs/API.md)
 - [Тестирование](docs/TESTING.md)
 - [Журнал проекта](docs/PROJECT_LOG.md)
 - [Архитектурные решения](docs/decisions/)
