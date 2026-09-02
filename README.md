@@ -11,10 +11,12 @@ FastAPI-приложения, контракт списка мест, автом
 окружение PostgreSQL/PostGIS. Первая ORM-модель места хранит координаты как
 PostGIS Point и управляется миграциями Alembic. Список мест читается из базы
 через асинхронный repository, а новые места можно создавать через HTTP API.
+Веб-клиент на React и TypeScript показывает адаптивный экран с интерактивной
+картой MapLibre.
 
 ## Быстрый запуск
 
-Требования: Git и [uv](https://docs.astral.sh/uv/).
+Требования: Git, [uv](https://docs.astral.sh/uv/), Docker и Node.js 24.
 
 ```powershell
 uv sync
@@ -23,11 +25,20 @@ docker compose up -d db
 uv run uvicorn rus_map.main:app --reload
 ```
 
+Во втором терминале запустить frontend:
+
+```powershell
+cd frontend
+npm ci
+npm run dev
+```
+
 После запуска доступны:
 
 - проверка API: <http://127.0.0.1:8000/health>;
 - Swagger UI: <http://127.0.0.1:8000/docs>;
 - OpenAPI-схема: <http://127.0.0.1:8000/openapi.json>.
+- интерактивная карта: <http://127.0.0.1:4173/>.
 
 ## Проверки качества
 
@@ -37,6 +48,10 @@ uv run ruff format --check .
 uv run ruff check .
 uv run mypy src
 uv run alembic current
+cd frontend
+npm test
+npm run lint
+npm run build
 ```
 
 ## Документация
@@ -46,6 +61,7 @@ uv run alembic current
 - [Архитектура](docs/ARCHITECTURE.md)
 - [HTTP API](docs/API.md)
 - [База данных](docs/DATABASE.md)
+- [Frontend](docs/FRONTEND.md)
 - [Тестирование](docs/TESTING.md)
 - [Журнал проекта](docs/PROJECT_LOG.md)
 - [Архитектурные решения](docs/decisions/)

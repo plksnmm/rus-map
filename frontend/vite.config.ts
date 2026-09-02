@@ -1,0 +1,16 @@
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    // MapLibre is isolated in a lazy chunk; warn if it grows beyond 1 MB.
+    chunkSizeWarningLimit: 1000,
+  },
+  server: {
+    host: '127.0.0.1',
+    port: 4173,
+    strictPort: true,
+  },
+})

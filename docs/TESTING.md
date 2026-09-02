@@ -22,10 +22,22 @@ total, пустой результат и SQL создания места без
 `tests/test_db_session.py` проверяет commit успешного запроса и rollback при
 исключении.
 
+`frontend/src/App.test.tsx` проверяет видимый пользователю каркас страницы:
+название проекта, информационный заголовок, доступную по имени область карты и
+состояние кнопки добавления места. MapLibre подменяется заглушкой, поэтому
+компонентный тест не требует WebGL, сети или картографического сервера.
+
 Запуск:
 
 ```powershell
 uv run pytest
+```
+
+Frontend-тесты запускаются отдельно:
+
+```powershell
+cd frontend
+npm test
 ```
 
 ## Полная локальная проверка
@@ -35,6 +47,10 @@ uv run pytest
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src
+cd frontend
+npm test
+npm run lint
+npm run build
 ```
 
 - pytest проверяет поведение;
@@ -71,7 +87,9 @@ Workflow `.github/workflows/ci.yml` запускается для каждого
 3. устанавливает Python из `.python-version`;
 4. восстанавливает зависимости строго из `uv.lock`;
 5. проверяет корректность `compose.yml` с `.env.example`;
-6. проверяет форматирование и запускает Ruff, mypy и pytest.
+6. проверяет форматирование и запускает Ruff, mypy и pytest;
+7. в отдельном job устанавливает Node.js и зависимости через `npm ci`;
+8. запускает Vitest, ESLint и production-сборку frontend.
 
 Проверка в Linux дополняет локальную разработку в Windows и помогает обнаружить
 зависимость от операционной системы, регистра символов и окончаний строк.
