@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+from rus_map.api.router import api_router
+
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
@@ -14,6 +16,8 @@ def create_app() -> FastAPI:
         """Confirm that the application is running."""
         return {"status": "ok"}
 
+    application.include_router(api_router)
     return application
+
 
 app = create_app()

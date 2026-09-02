@@ -10,6 +10,10 @@
 `tests/test_health.py` отправляет HTTP-запрос через FastAPI `TestClient` и
 проверяет статус и JSON-тело ответа `/health`.
 
+`tests/test_places.py` проверяет HTTP-контракт списка мест.
+`tests/test_place_schema.py` проверяет допустимые границы широты и долготы и
+отклонение четырёх значений за пределами земных координат.
+
 Запуск:
 
 ```powershell
@@ -20,11 +24,13 @@ uv run pytest
 
 ```powershell
 uv run pytest
+uv run ruff format --check .
 uv run ruff check .
 uv run mypy src
 ```
 
 - pytest проверяет поведение;
+- Ruff formatter проверяет единое форматирование;
 - Ruff выполняет статический анализ и проверку стиля;
 - mypy проверяет согласованность типов.
 
@@ -37,7 +43,7 @@ Workflow `.github/workflows/ci.yml` запускается для каждого
 2. устанавливает закреплённую версию uv;
 3. устанавливает Python из `.python-version`;
 4. восстанавливает зависимости строго из `uv.lock`;
-5. запускает Ruff, mypy и pytest.
+5. проверяет форматирование и запускает Ruff, mypy и pytest.
 
 Проверка в Linux дополняет локальную разработку в Windows и помогает обнаружить
 зависимость от операционной системы, регистра символов и окончаний строк.
