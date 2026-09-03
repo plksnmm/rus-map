@@ -55,6 +55,9 @@ npm run lint
 npm run build
 ```
 
+Production-образ собирается с Vite base path `/rus-map/`, потому что на staging карта размещена в подкаталоге
+существующего сайта. Локальные `npm run dev` и `npm run build` по умолчанию продолжают использовать корень `/`.
+
 - `npm test` один раз запускает Vitest;
 - `npm run test:watch` перезапускает тесты при изменениях;
 - `npm run lint` запускает ESLint;

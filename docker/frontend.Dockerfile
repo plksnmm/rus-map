@@ -9,7 +9,9 @@ RUN --mount=type=cache,target=/root/.npm \
 
 COPY frontend ./
 
-RUN npm run build
+ARG VITE_BASE_PATH=/
+
+RUN npm run build -- --base="$VITE_BASE_PATH"
 
 FROM nginx:1.30.4-alpine3.24 AS runtime
 
