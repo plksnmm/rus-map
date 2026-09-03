@@ -70,6 +70,55 @@ def test_list_places_returns_repository_data() -> None:
     }
 
 
+def test_get_place_returns_repository_data() -> None:
+    place_id = uuid4()
+    timestamp = datetime(2026, 9, 3, 20, 22, tzinfo=UTC)
+    repository = AsyncMock(spec=PlaceRepository)
+    repository.get_by_id.return_value = PlaceDetailRecord(
+        id=place_id,
+        title="Сысертский электротехнический завод",
+        description="Советское предприятие в исторических корпусах.",
+        latitude=56.494711,
+        longitude=60.809612,
+        created_at=timestamp,
+        updated_at=timestamp,
+    )
+    app.dependency_overrides[get_place_repository] = lambda: repository
+
+    try:
+        response = client.get(f"/api/v1/places/{place_id}")
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": str(place_id),
+        "title": "Сысертский электротехнический завод",
+        "description": "Советское предприятие в исторических корпусах.",
+        "latitude": 56.494711,
+        "longitude": 60.809612,
+        "created_at": "2026-09-03T20:22:00Z",
+        "updated_at": "2026-09-03T20:22:00Z",
+    }
+    repository.get_by_id.assert_awaited_once_with(place_id)
+
+
+def test_get_place_returns_404_for_unknown_id() -> None:
+    place_id = uuid4()
+    repository = AsyncMock(spec=PlaceRepository)
+    repository.get_by_id.return_value = None
+    app.dependency_overrides[get_place_repository] = lambda: repository
+
+    try:
+        response = client.get(f"/api/v1/places/{place_id}")
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Place not found"}
+    repository.get_by_id.assert_awaited_once_with(place_id)
+
+
 def test_create_place_returns_created_resource() -> None:
     place_id = uuid4()
     timestamp = datetime(2026, 9, 2, 12, 0, tzinfo=UTC)

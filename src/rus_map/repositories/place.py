@@ -83,6 +83,32 @@ class PlaceRepository:
 
         return PlacePage(items=items, total=total)
 
+    async def get_by_id(self, place_id: UUID) -> PlaceDetailRecord | None:
+        """Return one place or None when the identifier does not exist."""
+        statement = select(
+            Place.id,
+            Place.title,
+            Place.description,
+            func.ST_Y(Place.location, type_=Float).label("latitude"),
+            func.ST_X(Place.location, type_=Float).label("longitude"),
+            Place.created_at,
+            Place.updated_at,
+        ).where(Place.id == place_id)
+        row = (await self._session.execute(statement)).tuples().one_or_none()
+
+        if row is None:
+            return None
+
+        return PlaceDetailRecord(
+            id=row[0],
+            title=row[1],
+            description=row[2],
+            latitude=row[3],
+            longitude=row[4],
+            created_at=row[5],
+            updated_at=row[6],
+        )
+
     async def create(self, new_place: NewPlace) -> PlaceDetailRecord:
         """Insert a place and return its database-generated values."""
         statement = (

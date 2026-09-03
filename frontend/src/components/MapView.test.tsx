@@ -73,6 +73,7 @@ vi.mock('maplibre-gl', () => ({
 
 describe('MapView', () => {
   it('adds a places layer and opens a titled popup on marker click', () => {
+    const onSelectPlace = vi.fn()
     const place = {
       id: 'db21fe63-a06c-49de-8762-70cbe9c51601',
       title: 'Завод «Красный богатырь»',
@@ -80,7 +81,9 @@ describe('MapView', () => {
       longitude: 37.691,
     }
 
-    const { unmount } = render(<MapView places={[place]} />)
+    const { unmount } = render(
+      <MapView places={[place]} onSelectPlace={onSelectPlace} />,
+    )
 
     expect(mapLibreMock.mapOptions.current).toEqual(
       expect.objectContaining({
@@ -114,10 +117,11 @@ describe('MapView', () => {
     )
 
     mapLibreMock.handlers.get('click:places-markers')?.({
-      features: [{ properties: { title: place.title } }],
+      features: [{ properties: { id: place.id, title: place.title } }],
       lngLat: { lng: place.longitude, lat: place.latitude },
     })
 
+    expect(onSelectPlace).toHaveBeenCalledWith(place.id)
     expect(mapLibreMock.popup.setText).toHaveBeenCalledWith(place.title)
     expect(mapLibreMock.popup.addTo).toHaveBeenCalledWith(mapLibreMock.map)
 

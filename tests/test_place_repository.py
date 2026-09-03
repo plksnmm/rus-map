@@ -54,6 +54,54 @@ async def test_list_returns_empty_page() -> None:
 
 
 @pytest.mark.asyncio
+async def test_get_by_id_returns_complete_place() -> None:
+    place_id = uuid4()
+    timestamp = datetime.now(UTC)
+    session = AsyncMock(spec=AsyncSession)
+    result = Mock()
+    result.one_or_none.return_value = (
+        place_id,
+        "Сысертский электротехнический завод",
+        "Советское предприятие в исторических корпусах.",
+        56.494711,
+        60.809612,
+        timestamp,
+        timestamp,
+    )
+    execute_result = Mock()
+    execute_result.tuples.return_value = result
+    session.execute.return_value = execute_result
+
+    place = await PlaceRepository(session).get_by_id(place_id)
+
+    assert place is not None
+    assert place.id == place_id
+    assert place.description == "Советское предприятие в исторических корпусах."
+    assert place.latitude == 56.494711
+    assert place.longitude == 60.809612
+
+    statement = session.execute.await_args.args[0]
+    sql = str(statement.compile(dialect=postgresql.dialect()))
+    assert "WHERE app.places.id =" in sql
+    assert "ST_Y" in sql
+    assert "ST_X" in sql
+
+
+@pytest.mark.asyncio
+async def test_get_by_id_returns_none_for_unknown_place() -> None:
+    session = AsyncMock(spec=AsyncSession)
+    result = Mock()
+    result.one_or_none.return_value = None
+    execute_result = Mock()
+    execute_result.tuples.return_value = result
+    session.execute.return_value = execute_result
+
+    place = await PlaceRepository(session).get_by_id(uuid4())
+
+    assert place is None
+
+
+@pytest.mark.asyncio
 async def test_create_inserts_longitude_before_latitude() -> None:
     place_id = uuid4()
     timestamp = datetime.now(UTC)

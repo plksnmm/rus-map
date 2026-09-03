@@ -61,6 +61,7 @@ npm run build
 - [Архитектура](docs/ARCHITECTURE.md)
 - [HTTP API](docs/API.md)
 - [База данных](docs/DATABASE.md)
+- [Бэклог мест и материалов](docs/CONTENT_BACKLOG.md)
 - [Frontend](docs/FRONTEND.md)
 - [Развёртывание staging](docs/DEPLOYMENT.md)
 - [Резервное копирование и восстановление](docs/BACKUPS.md)

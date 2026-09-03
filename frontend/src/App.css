@@ -137,6 +137,37 @@
   background: rgb(255 255 255 / 80%);
 }
 
+.place-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.place-detail-close {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgb(21 21 21 / 35%);
+  color: var(--coal);
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.place-detail-close:hover,
+.place-detail-close:focus-visible {
+  color: #fff;
+  background: var(--coal);
+}
+
+.place-detail-description {
+  max-height: min(55vh, 32rem);
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+
 .maplibregl-popup-content {
   padding: 0.8rem 2rem 0.8rem 0.9rem;
   border: 2px solid var(--coal);

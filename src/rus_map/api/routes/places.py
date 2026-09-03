@@ -1,7 +1,9 @@
-from fastapi import APIRouter, status
+from uuid import UUID
+
+from fastapi import APIRouter, HTTPException, status
 
 from rus_map.api.dependencies import PlaceRepositoryDependency
-from rus_map.repositories.place import NewPlace
+from rus_map.repositories.place import NewPlace, PlaceDetailRecord
 from rus_map.schemas.place import (
     PlaceCreate,
     PlaceDetail,
@@ -10,6 +12,19 @@ from rus_map.schemas.place import (
 )
 
 router = APIRouter(prefix="/places", tags=["places"])
+
+
+def place_detail_response(place: PlaceDetailRecord) -> PlaceDetail:
+    """Convert a persistence record into the public detail schema."""
+    return PlaceDetail(
+        id=place.id,
+        title=place.title,
+        description=place.description,
+        latitude=place.latitude,
+        longitude=place.longitude,
+        created_at=place.created_at,
+        updated_at=place.updated_at,
+    )
 
 
 @router.post(
@@ -31,15 +46,7 @@ async def create_place(
         ),
     )
 
-    return PlaceDetail(
-        id=created.id,
-        title=created.title,
-        description=created.description,
-        latitude=created.latitude,
-        longitude=created.longitude,
-        created_at=created.created_at,
-        updated_at=created.updated_at,
-    )
+    return place_detail_response(created)
 
 
 @router.get("", response_model=PlaceListResponse)
@@ -61,3 +68,20 @@ async def list_places(
         ],
         total=page.total,
     )
+
+
+@router.get("/{place_id}", response_model=PlaceDetail)
+async def get_place(
+    place_id: UUID,
+    repository: PlaceRepositoryDependency,
+) -> PlaceDetail:
+    """Return complete information about one place."""
+    place = await repository.get_by_id(place_id)
+
+    if place is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Place not found",
+        )
+
+    return place_detail_response(place)

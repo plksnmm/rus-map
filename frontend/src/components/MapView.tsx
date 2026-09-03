@@ -26,9 +26,10 @@ setWorkerUrl(maplibreWorkerUrl)
 
 interface MapViewProps {
   places: PlaceSummary[]
+  onSelectPlace: (placeId: string) => void
 }
 
-export default function MapView({ places }: MapViewProps) {
+export default function MapView({ places, onSelectPlace }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<Map>(null)
   const placesDataRef = useRef(placesToGeoJson(places))
@@ -80,10 +81,13 @@ export default function MapView({ places }: MapViewProps) {
 
       map.on('click', PLACES_LAYER_ID, (event) => {
         const title = event.features?.[0]?.properties.title
+        const placeId = event.features?.[0]?.properties.id
 
-        if (typeof title !== 'string') {
+        if (typeof title !== 'string' || typeof placeId !== 'string') {
           return
         }
+
+        onSelectPlace(placeId)
 
         new Popup({ offset: 12 })
           .setLngLat(event.lngLat)
@@ -103,7 +107,7 @@ export default function MapView({ places }: MapViewProps) {
       mapRef.current = null
       map.remove()
     }
-  }, [])
+  }, [onSelectPlace])
 
   return (
     <div

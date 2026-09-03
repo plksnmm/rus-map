@@ -10,6 +10,12 @@ export interface PlaceListResponse {
   total: number
 }
 
+export interface PlaceDetail extends PlaceSummary {
+  description: string | null
+  created_at: string
+  updated_at: string
+}
+
 const placesApiUrl = `${import.meta.env.BASE_URL}api/v1/places`
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -47,6 +53,24 @@ function isPlaceListResponse(value: unknown): value is PlaceListResponse {
   )
 }
 
+function isPlaceDetail(value: unknown): value is PlaceDetail {
+  return (
+    isRecord(value) &&
+    isPlaceSummary(value) &&
+    (typeof value.description === 'string' || value.description === null) &&
+    typeof value.created_at === 'string' &&
+    typeof value.updated_at === 'string'
+  )
+}
+
+async function readJson(response: Response): Promise<unknown> {
+  try {
+    return await response.json()
+  } catch {
+    throw new Error('API мест вернул некорректный JSON')
+  }
+}
+
 export async function fetchPlaces(
   signal?: AbortSignal,
 ): Promise<PlaceListResponse> {
@@ -59,16 +83,32 @@ export async function fetchPlaces(
     throw new Error(`Не удалось загрузить места: HTTP ${response.status}`)
   }
 
-  let payload: unknown
-
-  try {
-    payload = await response.json()
-  } catch {
-    throw new Error('API мест вернул некорректный JSON')
-  }
+  const payload = await readJson(response)
 
   if (!isPlaceListResponse(payload)) {
     throw new Error('API мест вернул данные неожиданного формата')
+  }
+
+  return payload
+}
+
+export async function fetchPlace(
+  placeId: string,
+  signal?: AbortSignal,
+): Promise<PlaceDetail> {
+  const response = await fetch(`${placesApiUrl}/${encodeURIComponent(placeId)}`, {
+    headers: { Accept: 'application/json' },
+    signal,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить место: HTTP ${response.status}`)
+  }
+
+  const payload = await readJson(response)
+
+  if (!isPlaceDetail(payload)) {
+    throw new Error('API места вернул данные неожиданного формата')
   }
 
   return payload
