@@ -3,6 +3,9 @@
 Документ описывает staging-развёртывание «Руси пролетарской» на Ubuntu-сервере с уже работающими Caddy и
 Vikunja. Публичный адрес карты — `https://vm-1703.lnvps.cloud/rus-map/`.
 
+Если явно не указано иное, блоки `bash` выполняются на Ubuntu-сервере, а блоки `powershell` — на локальном
+Windows-компьютере. Серверные и локальные команды нельзя объединять в одном терминале.
+
 ## Архитектура
 
 | Компонент | Доступ | Назначение |
@@ -133,15 +136,45 @@ sudo systemctl is-active caddy
 Если reload завершился ошибкой, работающий процесс Caddy продолжает использовать предыдущую конфигурацию. Нужно
 вернуть последний backup-файл, повторить `caddy validate` и только затем reload.
 
-## Публичная проверка
+## Защита существующей Vikunja
 
-С рабочего компьютера или другого внешнего узла:
+Vikunja должна принимать соединения только через Caddy. Перед изменением systemd создаётся встроенный dump Vikunja:
 
 ```bash
-curl --fail https://vm-1703.lnvps.cloud/
-curl --fail https://vm-1703.lnvps.cloud/rus-map/
-curl --fail https://vm-1703.lnvps.cloud/rus-map/api/v1/places
-curl --include --request POST https://vm-1703.lnvps.cloud/rus-map/api/v1/places
+sudo install -d -m 700 /var/backups/vikunja
+sudo sh -c 'cd /opt/vikunja && /usr/local/bin/vikunja dump \
+  --path /var/backups/vikunja --filename before-loopback-bind-$(date +%F-%H%M%S)'
+sudo ls -lh /var/backups/vikunja
+```
+
+Loopback-привязка задаётся отдельным systemd drop-in, поэтому пакетный unit-файл не редактируется:
+
+```bash
+sudo install -d -m 755 /etc/systemd/system/vikunja.service.d
+printf '[Service]\nEnvironment=VIKUNJA_SERVICE_INTERFACE=127.0.0.1:3456\n' | \
+  sudo tee /etc/systemd/system/vikunja.service.d/10-loopback.conf > /dev/null
+sudo systemctl daemon-reload
+sudo systemctl restart vikunja
+sudo systemctl is-active vikunja
+sudo ss -lntp | grep ':3456'
+```
+
+Ожидается `active` и listener `127.0.0.1:3456`, а не `0.0.0.0:3456` или `*:3456`. После перезапуска Caddy-маршрут
+Vikunja должен вернуть HTTP 200.
+
+## Публичная проверка
+
+С локального Windows-компьютера:
+
+```powershell
+$base = "https://vm-1703.lnvps.cloud"
+curl.exe -sS -o NUL -w "vikunja=%{http_code}`n" "$base/"
+curl.exe -sS -o NUL -w "map=%{http_code}`n" "$base/rus-map/"
+curl.exe -sS -o NUL -w "api-get=%{http_code}`n" "$base/rus-map/api/v1/places"
+curl.exe -sS -o NUL -w "post=%{http_code}`n" -X POST "$base/rus-map/api/v1/places"
+curl.exe -sS -o NUL -w "put=%{http_code}`n" -X PUT "$base/rus-map/api/v1/places"
+curl.exe -sS -o NUL -w "patch=%{http_code}`n" -X PATCH "$base/rus-map/api/v1/places"
+curl.exe -sS -o NUL -w "delete=%{http_code}`n" -X DELETE "$base/rus-map/api/v1/places"
 ```
 
 Ожидается:
@@ -149,7 +182,16 @@ curl --include --request POST https://vm-1703.lnvps.cloud/rus-map/api/v1/places
 - корневой URL продолжает возвращать Vikunja;
 - `/rus-map/` возвращает React-приложение;
 - публичный `GET` API успешен;
-- публичный `POST` получает `403 Forbidden` от Caddy.
+- публичные `POST`, `PUT`, `PATCH` и `DELETE` получают `403 Forbidden` от Caddy.
+
+Прямой порт Vikunja проверяется с локального Windows-компьютера, а не с сервера:
+
+```powershell
+curl.exe -I --connect-timeout 3 --max-time 5 http://vm-1703.lnvps.cloud:3456
+$LASTEXITCODE
+```
+
+Ожидается тайм-аут и код curl `28`. Ответ HTTP 200 означал бы, что plaintext-порт снова опубликован в интернете.
 
 ## Полный API через SSH-туннель
 
@@ -164,14 +206,26 @@ ssh -L 18000:127.0.0.1:18000 ubuntu@vm-1703.lnvps.cloud
 
 ## Обновление
 
-Перед обновлением CI ветки `main` должен быть зелёным:
+Перед обновлением CI ветки `main` должен быть зелёным. На сервере сначала проверяются рабочая ветка и отсутствие
+неучтённых изменений, фиксируется текущий commit и создаётся бэкап по инструкции из `docs/BACKUPS.md`:
 
 ```bash
 cd /opt/rus-map
+git status --short --branch
+git rev-parse --short HEAD
+```
+
+Если status содержит локальные изменения, обновление останавливается до их разбора. После создания и проверки
+бэкапа:
+
+```bash
 git pull --ff-only
+docker compose --env-file .env.production -f compose.production.yml config --quiet
 docker compose --env-file .env.production -f compose.production.yml up -d --build
 docker compose --env-file .env.production -f compose.production.yml ps -a
+curl --fail http://127.0.0.1:18000/health
 curl --fail https://vm-1703.lnvps.cloud/rus-map/
+curl --fail https://vm-1703.lnvps.cloud/rus-map/api/v1/places
 ```
 
 Compose дожидается здоровой базы, выполняет миграции, затем запускает backend. Миграции должны оставаться обратно
@@ -179,18 +233,22 @@ Compose дожидается здоровой базы, выполняет ми�
 
 ## Резервная копия PostgreSQL
 
-Каталог для копий создаётся вне репозитория:
+Полная процедура создания, проверки, тестовой репетиции и аварийного восстановления описана в
+[`docs/BACKUPS.md`](BACKUPS.md). Dump создаётся перед каждым обновлением с миграциями и перед любым восстановлением.
+Dump-файлы хранятся вне Git с правами `600`.
 
-```bash
-sudo install -d -m 700 -o "$USER" -g "$USER" /opt/rus-map-backups
-docker compose --env-file .env.production -f compose.production.yml exec -T db \
-  pg_dump --format=custom --username=rus_map --dbname=rus_map \
-  > /opt/rus-map-backups/rus-map-$(date +%F-%H%M%S).dump
-ls -lh /opt/rus-map-backups
-```
+## Контрольный чек-лист staging
 
-Восстановление изменяет данные и выполняется только после отдельной проверки выбранного dump-файла и остановки
-записи в приложение.
+- `https://vm-1703.lnvps.cloud/` возвращает Vikunja с HTTP 200;
+- `https://vm-1703.lnvps.cloud/rus-map/` возвращает карту с HTTP 200;
+- публичный `GET /rus-map/api/v1/places` возвращает HTTP 200;
+- публичные изменяющие методы API возвращают HTTP 403;
+- `db`, `backend` и `frontend` работают, `migrate` завершён с кодом 0;
+- backend и frontend слушают только loopback-порты;
+- PostgreSQL не имеет host port binding;
+- Vikunja слушает только `127.0.0.1:3456`;
+- последний dump PostgreSQL имеет права `600` и читается через `pg_restore --list`;
+- `.env.production` имеет права `600`, игнорируется Git и не выводится в журналы.
 
 ## Откат приложения
 
