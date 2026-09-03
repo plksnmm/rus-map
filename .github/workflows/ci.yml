@@ -88,6 +88,15 @@ jobs:
       - name: Validate production Docker Compose configuration
         run: docker compose --env-file .env.production.example -f compose.production.yml config --quiet
 
+      - name: Validate Caddy configuration
+        run: >-
+          docker run --rm
+          --volume "$PWD:/opt/rus-map:ro"
+          caddy:2.11.4-alpine
+          caddy validate
+          --config /opt/rus-map/deploy/caddy/Caddyfile.example
+          --adapter caddyfile
+
       - name: Build backend image
         run: docker build --file docker/backend.Dockerfile --tag rus-map-backend:ci .
 
@@ -95,4 +104,13 @@ jobs:
         run: test "$(docker run --rm rus-map-backend:ci id -u)" = "10001"
 
       - name: Build frontend image
-        run: docker build --file docker/frontend.Dockerfile --tag rus-map-frontend:ci .
+        run: >-
+          docker build
+          --build-arg VITE_BASE_PATH=/rus-map/
+          --file docker/frontend.Dockerfile
+          --tag rus-map-frontend:ci .
+
+      - name: Verify frontend production base path
+        run: >-
+          docker run --rm --entrypoint grep rus-map-frontend:ci
+          -q '/rus-map/assets/' /usr/share/nginx/html/index.html

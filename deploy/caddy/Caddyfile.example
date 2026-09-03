@@ -1,0 +1,7 @@
+vm-1703.lnvps.cloud {
+    import /opt/rus-map/deploy/caddy/rus-map.caddy
+
+    handle {
+        reverse_proxy 127.0.0.1:3456
+    }
+}
