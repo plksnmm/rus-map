@@ -136,3 +136,25 @@ jobs:
         run: >-
           docker run --rm --entrypoint grep rus-map-frontend:ci
           -q '/rus-map/assets/' /usr/share/nginx/html/index.html
+
+      - name: Verify frontend serves production files
+        run: |
+          docker run --detach --name rus-map-frontend-test \
+            --publish 127.0.0.1:18081:8080 \
+            rus-map-frontend:ci
+          trap 'docker rm --force rus-map-frontend-test >/dev/null 2>&1 || true' EXIT
+
+          for attempt in {1..10}; do
+            page_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              http://127.0.0.1:18081/ || true)"
+            favicon_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              http://127.0.0.1:18081/favicon.png || true)"
+            if [ "$page_status" = "200" ] && [ "$favicon_status" = "200" ]; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          docker logs rus-map-frontend-test
+          echo "Expected page and favicon status 200, got page=$page_status favicon=$favicon_status"
+          exit 1
