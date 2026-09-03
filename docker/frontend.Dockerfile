@@ -11,7 +11,9 @@ COPY frontend ./
 
 ARG VITE_BASE_PATH=/
 
-RUN npm run build -- --base="$VITE_BASE_PATH"
+RUN npm run build -- --base="$VITE_BASE_PATH" \
+    && find /app/dist -type d -exec chmod 755 {} + \
+    && find /app/dist -type f -exec chmod 644 {} +
 
 FROM nginx:1.30.4-alpine3.24 AS runtime
 
