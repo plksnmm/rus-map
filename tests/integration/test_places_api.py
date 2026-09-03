@@ -57,6 +57,9 @@ async def test_list_places_reads_postgis_data() -> None:
                     base_url="http://test",
                 ) as client:
                     response = await client.get("/api/v1/places")
+                    detail_response = await client.get(
+                        f"/api/v1/places/{place.id}",
+                    )
 
                 assert response.status_code == 200
                 body = response.json()
@@ -70,6 +73,15 @@ async def test_list_places_reads_postgis_data() -> None:
                     "longitude": 37.6917,
                 }
                 assert body["total"] >= 1
+                assert detail_response.status_code == 200
+                detail = detail_response.json()
+                assert detail["id"] == str(place.id)
+                assert detail["title"] == "Завод Красный богатырь"
+                assert detail["description"] == "Integration-test record"
+                assert detail["latitude"] == 55.8031
+                assert detail["longitude"] == 37.6917
+                assert detail["created_at"] is not None
+                assert detail["updated_at"] is not None
             finally:
                 application.dependency_overrides.clear()
                 await session.close()

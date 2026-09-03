@@ -1,27 +1,43 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
-import { fetchPlaces } from './api/places'
+import { fetchPlace, fetchPlaces } from './api/places'
 
 vi.mock('./api/places', () => ({
+  fetchPlace: vi.fn(),
   fetchPlaces: vi.fn(),
 }))
 
 vi.mock('./components/MapView', () => ({
-  default: ({ places }: { places: unknown[] }) => (
-    <div
-      role="application"
-      aria-label="Интерактивная карта"
-      data-place-count={places.length}
-    />
+  default: ({
+    places,
+    onSelectPlace,
+  }: {
+    places: { id: string }[]
+    onSelectPlace: (placeId: string) => void
+  }) => (
+    <>
+      <div
+        role="application"
+        aria-label="Интерактивная карта"
+        data-place-count={places.length}
+      />
+      {places[0] && (
+        <button type="button" onClick={() => onSelectPlace(places[0].id)}>
+          Выбрать место на карте
+        </button>
+      )}
+    </>
   ),
 }))
 
 const fetchPlacesMock = vi.mocked(fetchPlaces)
+const fetchPlaceMock = vi.mocked(fetchPlace)
 
 describe('App', () => {
   beforeEach(() => {
     fetchPlacesMock.mockReset()
+    fetchPlaceMock.mockReset()
     fetchPlacesMock.mockResolvedValue({ items: [], total: 0 })
   })
 
@@ -82,6 +98,61 @@ describe('App', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Не удалось загрузить места',
+    )
+    expect(
+      screen.getByRole('application', { name: 'Интерактивная карта' }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows complete place details after a marker is selected', async () => {
+    const place = {
+      id: 'e2457cad-b0e2-45b4-8e76-81e09b3d1fed',
+      title: 'Сысертский электротехнический завод',
+      latitude: 56.494711,
+      longitude: 60.809612,
+    }
+    fetchPlacesMock.mockResolvedValue({ items: [place], total: 1 })
+    fetchPlaceMock.mockResolvedValue({
+      ...place,
+      description: 'Советское предприятие в исторических корпусах.',
+      created_at: '2026-09-03T20:22:56.888798Z',
+      updated_at: '2026-09-03T20:29:00Z',
+    })
+
+    render(<App />)
+    fireEvent.click(await screen.findByText('Выбрать место на карте'))
+
+    expect(
+      await screen.findByRole('heading', { name: place.title }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Советское предприятие в исторических корпусах.'),
+    ).toBeInTheDocument()
+    expect(fetchPlaceMock).toHaveBeenCalledWith(place.id, expect.any(AbortSignal))
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Закрыть карточку места' }),
+    )
+    expect(
+      screen.getByRole('heading', { name: 'Исследуй историю вокруг' }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps the map available when place details fail to load', async () => {
+    const place = {
+      id: 'e2457cad-b0e2-45b4-8e76-81e09b3d1fed',
+      title: 'Сысертский электротехнический завод',
+      latitude: 56.494711,
+      longitude: 60.809612,
+    }
+    fetchPlacesMock.mockResolvedValue({ items: [place], total: 1 })
+    fetchPlaceMock.mockRejectedValue(new Error('Network error'))
+
+    render(<App />)
+    fireEvent.click(await screen.findByText('Выбрать место на карте'))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Не удалось загрузить информацию о месте',
     )
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),

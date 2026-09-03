@@ -1,5 +1,10 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
-import { fetchPlaces, type PlaceSummary } from './api/places'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import {
+  fetchPlace,
+  fetchPlaces,
+  type PlaceDetail,
+  type PlaceSummary,
+} from './api/places'
 import './App.css'
 
 const MapView = lazy(() => import('./components/MapView'))
@@ -8,6 +13,24 @@ function App() {
   const [places, setPlaces] = useState<PlaceSummary[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null)
+  const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null)
+  const [isDetailLoading, setIsDetailLoading] = useState(false)
+  const [hasDetailError, setHasDetailError] = useState(false)
+
+  const handleSelectPlace = useCallback((placeId: string) => {
+    setSelectedPlaceId(placeId)
+    setSelectedPlace(null)
+    setIsDetailLoading(true)
+    setHasDetailError(false)
+  }, [])
+
+  const handleClosePlace = useCallback(() => {
+    setSelectedPlaceId(null)
+    setSelectedPlace(null)
+    setIsDetailLoading(false)
+    setHasDetailError(false)
+  }, [])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -44,6 +67,42 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    if (selectedPlaceId === null) {
+      return
+    }
+
+    const controller = new AbortController()
+    let isActive = true
+
+    fetchPlace(selectedPlaceId, controller.signal)
+      .then((place) => {
+        if (isActive) {
+          setSelectedPlace(place)
+        }
+      })
+      .catch((error: unknown) => {
+        if (
+          !isActive ||
+          (error instanceof DOMException && error.name === 'AbortError')
+        ) {
+          return
+        }
+
+        setHasDetailError(true)
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsDetailLoading(false)
+        }
+      })
+
+    return () => {
+      isActive = false
+      controller.abort()
+    }
+  }, [selectedPlaceId])
+
   return (
     <main className="app-shell">
       <header className="navbar navbar-dark app-header px-3">
@@ -67,31 +126,77 @@ function App() {
 
       <section className="map-layout" aria-label="Карта мест">
         <aside className="place-panel shadow-sm">
-          <div className="panel-kicker">Народный архив</div>
-          <h1 className="h5 mb-2 text-uppercase">Исследуй историю вокруг</h1>
-          <p className="text-secondary mb-3">
-            Здесь появятся памятники, заводы, культурные пространства и маршруты.
-          </p>
-          {isLoading && (
-            <div className="alert alert-light border mb-0" role="status">
-              Загружаем места…
-            </div>
-          )}
-          {!isLoading && hasError && (
-            <div className="alert alert-warning mb-0" role="alert">
-              Не удалось загрузить места. Карта продолжает работать — попробуйте
-              обновить страницу позже.
-            </div>
-          )}
-          {!isLoading && !hasError && places.length === 0 && (
-            <div className="alert alert-light border mb-0" role="status">
-              На карте пока нет мест.
-            </div>
-          )}
-          {!isLoading && !hasError && places.length > 0 && (
-            <div className="place-count" role="status">
-              На карте мест: <strong>{places.length}</strong>
-            </div>
+          {selectedPlaceId === null ? (
+            <>
+              <div className="panel-kicker">Народный архив</div>
+              <h1 className="h5 mb-2 text-uppercase">
+                Исследуй историю вокруг
+              </h1>
+              <p className="text-secondary mb-3">
+                Здесь появятся памятники, заводы, культурные пространства и
+                маршруты.
+              </p>
+              {isLoading && (
+                <div className="alert alert-light border mb-0" role="status">
+                  Загружаем места…
+                </div>
+              )}
+              {!isLoading && hasError && (
+                <div className="alert alert-warning mb-0" role="alert">
+                  Не удалось загрузить места. Карта продолжает работать —
+                  попробуйте обновить страницу позже.
+                </div>
+              )}
+              {!isLoading && !hasError && places.length === 0 && (
+                <div className="alert alert-light border mb-0" role="status">
+                  На карте пока нет мест.
+                </div>
+              )}
+              {!isLoading && !hasError && places.length > 0 && (
+                <div className="place-count" role="status">
+                  На карте мест: <strong>{places.length}</strong>
+                </div>
+              )}
+            </>
+          ) : (
+            <article className="place-detail" aria-live="polite">
+              <div className="place-detail-header">
+                <div className="panel-kicker mb-0">Карточка места</div>
+                <button
+                  className="place-detail-close"
+                  type="button"
+                  aria-label="Закрыть карточку места"
+                  onClick={handleClosePlace}
+                >
+                  ×
+                </button>
+              </div>
+              {isDetailLoading && (
+                <div className="alert alert-light border mb-0" role="status">
+                  Загружаем информацию…
+                </div>
+              )}
+              {!isDetailLoading && hasDetailError && (
+                <div className="alert alert-warning mb-0" role="alert">
+                  Не удалось загрузить информацию о месте. Карта продолжает
+                  работать.
+                </div>
+              )}
+              {!isDetailLoading && selectedPlace && (
+                <>
+                  <h1 className="h5 my-2">{selectedPlace.title}</h1>
+                  {selectedPlace.description ? (
+                    <p className="place-detail-description mb-0">
+                      {selectedPlace.description}
+                    </p>
+                  ) : (
+                    <p className="text-secondary mb-0">
+                      Описание пока не добавлено.
+                    </p>
+                  )}
+                </>
+              )}
+            </article>
           )}
         </aside>
 
@@ -102,7 +207,7 @@ function App() {
             </div>
           }
         >
-          <MapView places={places} />
+          <MapView places={places} onSelectPlace={handleSelectPlace} />
         </Suspense>
       </section>
     </main>

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fetchPlaces } from './places'
+import { fetchPlace, fetchPlaces } from './places'
 
 const validPayload = {
   items: [
@@ -55,6 +55,54 @@ describe('fetchPlaces', () => {
 
     await expect(fetchPlaces()).rejects.toThrow(
       'API мест вернул данные неожиданного формата',
+    )
+  })
+})
+
+describe('fetchPlace', () => {
+  it('loads and validates complete place details', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const place = {
+      id: 'e2457cad-b0e2-45b4-8e76-81e09b3d1fed',
+      title: 'Сысертский электротехнический завод',
+      description: 'Советское предприятие в исторических корпусах.',
+      latitude: 56.494711,
+      longitude: 60.809612,
+      created_at: '2026-09-03T20:22:56.888798Z',
+      updated_at: '2026-09-03T20:29:00Z',
+    }
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(place), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    await expect(fetchPlace(place.id)).resolves.toEqual(place)
+    expect(fetchMock).toHaveBeenCalledWith(
+      `/api/v1/places/${place.id}`,
+      expect.objectContaining({ headers: { Accept: 'application/json' } }),
+    )
+  })
+
+  it('rejects an incomplete detail response', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 'e2457cad-b0e2-45b4-8e76-81e09b3d1fed',
+          title: 'Сысертский электротехнический завод',
+          latitude: 56.494711,
+          longitude: 60.809612,
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+    )
+
+    await expect(fetchPlace('missing-fields')).rejects.toThrow(
+      'данные неожиданного формата',
     )
   })
 })
