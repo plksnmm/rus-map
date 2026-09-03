@@ -63,6 +63,7 @@ npm run build
 - [База данных](docs/DATABASE.md)
 - [Frontend](docs/FRONTEND.md)
 - [Развёртывание staging](docs/DEPLOYMENT.md)
+- [Резервное копирование и восстановление](docs/BACKUPS.md)
 - [Тестирование](docs/TESTING.md)
 - [Журнал проекта](docs/PROJECT_LOG.md)
 - [Архитектурные решения](docs/decisions/)
