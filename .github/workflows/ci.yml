@@ -97,6 +97,28 @@ jobs:
           --config /opt/rus-map/deploy/caddy/Caddyfile.example
           --adapter caddyfile
 
+      - name: Verify Caddy blocks public API mutations
+        run: |
+          docker run --detach --name rus-map-caddy-test \
+            --publish 127.0.0.1:18090:18090 \
+            --volume "$PWD:/opt/rus-map:ro" \
+            caddy:2.11.4-alpine \
+            caddy run --config /opt/rus-map/deploy/caddy/Caddyfile.test --adapter caddyfile
+          trap 'docker rm --force rus-map-caddy-test >/dev/null 2>&1 || true' EXIT
+
+          for attempt in {1..10}; do
+            status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              --request POST http://127.0.0.1:18090/rus-map/api/v1/places || true)"
+            if [ "$status" = "403" ]; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          docker logs rus-map-caddy-test
+          echo "Expected POST status 403, got $status"
+          exit 1
+
       - name: Build backend image
         run: docker build --file docker/backend.Dockerfile --tag rus-map-backend:ci .
 

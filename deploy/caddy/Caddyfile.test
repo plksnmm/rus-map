@@ -1,0 +1,7 @@
+http://:18090 {
+    import /opt/rus-map/deploy/caddy/rus-map.caddy
+
+    handle {
+        respond "fallback" 200
+    }
+}
