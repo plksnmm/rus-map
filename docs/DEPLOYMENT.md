@@ -242,6 +242,10 @@ CLI-командой внутри backend-контейнера. Перед фа�
 свежий backup и успешный `--dry-run`. Полный порядок приведён в
 [`docs/MATERIAL_IMPORT.md`](MATERIAL_IMPORT.md).
 
+Новые проверенные точки импортируются похожей закрытой командой. Порядок
+проверки координат, backup, dry-run и production-запуска описан в
+[`docs/PLACE_IMPORT.md`](PLACE_IMPORT.md).
+
 ## Контрольный чек-лист staging
 
 - `https://vm-1703.lnvps.cloud/` возвращает Vikunja с HTTP 200;
