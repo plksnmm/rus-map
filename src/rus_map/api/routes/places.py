@@ -2,8 +2,16 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
 
-from rus_map.api.dependencies import PlaceRepositoryDependency
+from rus_map.api.dependencies import (
+    MaterialRepositoryDependency,
+    PlaceRepositoryDependency,
+)
 from rus_map.repositories.place import NewPlace, PlaceDetailRecord
+from rus_map.schemas.material import (
+    MaterialListResponse,
+    MaterialResponse,
+    MaterialRevisionResponse,
+)
 from rus_map.schemas.place import (
     PlaceCreate,
     PlaceDetail,
@@ -85,3 +93,39 @@ async def get_place(
         )
 
     return place_detail_response(place)
+
+
+@router.get("/{place_id}/materials", response_model=MaterialListResponse)
+async def list_place_materials(
+    place_id: UUID,
+    repository: MaterialRepositoryDependency,
+) -> MaterialListResponse:
+    """Return published materials for one existing place."""
+    page = await repository.list_published_for_place(place_id)
+
+    if page is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Place not found",
+        )
+
+    return MaterialListResponse(
+        items=[
+            MaterialResponse(
+                id=material.id,
+                type=material.type,
+                title=material.title,
+                source=material.source,
+                revision=MaterialRevisionResponse(
+                    revision_number=material.revision_number,
+                    content=material.content,
+                    url=material.url,
+                    created_at=material.revision_created_at,
+                ),
+                created_at=material.created_at,
+                updated_at=material.updated_at,
+            )
+            for material in page.items
+        ],
+        total=page.total,
+    )
