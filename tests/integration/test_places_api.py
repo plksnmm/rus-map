@@ -10,7 +10,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from rus_map.db.session import get_engine, get_session, get_session_factory
 from rus_map.main import create_app
-from rus_map.models import Place
+from rus_map.models import (
+    Material,
+    MaterialRevision,
+    MaterialType,
+    ModerationStatus,
+    Place,
+)
 
 pytestmark = [
     pytest.mark.integration,
@@ -133,4 +139,106 @@ async def test_create_place_commits_and_appears_in_list() -> None:
                     delete(Place).where(Place.id == created_place_id),
                 )
                 await cleanup_session.commit()
+        await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_list_materials_returns_only_published_latest_revision() -> None:
+    """The nested endpoint filters moderation states and older revisions."""
+    engine = get_engine()
+    application = create_app()
+
+    try:
+        async with engine.connect() as connection:
+            transaction = await connection.begin()
+            session = AsyncSession(bind=connection, expire_on_commit=False)
+
+            try:
+                place = Place(
+                    title="Кусковский химический завод",
+                    description=None,
+                    location=WKTElement("POINT(37.75 55.74)", srid=4326),
+                )
+                session.add(place)
+                await session.flush()
+
+                published = Material(
+                    place_id=place.id,
+                    type=MaterialType.EXTERNAL_LINK,
+                    status=ModerationStatus.PUBLISHED,
+                    title="Исторический материал",
+                    source="Русь пролетарская",
+                )
+                pending = Material(
+                    place_id=place.id,
+                    type=MaterialType.TEXT,
+                    status=ModerationStatus.PENDING_REVIEW,
+                    title="Материал на проверке",
+                    source=None,
+                )
+                session.add_all([published, pending])
+                await session.flush()
+                session.add_all(
+                    [
+                        MaterialRevision(
+                            material_id=published.id,
+                            revision_number=1,
+                            status=ModerationStatus.PUBLISHED,
+                            content=None,
+                            url="https://example.com/old",
+                        ),
+                        MaterialRevision(
+                            material_id=published.id,
+                            revision_number=2,
+                            status=ModerationStatus.PUBLISHED,
+                            content=None,
+                            url="https://example.com/current",
+                        ),
+                        MaterialRevision(
+                            material_id=published.id,
+                            revision_number=3,
+                            status=ModerationStatus.PENDING_REVIEW,
+                            content=None,
+                            url="https://example.com/not-reviewed",
+                        ),
+                        MaterialRevision(
+                            material_id=pending.id,
+                            revision_number=1,
+                            status=ModerationStatus.PENDING_REVIEW,
+                            content="Этот текст ещё не опубликован",
+                            url=None,
+                        ),
+                    ],
+                )
+                await session.flush()
+
+                async def override_get_session() -> AsyncIterator[AsyncSession]:
+                    yield session
+
+                application.dependency_overrides[get_session] = override_get_session
+
+                async with AsyncClient(
+                    transport=ASGITransport(app=application),
+                    base_url="http://test",
+                ) as client:
+                    response = await client.get(
+                        f"/api/v1/places/{place.id}/materials",
+                    )
+
+                assert response.status_code == 200
+                body = response.json()
+                assert body["total"] == 1
+                assert len(body["items"]) == 1
+                returned = body["items"][0]
+                assert returned["id"] == str(published.id)
+                assert returned["type"] == "external_link"
+                assert returned["revision"]["revision_number"] == 2
+                assert returned["revision"]["content"] is None
+                assert returned["revision"]["url"] == ("https://example.com/current")
+            finally:
+                application.dependency_overrides.clear()
+                await session.close()
+                if transaction.is_active:
+                    await transaction.rollback()
+    finally:
         await engine.dispose()
