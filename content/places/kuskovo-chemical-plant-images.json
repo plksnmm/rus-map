@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "place_id": "bbe880f1-4bf5-4b49-889a-7ccab143a6dd",
+  "images": [
+    {
+      "media_id": "37b05333-29c6-4fdd-975b-0348df04875a",
+      "material_id": "7e68a0ae-7e16-4c6c-a4ca-b71336f8d50d",
+      "revision_id": "0987c49d-9e32-4247-b5b3-08d2c3816ab3",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Опытный цех 02 и установка производства полиформальдегида, 1964 год",
+      "source": "Государственный каталог Музейного фонда Российской Федерации",
+      "source_url": "https://goskatalog.ru/portal/#/collections?id=16565850",
+      "file": "kuskovo/experimental-shop-polyformaldehyde-1964.jpg",
+      "sha256": "08ec6e2c78aea9456173f44e44b6874a843863cc5026e1455a1cab1ddfea3f8c"
+    },
+    {
+      "media_id": "d5967021-2b6b-416f-b96e-8aefe69a50cc",
+      "material_id": "ba49fecf-d228-4ae9-b378-9abb3da72068",
+      "revision_id": "3c339d4c-8763-4b8c-93d3-5c5af6b77323",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Кусковский химический завод, 1964 год",
+      "source": "Государственный каталог Музейного фонда Российской Федерации",
+      "source_url": "https://goskatalog.ru/portal/#/collections?id=16566382",
+      "file": "kuskovo/kuskovo-chemical-plant-1964.jpg",
+      "sha256": "f1be1efbe46ea6b2979feae7df681badcc4523dddce256575065cea73ea7fd35"
+    },
+    {
+      "media_id": "070883af-2923-480e-aa6a-971f81d5503f",
+      "material_id": "75a6f56a-3147-48aa-9190-8a90a85a12d5",
+      "revision_id": "99820478-f263-4d20-a036-d9a59f64a763",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Пульт установки ударопрочного полистирола, 1964 год",
+      "source": "Государственный каталог Музейного фонда Российской Федерации",
+      "source_url": "https://goskatalog.ru/portal/#/collections?id=16565672",
+      "file": "kuskovo/impact-resistant-polystyrene-control-panel-1964.jpg",
+      "sha256": "218d8f37e9036f67d2bd7cd59465e27bcfb8b2d5b486d65e006157b6d707efe1"
+    },
+    {
+      "media_id": "5968507b-8e49-4444-a656-5003ddaa3535",
+      "material_id": "55cd0d8d-c9f3-4c68-961f-f1c5e4ae4b7a",
+      "revision_id": "5fa142be-bfdb-408c-9149-a129867054ae",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Машина для литья образцов, 1964 год",
+      "source": "Государственный каталог Музейного фонда Российской Федерации",
+      "source_url": "https://goskatalog.ru/portal/#/collections?id=16565419",
+      "file": "kuskovo/sample-casting-machine-1964.jpg",
+      "sha256": "f640a29076857ae718f8bfa341b2759911fe5302f9940afbeb3051cc244648a2"
+    }
+  ]
+}
