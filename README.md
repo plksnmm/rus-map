@@ -67,6 +67,7 @@ npm run build
 - [HTTP API](docs/API.md)
 - [База данных](docs/DATABASE.md)
 - [Бэклог мест и материалов](docs/CONTENT_BACKLOG.md)
+- [Закрытый импорт мест](docs/PLACE_IMPORT.md)
 - [Закрытый импорт материалов](docs/MATERIAL_IMPORT.md)
 - [Frontend](docs/FRONTEND.md)
 - [Развёртывание staging](docs/DEPLOYMENT.md)
