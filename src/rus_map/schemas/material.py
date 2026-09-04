@@ -27,6 +27,7 @@ class MaterialRevisionResponse(BaseModel):
     revision_number: int = Field(gt=0)
     content: MaterialContent | None
     url: MaterialUrl | None
+    media_id: UUID | None = None
     created_at: datetime
 
     @model_validator(mode="after")

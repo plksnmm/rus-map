@@ -69,6 +69,7 @@ npm run build
 - [Бэклог мест и материалов](docs/CONTENT_BACKLOG.md)
 - [Закрытый импорт мест](docs/PLACE_IMPORT.md)
 - [Закрытый импорт материалов](docs/MATERIAL_IMPORT.md)
+- [Импорт фотографий](docs/IMAGE_IMPORT.md)
 - [Frontend](docs/FRONTEND.md)
 - [Развёртывание staging](docs/DEPLOYMENT.md)
 - [Резервное копирование и восстановление](docs/BACKUPS.md)

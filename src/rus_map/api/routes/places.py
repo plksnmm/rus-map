@@ -1,11 +1,14 @@
+from pathlib import Path
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import FileResponse
 
 from rus_map.api.dependencies import (
     MaterialRepositoryDependency,
     PlaceRepositoryDependency,
 )
+from rus_map.config import get_settings
 from rus_map.repositories.place import NewPlace, PlaceDetailRecord
 from rus_map.schemas.material import (
     MaterialListResponse,
@@ -120,6 +123,7 @@ async def list_place_materials(
                     revision_number=material.revision_number,
                     content=material.content,
                     url=material.url,
+                    media_id=material.media_asset_id,
                     created_at=material.revision_created_at,
                 ),
                 created_at=material.created_at,
@@ -128,4 +132,31 @@ async def list_place_materials(
             for material in page.items
         ],
         total=page.total,
+    )
+
+
+@router.get("/{place_id}/images/{media_id}", response_class=FileResponse)
+async def get_place_image(
+    place_id: UUID,
+    media_id: UUID,
+    repository: MaterialRepositoryDependency,
+) -> FileResponse:
+    """Return an optimized image exposed by a published place material."""
+    image = await repository.get_published_image(place_id, media_id)
+    if image is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found"
+        )
+
+    media_root = get_settings().media_root.resolve()
+    image_path = (media_root / image.storage_key).resolve()
+    if not image_path.is_relative_to(media_root) or not image_path.is_file():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found"
+        )
+
+    return FileResponse(
+        path=Path(image_path),
+        media_type=image.content_type,
+        headers={"Cache-Control": "public, max-age=31536000, immutable"},
     )

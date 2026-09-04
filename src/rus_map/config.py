@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -19,6 +20,7 @@ class Settings(BaseSettings):
     postgres_db: str
     postgres_user: str
     postgres_password: SecretStr
+    media_root: Path = Path("var/media")
 
     @property
     def database_url(self) -> URL:

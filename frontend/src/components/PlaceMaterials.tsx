@@ -1,6 +1,7 @@
-import { isSafeHttpUrl, type PlaceMaterial } from '../api/places'
+import { isSafeHttpUrl, placeImageUrl, type PlaceMaterial } from '../api/places'
 
 interface PlaceMaterialsProps {
+  placeId: string
   materials: PlaceMaterial[]
   isLoading: boolean
   hasError: boolean
@@ -16,13 +17,16 @@ const materialTypeLabels: Record<PlaceMaterial['type'], string> = {
 
 const linkLabels: Record<Exclude<PlaceMaterial['type'], 'text'>, string> = {
   external_link: 'Открыть источник',
-  image: 'Открыть изображение',
+  image: 'Открыть источник изображения',
   video: 'Смотреть видео',
   audio: 'Слушать аудио',
 }
 
-function MaterialLink({ material }: { material: PlaceMaterial }) {
+function MaterialLink({ material, placeId }: { material: PlaceMaterial; placeId: string }) {
   const url = material.revision.url
+  const imageUrl = material.revision.media_id
+    ? placeImageUrl(placeId, material.revision.media_id)
+    : url
 
   if (material.type === 'text' || url === null || !isSafeHttpUrl(url)) {
     return null
@@ -30,11 +34,11 @@ function MaterialLink({ material }: { material: PlaceMaterial }) {
 
   return (
     <>
-      {material.type === 'image' && (
-        <a href={url} target="_blank" rel="noopener noreferrer">
+      {material.type === 'image' && imageUrl && (
+        <a href={imageUrl} target="_blank" rel="noopener noreferrer">
           <img
             className="place-material-image"
-            src={url}
+            src={imageUrl}
             alt={material.title}
             loading="lazy"
           />
@@ -54,6 +58,7 @@ function MaterialLink({ material }: { material: PlaceMaterial }) {
 }
 
 export default function PlaceMaterials({
+  placeId,
   materials,
   isLoading,
   hasError,
@@ -84,7 +89,10 @@ export default function PlaceMaterials({
       {!isLoading && !hasError && materials.length > 0 && (
         <div className="place-material-list">
           {materials.map((material) => (
-            <article className="place-material" key={material.id}>
+            <article
+              className={`place-material${material.type === 'image' ? ' place-material--image' : ''}`}
+              key={material.id}
+            >
               <div className="place-material-type">
                 {materialTypeLabels[material.type]}
               </div>
@@ -99,7 +107,7 @@ export default function PlaceMaterials({
                   {material.revision.content}
                 </p>
               )}
-              <MaterialLink material={material} />
+              <MaterialLink material={material} placeId={placeId} />
             </article>
           ))}
         </div>

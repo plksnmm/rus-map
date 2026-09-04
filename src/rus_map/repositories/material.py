@@ -9,6 +9,7 @@ from rus_map.models import (
     Material,
     MaterialRevision,
     MaterialType,
+    MediaAsset,
     ModerationStatus,
     Place,
 )
@@ -25,6 +26,7 @@ class MaterialRecord:
     revision_number: int
     content: str | None
     url: str | None
+    media_asset_id: UUID | None
     revision_created_at: datetime
     created_at: datetime
     updated_at: datetime
@@ -36,6 +38,14 @@ class MaterialPage:
 
     items: list[MaterialRecord]
     total: int
+
+
+@dataclass(frozen=True, slots=True)
+class PublishedImageRecord:
+    """Storage information for an image visible through a published revision."""
+
+    storage_key: str
+    content_type: str
 
 
 class MaterialRepository:
@@ -61,6 +71,7 @@ class MaterialRepository:
                 MaterialRevision.revision_number,
                 MaterialRevision.content,
                 MaterialRevision.url,
+                MaterialRevision.media_asset_id,
                 MaterialRevision.created_at.label("revision_created_at"),
                 func.row_number()
                 .over(
@@ -85,6 +96,7 @@ class MaterialRepository:
                 ranked_revisions.c.revision_number,
                 ranked_revisions.c.content,
                 ranked_revisions.c.url,
+                ranked_revisions.c.media_asset_id,
                 ranked_revisions.c.revision_created_at,
                 Material.created_at,
                 Material.updated_at,
@@ -110,11 +122,34 @@ class MaterialRepository:
                 revision_number=row[4],
                 content=row[5],
                 url=row[6],
-                revision_created_at=row[7],
-                created_at=row[8],
-                updated_at=row[9],
+                media_asset_id=row[7],
+                revision_created_at=row[8],
+                created_at=row[9],
+                updated_at=row[10],
             )
             for row in rows
         ]
 
         return MaterialPage(items=items, total=len(items))
+
+    async def get_published_image(
+        self, place_id: UUID, media_asset_id: UUID
+    ) -> PublishedImageRecord | None:
+        """Return an image only when a published place material exposes it."""
+        statement = (
+            select(MediaAsset.display_storage_key, MediaAsset.display_content_type)
+            .join(MaterialRevision, MaterialRevision.media_asset_id == MediaAsset.id)
+            .join(Material, Material.id == MaterialRevision.material_id)
+            .where(
+                Material.place_id == place_id,
+                Material.type == MaterialType.IMAGE,
+                Material.status == ModerationStatus.PUBLISHED,
+                MaterialRevision.status == ModerationStatus.PUBLISHED,
+                MediaAsset.id == media_asset_id,
+            )
+            .limit(1)
+        )
+        row = (await self._session.execute(statement)).tuples().one_or_none()
+        if row is None:
+            return None
+        return PublishedImageRecord(storage_key=row[0], content_type=row[1])
