@@ -1,5 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fetchPlace, fetchPlaceMaterials, fetchPlaces } from './places'
+import {
+  fetchPlace,
+  fetchPlaceMaterials,
+  fetchPlaces,
+  placeImageUrl,
+} from './places'
+
+describe('placeImageUrl', () => {
+  it('encodes the place and media identifiers', () => {
+    expect(placeImageUrl('place/id', 'media id')).toBe(
+      '/api/v1/places/place%2Fid/images/media%20id',
+    )
+  })
+})
 
 const validPayload = {
   items: [
@@ -120,6 +133,7 @@ describe('fetchPlaceMaterials', () => {
             revision_number: 2,
             content: 'Новая опубликованная редакция.',
             url: null,
+            media_id: null,
             created_at: '2026-09-04T09:00:00Z',
           },
           created_at: '2026-09-04T08:00:00Z',
@@ -134,6 +148,7 @@ describe('fetchPlaceMaterials', () => {
             revision_number: 1,
             content: null,
             url: 'https://example.com/video',
+            media_id: null,
             created_at: '2026-09-04T10:00:00Z',
           },
           created_at: '2026-09-04T10:00:00Z',
@@ -169,6 +184,7 @@ describe('fetchPlaceMaterials', () => {
             revision_number: 1,
             content: null,
             url: 'javascript:alert(1)',
+            media_id: null,
             created_at: '2026-09-04T10:00:00Z',
           },
           created_at: '2026-09-04T10:00:00Z',

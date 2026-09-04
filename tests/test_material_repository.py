@@ -27,6 +27,7 @@ async def test_list_returns_latest_published_materials() -> None:
             2,
             None,
             "https://example.com/report",
+            None,
             timestamp,
             timestamp,
             timestamp,

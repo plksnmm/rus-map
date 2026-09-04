@@ -164,6 +164,9 @@ class MaterialRevision(Base):
     )
     content: Mapped[str | None] = mapped_column(Text, nullable=True)
     url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    media_asset_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("app.media_assets.id"), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

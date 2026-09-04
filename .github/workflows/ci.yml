@@ -125,6 +125,11 @@ jobs:
       - name: Verify backend runs as a non-root user
         run: test "$(docker run --rm rus-map-backend:ci id -u)" = "10001"
 
+      - name: Verify backend media support
+        run: >-
+          docker run --rm rus-map-backend:ci sh -c
+          'test -w /app/media && python -m rus_map.admin.image_import --help'
+
       - name: Build frontend image
         run: >-
           docker build

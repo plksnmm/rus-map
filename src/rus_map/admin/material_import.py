@@ -167,6 +167,7 @@ def _revision_matches(
         and existing.status == expected.status
         and existing.content == expected.content
         and existing.url == expected.url
+        and existing.media_asset_id is None
     )
 
 

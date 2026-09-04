@@ -42,6 +42,27 @@ ls -lh "$backup_file"
 
 ## Проверка архива
 
+## Копия изображений
+
+PostgreSQL dump не содержит фотографии. После появления `media_data` вместе с
+каждым важным dump создаётся отдельный архив тома:
+
+```bash
+media_backup="/opt/rus-map-backups/rus-map-media-$(date +%F-%H%M%S).tar.gz"
+docker run --rm \
+  --volume rus-map-production_media_data:/media:ro \
+  --volume /opt/rus-map-backups:/backup \
+  alpine:3.22 tar -czf "/backup/$(basename "$media_backup")" -C /media .
+chmod 600 "$media_backup"
+tar -tzf "$media_backup" | head
+ls -lh "$media_backup"
+```
+
+Код завершения должен быть `0`, архив — ненулевого размера, а список должен
+содержать каталоги `original/` и `display/` после первого импорта. Dump базы и
+архив медиа образуют одну логическую резервную копию и переносятся во внешнее
+зашифрованное хранилище вместе.
+
 Проверка списка объектов не изменяет базу:
 
 ```bash

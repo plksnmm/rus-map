@@ -10,6 +10,7 @@ dependencies = [
     "fastapi>=0.141.1",
     "geoalchemy2>=0.20.0",
     "pydantic-settings>=2.15.0",
+    "pillow>=11.3.0",
     "sqlalchemy>=2.0.52",
     "uvicorn[standard]>=0.52.4",
 ]
@@ -18,6 +19,7 @@ dependencies = [
 rus-map = "rus_map:main"
 rus-map-import-materials = "rus_map.admin.material_import:main"
 rus-map-import-places = "rus_map.admin.place_import:main"
+rus-map-import-images = "rus_map.admin.image_import:main"
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]

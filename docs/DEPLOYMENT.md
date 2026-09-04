@@ -306,3 +306,13 @@ docker compose --env-file .env.production -f compose.production.yml down
 - [Caddy: `handle`](https://caddyserver.com/docs/caddyfile/directives/handle)
 - [Caddy: `handle_path`](https://caddyserver.com/docs/caddyfile/directives/handle_path)
 - [Docker Engine на Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+# Постоянные изображения
+
+Production Compose создаёт том `rus-map-production_media_data` и подключает его
+к backend как `/app/media`. Он не удаляется при обычном `docker compose down`.
+Команду `down --volumes` на сервере выполнять нельзя: она удалит и PostgreSQL,
+и изображения. Перед первым импортом и каждым обновлением контента создаются
+обе копии по `docs/BACKUPS.md`.
+
+Закрытый импорт выполняется по `docs/IMAGE_IMPORT.md`; каталог исходников
+подключается к одноразовому backend-контейнеру только для чтения.

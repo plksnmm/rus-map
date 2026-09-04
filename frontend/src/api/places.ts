@@ -27,6 +27,7 @@ export interface MaterialRevision {
   revision_number: number
   content: string | null
   url: string | null
+  media_id: string | null
   created_at: string
 }
 
@@ -119,14 +120,20 @@ function isMaterialRevision(
 
   const hasContent = typeof value.content === 'string' && value.content.length > 0
   const hasSafeUrl = typeof value.url === 'string' && isSafeHttpUrl(value.url)
+  const hasMediaId = typeof value.media_id === 'string' || value.media_id === null
 
   return (
     Number.isInteger(value.revision_number) &&
     (value.revision_number as number) > 0 &&
     typeof value.created_at === 'string' &&
+    hasMediaId &&
     ((materialType === 'text' && hasContent && value.url === null) ||
       (materialType !== 'text' && value.content === null && hasSafeUrl))
   )
+}
+
+export function placeImageUrl(placeId: string, mediaId: string): string {
+  return `${placesApiUrl}/${encodeURIComponent(placeId)}/images/${encodeURIComponent(mediaId)}`
 }
 
 function isPlaceMaterial(value: unknown): value is PlaceMaterial {

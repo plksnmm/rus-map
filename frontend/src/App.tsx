@@ -243,6 +243,7 @@ function App() {
                     </p>
                   )}
                   <PlaceMaterials
+                    placeId={selectedPlace.id}
                     materials={materials}
                     isLoading={isMaterialsLoading}
                     hasError={hasMaterialsError}

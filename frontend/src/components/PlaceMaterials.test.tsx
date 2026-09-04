@@ -14,6 +14,7 @@ function material(
       revision_number: 1,
       content: null,
       url: 'https://example.com/material',
+      media_id: null,
       created_at: timestamp,
     },
     created_at: timestamp,
@@ -34,6 +35,7 @@ describe('PlaceMaterials', () => {
           revision_number: 2,
           content: 'Архивный текст без HTML.',
           url: null,
+          media_id: null,
           created_at: timestamp,
         },
       }),
@@ -45,6 +47,7 @@ describe('PlaceMaterials', () => {
           revision_number: 1,
           content: null,
           url: 'https://example.com/factory.jpg',
+          media_id: 'media-id',
           created_at: timestamp,
         },
       }),
@@ -66,39 +69,39 @@ describe('PlaceMaterials', () => {
     ]
 
     render(
-      <PlaceMaterials materials={materials} isLoading={false} hasError={false} />,
+      <PlaceMaterials placeId="place-id" materials={materials} isLoading={false} hasError={false} />,
     )
 
     expect(screen.getByText('Архивный текст без HTML.')).toBeInTheDocument()
     expect(screen.getByText('Источник: Русь пролетарская')).toBeInTheDocument()
     expect(
       screen.getByRole('img', { name: 'Фотография заводских корпусов' }),
-    ).toHaveAttribute('loading', 'lazy')
+    ).toHaveAttribute('src', '/api/v1/places/place-id/images/media-id')
 
     for (const link of screen.getAllByRole('link')) {
       expect(link).toHaveAttribute('target', '_blank')
       expect(link).toHaveAttribute('rel', 'noopener noreferrer')
-      expect(link.getAttribute('href')).toMatch(/^https:\/\//)
+      expect(link.getAttribute('href')).toMatch(/^(https:\/\/|\/api\/v1\/)/)
     }
 
     expect(screen.getByRole('link', { name: /Смотреть видео/ })).toBeVisible()
     expect(screen.getByRole('link', { name: /Слушать аудио/ })).toBeVisible()
-    expect(screen.getByRole('link', { name: /Открыть источник/ })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Открыть источник' })).toBeVisible()
   })
 
   it('shows loading, error and empty states', () => {
     const { rerender } = render(
-      <PlaceMaterials materials={[]} isLoading hasError={false} />,
+      <PlaceMaterials placeId="place-id" materials={[]} isLoading hasError={false} />,
     )
     expect(screen.getByRole('status')).toHaveTextContent('Загружаем материалы')
 
-    rerender(<PlaceMaterials materials={[]} isLoading={false} hasError />)
+    rerender(<PlaceMaterials placeId="place-id" materials={[]} isLoading={false} hasError />)
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Основная информация о месте остаётся доступна',
     )
 
     rerender(
-      <PlaceMaterials materials={[]} isLoading={false} hasError={false} />,
+      <PlaceMaterials placeId="place-id" materials={[]} isLoading={false} hasError={false} />,
     )
     expect(screen.getByText('Материалы пока не добавлены.')).toBeInTheDocument()
   })

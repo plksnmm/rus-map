@@ -46,6 +46,22 @@ def test_settings_load_from_environment(
     assert settings.postgres_db == "test_database"
     assert settings.postgres_user == "test_user"
     assert settings.postgres_password.get_secret_value() == "test_password"
+    assert settings.media_root == Path("var/media")
+
+
+def test_settings_load_media_root_from_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("MEDIA_ROOT", "D:/rus-map-media")
+    settings = Settings(
+        postgres_host="localhost",
+        postgres_port=5432,
+        postgres_db="rus_map",
+        postgres_user="rus_map",
+        postgres_password=SecretStr("secret"),
+    )
+
+    assert settings.media_root == Path("D:/rus-map-media")
 
 
 def test_settings_require_database_environment(
