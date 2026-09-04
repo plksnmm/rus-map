@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fetchPlace, fetchPlaces } from './places'
+import { fetchPlace, fetchPlaceMaterials, fetchPlaces } from './places'
 
 const validPayload = {
   items: [
@@ -103,6 +103,92 @@ describe('fetchPlace', () => {
 
     await expect(fetchPlace('missing-fields')).rejects.toThrow(
       'данные неожиданного формата',
+    )
+  })
+})
+
+describe('fetchPlaceMaterials', () => {
+  it('loads and validates text and linked materials', async () => {
+    const payload = {
+      items: [
+        {
+          id: '7e3e79ea-59c6-4a85-acb2-4289e77677ec',
+          type: 'text',
+          title: 'История завода',
+          source: 'Русь пролетарская',
+          revision: {
+            revision_number: 2,
+            content: 'Новая опубликованная редакция.',
+            url: null,
+            created_at: '2026-09-04T09:00:00Z',
+          },
+          created_at: '2026-09-04T08:00:00Z',
+          updated_at: '2026-09-04T09:00:00Z',
+        },
+        {
+          id: 'a1358ae4-5a50-4f2b-bfad-ae652c288409',
+          type: 'video',
+          title: 'Видеорепортаж',
+          source: null,
+          revision: {
+            revision_number: 1,
+            content: null,
+            url: 'https://example.com/video',
+            created_at: '2026-09-04T10:00:00Z',
+          },
+          created_at: '2026-09-04T10:00:00Z',
+          updated_at: '2026-09-04T10:00:00Z',
+        },
+      ],
+      total: 2,
+    }
+    const fetchMock = vi.fn().mockResolvedValue(responseWith(payload))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(
+      fetchPlaceMaterials('place/id with spaces'),
+    ).resolves.toEqual(payload)
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/places/place%2Fid%20with%20spaces/materials',
+      {
+        headers: { Accept: 'application/json' },
+        signal: undefined,
+      },
+    )
+  })
+
+  it('rejects unsafe material URLs', async () => {
+    const payload = {
+      items: [
+        {
+          id: 'a1358ae4-5a50-4f2b-bfad-ae652c288409',
+          type: 'external_link',
+          title: 'Опасная ссылка',
+          source: null,
+          revision: {
+            revision_number: 1,
+            content: null,
+            url: 'javascript:alert(1)',
+            created_at: '2026-09-04T10:00:00Z',
+          },
+          created_at: '2026-09-04T10:00:00Z',
+          updated_at: '2026-09-04T10:00:00Z',
+        },
+      ],
+      total: 1,
+    }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(responseWith(payload)))
+
+    await expect(fetchPlaceMaterials('place-id')).rejects.toThrow(
+      'API материалов вернул данные неожиданного формата',
+    )
+  })
+
+  it('reports an unsuccessful materials response', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(responseWith({}, 502)))
+
+    await expect(fetchPlaceMaterials('place-id')).rejects.toThrow(
+      'Не удалось загрузить материалы места: HTTP 502',
     )
   })
 })
