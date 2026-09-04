@@ -1,10 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
-import { fetchPlace, fetchPlaces } from './api/places'
+import { fetchPlace, fetchPlaceMaterials, fetchPlaces } from './api/places'
 
 vi.mock('./api/places', () => ({
   fetchPlace: vi.fn(),
+  fetchPlaceMaterials: vi.fn(),
   fetchPlaces: vi.fn(),
 }))
 
@@ -33,12 +34,15 @@ vi.mock('./components/MapView', () => ({
 
 const fetchPlacesMock = vi.mocked(fetchPlaces)
 const fetchPlaceMock = vi.mocked(fetchPlace)
+const fetchPlaceMaterialsMock = vi.mocked(fetchPlaceMaterials)
 
 describe('App', () => {
   beforeEach(() => {
     fetchPlacesMock.mockReset()
     fetchPlaceMock.mockReset()
+    fetchPlaceMaterialsMock.mockReset()
     fetchPlacesMock.mockResolvedValue({ items: [], total: 0 })
+    fetchPlaceMaterialsMock.mockResolvedValue({ items: [], total: 0 })
   })
 
   it('renders the map foundation', async () => {
@@ -129,6 +133,13 @@ describe('App', () => {
       screen.getByText('Советское предприятие в исторических корпусах.'),
     ).toBeInTheDocument()
     expect(fetchPlaceMock).toHaveBeenCalledWith(place.id, expect.any(AbortSignal))
+    expect(fetchPlaceMaterialsMock).toHaveBeenCalledWith(
+      place.id,
+      expect.any(AbortSignal),
+    )
+    expect(
+      await screen.findByText('Материалы пока не добавлены.'),
+    ).toBeInTheDocument()
 
     fireEvent.click(
       screen.getByRole('button', { name: 'Закрыть карточку места' }),
@@ -153,6 +164,36 @@ describe('App', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Не удалось загрузить информацию о месте',
+    )
+    expect(
+      screen.getByRole('application', { name: 'Интерактивная карта' }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps place details available when materials fail to load', async () => {
+    const place = {
+      id: 'e2457cad-b0e2-45b4-8e76-81e09b3d1fed',
+      title: 'Сысертский электротехнический завод',
+      latitude: 56.494711,
+      longitude: 60.809612,
+    }
+    fetchPlacesMock.mockResolvedValue({ items: [place], total: 1 })
+    fetchPlaceMock.mockResolvedValue({
+      ...place,
+      description: 'Описание завода остаётся доступным.',
+      created_at: '2026-09-03T20:22:56.888798Z',
+      updated_at: '2026-09-03T20:29:00Z',
+    })
+    fetchPlaceMaterialsMock.mockRejectedValue(new Error('Network error'))
+
+    render(<App />)
+    fireEvent.click(await screen.findByText('Выбрать место на карте'))
+
+    expect(
+      await screen.findByText('Описание завода остаётся доступным.'),
+    ).toBeInTheDocument()
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Не удалось загрузить материалы',
     )
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),

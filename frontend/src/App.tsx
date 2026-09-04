@@ -1,11 +1,14 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import {
   fetchPlace,
+  fetchPlaceMaterials,
   fetchPlaces,
+  type PlaceMaterial,
   type PlaceDetail,
   type PlaceSummary,
 } from './api/places'
 import './App.css'
+import PlaceMaterials from './components/PlaceMaterials'
 
 const MapView = lazy(() => import('./components/MapView'))
 
@@ -17,12 +20,18 @@ function App() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null)
   const [isDetailLoading, setIsDetailLoading] = useState(false)
   const [hasDetailError, setHasDetailError] = useState(false)
+  const [materials, setMaterials] = useState<PlaceMaterial[]>([])
+  const [isMaterialsLoading, setIsMaterialsLoading] = useState(false)
+  const [hasMaterialsError, setHasMaterialsError] = useState(false)
 
   const handleSelectPlace = useCallback((placeId: string) => {
     setSelectedPlaceId(placeId)
     setSelectedPlace(null)
     setIsDetailLoading(true)
     setHasDetailError(false)
+    setMaterials([])
+    setIsMaterialsLoading(true)
+    setHasMaterialsError(false)
   }, [])
 
   const handleClosePlace = useCallback(() => {
@@ -30,6 +39,9 @@ function App() {
     setSelectedPlace(null)
     setIsDetailLoading(false)
     setHasDetailError(false)
+    setMaterials([])
+    setIsMaterialsLoading(false)
+    setHasMaterialsError(false)
   }, [])
 
   useEffect(() => {
@@ -94,6 +106,42 @@ function App() {
       .finally(() => {
         if (isActive) {
           setIsDetailLoading(false)
+        }
+      })
+
+    return () => {
+      isActive = false
+      controller.abort()
+    }
+  }, [selectedPlaceId])
+
+  useEffect(() => {
+    if (selectedPlaceId === null) {
+      return
+    }
+
+    const controller = new AbortController()
+    let isActive = true
+
+    fetchPlaceMaterials(selectedPlaceId, controller.signal)
+      .then((response) => {
+        if (isActive) {
+          setMaterials(response.items)
+        }
+      })
+      .catch((error: unknown) => {
+        if (
+          !isActive ||
+          (error instanceof DOMException && error.name === 'AbortError')
+        ) {
+          return
+        }
+
+        setHasMaterialsError(true)
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsMaterialsLoading(false)
         }
       })
 
@@ -194,6 +242,11 @@ function App() {
                       Описание пока не добавлено.
                     </p>
                   )}
+                  <PlaceMaterials
+                    materials={materials}
+                    isLoading={isMaterialsLoading}
+                    hasError={hasMaterialsError}
+                  />
                 </>
               )}
             </article>
