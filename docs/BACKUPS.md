@@ -23,7 +23,6 @@ ls -ld /opt/rus-map-backups
 
 ```bash
 cd /opt/rus-map
-umask 077
 backup_file="/opt/rus-map-backups/rus-map-$(date +%F-%H%M%S).dump"
 ```
 
@@ -31,12 +30,19 @@ backup_file="/opt/rus-map-backups/rus-map-$(date +%F-%H%M%S).dump"
 выбирать отдельные объекты при восстановлении:
 
 ```bash
-docker compose --env-file .env.production -f compose.production.yml exec -T db \
-  pg_dump --format=custom --username=rus_map --dbname=rus_map > "$backup_file"
+(
+  umask 077
+  docker compose --env-file .env.production -f compose.production.yml exec -T db \
+    pg_dump --format=custom --username=rus_map --dbname=rus_map > "$backup_file"
+)
 echo $?
 chmod 600 "$backup_file"
 ls -lh "$backup_file"
 ```
+
+`umask 077` выполняется в отдельной подоболочке. Поэтому закрытые права
+применяются к dump-файлу, но маска не остаётся активной и не превращает файлы
+следующего `git pull` в недоступные контейнеру файлы с правами `600`.
 
 Код `0` и ненулевой размер файла обязательны. Пароль в команду и имя файла не добавляется.
 
@@ -50,13 +56,19 @@ PostgreSQL dump не содержит фотографии. После появ�
 ```bash
 media_backup="/opt/rus-map-backups/rus-map-media-$(date +%F-%H%M%S).tar.gz"
 docker run --rm \
-  --volume rus-map-production_media_data:/media:ro \
-  --volume /opt/rus-map-backups:/backup \
-  alpine:3.22 tar -czf "/backup/$(basename "$media_backup")" -C /media .
+  --user "$(id -u):$(id -g)" \
+  --mount type=volume,src=rus-map-production_media_data,dst=/data,readonly,volume-nocopy \
+  --mount type=bind,src=/opt/rus-map-backups,dst=/backup \
+  alpine:3.22 tar -czf "/backup/$(basename "$media_backup")" -C /data .
 chmod 600 "$media_backup"
 tar -tzf "$media_backup" | head
 ls -lh "$media_backup"
 ```
+
+Том подключается к нейтральному каталогу `/data` с `volume-nocopy`. Подключение
+пустого тома к стандартному `/media` Alpine запрещено: Docker может скопировать
+туда каталоги `cdrom`, `floppy` и `usb` из образа. Контейнер запускается с UID и
+GID текущего пользователя, поэтому архив не остаётся во владении `root`.
 
 Код завершения должен быть `0`, архив — ненулевого размера, а список должен
 содержать каталоги `original/` и `display/` после первого импорта. Dump базы и
