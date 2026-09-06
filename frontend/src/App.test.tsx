@@ -3,11 +3,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 import { fetchPlace, fetchPlaceMaterials, fetchPlaces } from './api/places'
 
-vi.mock('./api/places', () => ({
-  fetchPlace: vi.fn(),
-  fetchPlaceMaterials: vi.fn(),
-  fetchPlaces: vi.fn(),
-}))
+vi.mock('./api/places', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./api/places')>()
+
+  return {
+    ...actual,
+    fetchPlace: vi.fn(),
+    fetchPlaceMaterials: vi.fn(),
+    fetchPlaces: vi.fn(),
+  }
+})
 
 vi.mock('./components/MapView', () => ({
   default: ({
@@ -122,6 +127,26 @@ describe('App', () => {
       created_at: '2026-09-03T20:22:56.888798Z',
       updated_at: '2026-09-03T20:29:00Z',
     })
+    fetchPlaceMaterialsMock.mockResolvedValue({
+      items: [
+        {
+          id: 'image-id',
+          type: 'image',
+          title: 'Архивный заводской цех',
+          source: 'Государственный каталог',
+          revision: {
+            revision_number: 1,
+            content: null,
+            url: 'https://example.com/archive-image',
+            media_id: 'media-id',
+            created_at: '2026-09-03T20:22:56.888798Z',
+          },
+          created_at: '2026-09-03T20:22:56.888798Z',
+          updated_at: '2026-09-03T20:22:56.888798Z',
+        },
+      ],
+      total: 1,
+    })
 
     render(<App />)
     fireEvent.click(await screen.findByText('Выбрать место на карте'))
@@ -132,14 +157,22 @@ describe('App', () => {
     expect(
       screen.getByText('Советское предприятие в исторических корпусах.'),
     ).toBeInTheDocument()
+    const gallery = await screen.findByRole('region', { name: 'Фотографии' })
+    const description = screen.getByText(
+      'Советское предприятие в исторических корпусах.',
+    )
+    expect(
+      gallery.compareDocumentPosition(description) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
     expect(fetchPlaceMock).toHaveBeenCalledWith(place.id, expect.any(AbortSignal))
     expect(fetchPlaceMaterialsMock).toHaveBeenCalledWith(
       place.id,
       expect.any(AbortSignal),
     )
     expect(
-      await screen.findByText('Материалы пока не добавлены.'),
-    ).toBeInTheDocument()
+      screen.queryByText('Материалы пока не добавлены.'),
+    ).not.toBeInTheDocument()
 
     fireEvent.click(
       screen.getByRole('button', { name: 'Закрыть карточку места' }),

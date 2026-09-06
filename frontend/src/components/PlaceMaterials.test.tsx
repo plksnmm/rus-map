@@ -6,7 +6,8 @@ import PlaceMaterials from './PlaceMaterials'
 const timestamp = '2026-09-04T09:00:00Z'
 
 function material(
-  overrides: Partial<PlaceMaterial> & Pick<PlaceMaterial, 'id' | 'type' | 'title'>,
+  overrides: Partial<PlaceMaterial> &
+    Pick<PlaceMaterial, 'id' | 'type' | 'title'>,
 ): PlaceMaterial {
   return {
     source: null,
@@ -24,7 +25,7 @@ function material(
 }
 
 describe('PlaceMaterials', () => {
-  it('shows text, source, image and safe external links', () => {
+  it('shows text, sources and safe external links outside the gallery', () => {
     const materials: PlaceMaterial[] = [
       material({
         id: 'text-id',
@@ -66,17 +67,36 @@ describe('PlaceMaterials', () => {
         type: 'external_link',
         title: 'Статья об истории',
       }),
+      material({
+        id: 'duplicate-image-source',
+        type: 'external_link',
+        title: 'Та же карточка архивной фотографии',
+        revision: {
+          revision_number: 1,
+          content: null,
+          url: 'https://example.com/factory.jpg',
+          media_id: null,
+          created_at: timestamp,
+        },
+      }),
     ]
 
     render(
-      <PlaceMaterials placeId="place-id" materials={materials} isLoading={false} hasError={false} />,
+      <PlaceMaterials
+        materials={materials}
+        isLoading={false}
+        hasError={false}
+      />,
     )
 
     expect(screen.getByText('Архивный текст без HTML.')).toBeInTheDocument()
     expect(screen.getByText('Источник: Русь пролетарская')).toBeInTheDocument()
     expect(
-      screen.getByRole('img', { name: 'Фотография заводских корпусов' }),
-    ).toHaveAttribute('src', '/api/v1/places/place-id/images/media-id')
+      screen.queryByRole('img', { name: 'Фотография заводских корпусов' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Та же карточка архивной фотографии'),
+    ).not.toBeInTheDocument()
 
     for (const link of screen.getAllByRole('link')) {
       expect(link).toHaveAttribute('target', '_blank')
@@ -91,17 +111,17 @@ describe('PlaceMaterials', () => {
 
   it('shows loading, error and empty states', () => {
     const { rerender } = render(
-      <PlaceMaterials placeId="place-id" materials={[]} isLoading hasError={false} />,
+      <PlaceMaterials materials={[]} isLoading hasError={false} />,
     )
     expect(screen.getByRole('status')).toHaveTextContent('Загружаем материалы')
 
-    rerender(<PlaceMaterials placeId="place-id" materials={[]} isLoading={false} hasError />)
+    rerender(<PlaceMaterials materials={[]} isLoading={false} hasError />)
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Основная информация о месте остаётся доступна',
     )
 
     rerender(
-      <PlaceMaterials placeId="place-id" materials={[]} isLoading={false} hasError={false} />,
+      <PlaceMaterials materials={[]} isLoading={false} hasError={false} />,
     )
     expect(screen.getByText('Материалы пока не добавлены.')).toBeInTheDocument()
   })
