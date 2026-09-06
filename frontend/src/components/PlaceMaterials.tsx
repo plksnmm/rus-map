@@ -1,7 +1,6 @@
-import { isSafeHttpUrl, placeImageUrl, type PlaceMaterial } from '../api/places'
+import { isSafeHttpUrl, type PlaceMaterial } from '../api/places'
 
 interface PlaceMaterialsProps {
-  placeId: string
   materials: PlaceMaterial[]
   isLoading: boolean
   hasError: boolean
@@ -22,28 +21,20 @@ const linkLabels: Record<Exclude<PlaceMaterial['type'], 'text'>, string> = {
   audio: 'Слушать аудио',
 }
 
-function MaterialLink({ material, placeId }: { material: PlaceMaterial; placeId: string }) {
+function MaterialLink({ material }: { material: PlaceMaterial }) {
   const url = material.revision.url
-  const imageUrl = material.revision.media_id
-    ? placeImageUrl(placeId, material.revision.media_id)
-    : url
 
-  if (material.type === 'text' || url === null || !isSafeHttpUrl(url)) {
+  if (
+    material.type === 'text' ||
+    material.type === 'image' ||
+    url === null ||
+    !isSafeHttpUrl(url)
+  ) {
     return null
   }
 
   return (
     <>
-      {material.type === 'image' && imageUrl && (
-        <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-          <img
-            className="place-material-image"
-            src={imageUrl}
-            alt={material.title}
-            loading="lazy"
-          />
-        </a>
-      )}
       <a
         className="place-material-link"
         href={url}
@@ -58,15 +49,42 @@ function MaterialLink({ material, placeId }: { material: PlaceMaterial; placeId:
 }
 
 export default function PlaceMaterials({
-  placeId,
   materials,
   isLoading,
   hasError,
 }: PlaceMaterialsProps) {
+  const imageSourceUrls = new Set(
+    materials
+      .filter((material) => material.type === 'image')
+      .map((material) => material.revision.url)
+      .filter((url): url is string => url !== null),
+  )
+  const visibleMaterials = materials.filter(
+    (material) =>
+      material.type !== 'image' &&
+      !(
+        material.type === 'external_link' &&
+        material.revision.url !== null &&
+        imageSourceUrls.has(material.revision.url)
+      ),
+  )
+
+  if (
+    !isLoading &&
+    !hasError &&
+    materials.length > 0 &&
+    visibleMaterials.length === 0
+  ) {
+    return null
+  }
+
   return (
-    <section className="place-materials" aria-labelledby="place-materials-title">
+    <section
+      className="place-materials"
+      aria-labelledby="place-materials-title"
+    >
       <h2 id="place-materials-title" className="place-materials-title">
-        Материалы
+        История и материалы
       </h2>
 
       {isLoading && (
@@ -82,15 +100,15 @@ export default function PlaceMaterials({
         </div>
       )}
 
-      {!isLoading && !hasError && materials.length === 0 && (
+      {!isLoading && !hasError && visibleMaterials.length === 0 && (
         <p className="text-secondary mb-0">Материалы пока не добавлены.</p>
       )}
 
-      {!isLoading && !hasError && materials.length > 0 && (
+      {!isLoading && !hasError && visibleMaterials.length > 0 && (
         <div className="place-material-list">
-          {materials.map((material) => (
+          {visibleMaterials.map((material) => (
             <article
-              className={`place-material${material.type === 'image' ? ' place-material--image' : ''}`}
+              className={`place-material place-material--${material.type}`}
               key={material.id}
             >
               <div className="place-material-type">
@@ -107,7 +125,7 @@ export default function PlaceMaterials({
                   {material.revision.content}
                 </p>
               )}
-              <MaterialLink material={material} placeId={placeId} />
+              <MaterialLink material={material} />
             </article>
           ))}
         </div>

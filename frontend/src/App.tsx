@@ -8,6 +8,7 @@ import {
   type PlaceSummary,
 } from './api/places'
 import './App.css'
+import PlaceImageGallery from './components/PlaceImageGallery'
 import PlaceMaterials from './components/PlaceMaterials'
 
 const MapView = lazy(() => import('./components/MapView'))
@@ -173,7 +174,9 @@ function App() {
       </header>
 
       <section className="map-layout" aria-label="Карта мест">
-        <aside className="place-panel shadow-sm">
+        <aside
+          className={`place-panel shadow-sm${selectedPlaceId ? ' place-panel--detail' : ''}`}
+        >
           {selectedPlaceId === null ? (
             <>
               <div className="panel-kicker">Народный архив</div>
@@ -233,6 +236,13 @@ function App() {
               {!isDetailLoading && selectedPlace && (
                 <>
                   <h1 className="h5 my-2">{selectedPlace.title}</h1>
+                  <PlaceImageGallery
+                    key={selectedPlace.id}
+                    placeId={selectedPlace.id}
+                    images={materials.filter(
+                      (material) => material.type === 'image',
+                    )}
+                  />
                   {selectedPlace.description ? (
                     <p className="place-detail-description mb-0">
                       {selectedPlace.description}
@@ -243,7 +253,6 @@ function App() {
                     </p>
                   )}
                   <PlaceMaterials
-                    placeId={selectedPlace.id}
                     materials={materials}
                     isLoading={isMaterialsLoading}
                     hasError={hasMaterialsError}
