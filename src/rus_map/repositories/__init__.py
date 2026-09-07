@@ -6,3 +6,10 @@ from rus_map.repositories.place import PlaceDetailRecord as PlaceDetailRecord
 from rus_map.repositories.place import PlacePage as PlacePage
 from rus_map.repositories.place import PlaceRecord as PlaceRecord
 from rus_map.repositories.place import PlaceRepository as PlaceRepository
+from rus_map.repositories.submission import NewPlaceSubmission as NewPlaceSubmission
+from rus_map.repositories.submission import (
+    PlaceSubmissionRecord as PlaceSubmissionRecord,
+)
+from rus_map.repositories.submission import (
+    PlaceSubmissionRepository as PlaceSubmissionRepository,
+)
