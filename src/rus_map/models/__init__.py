@@ -4,3 +4,5 @@ from rus_map.models.material import MaterialType as MaterialType
 from rus_map.models.material import ModerationStatus as ModerationStatus
 from rus_map.models.media import MediaAsset as MediaAsset
 from rus_map.models.place import Place as Place
+from rus_map.models.submission import PlaceSubmission as PlaceSubmission
+from rus_map.models.submission import SubmissionStatus as SubmissionStatus
