@@ -16,16 +16,18 @@
 
 ### Сысертский электротехнический завод
 
-- Статус: `published`, материалы подготовлены; изображение —
-  `needs_media_support`.
+- Статус: `published`; материалы и иллюстрация публикации подготовлены к импорту.
 - Идентификатор: `e2457cad-b0e2-45b4-8e76-81e09b3d1fed`.
 - Координаты: `56.494711, 60.809612`.
 - Основной материал: <https://t.me/rus_proletarskaya/306>.
 - Видео: <https://youtu.be/Dh-ZcOVh8zw>.
 - Альтернативная видеоссылка: <https://dzen.ru/video/watch/68ea58c270153c7016fd1e21>.
-- Манифест: `content/places/sysert-electrotechnical-plant.json`.
-- Следующее действие: после review выполнить backup, dry-run и закрытый импорт.
-  Изображения перенести после появления собственного файлового хранилища.
+- Манифест материалов: `content/places/sysert-electrotechnical-plant.json`.
+- Манифест изображения:
+  `content/places/sysert-electrotechnical-plant-images.json`.
+- Исходный файл: `content/media/sysert/sysert-plant-publication-cover.jpg`.
+- Следующее действие: после review выполнить backup, dry-run, закрытый импорт
+  изображения и повторный запуск для проверки идемпотентности.
 
 ## К добавлению
 
