@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "place_id": "e2457cad-b0e2-45b4-8e76-81e09b3d1fed",
+  "images": [
+    {
+      "media_id": "1fd7980c-3a6f-4d2b-ac4f-94235f8e700e",
+      "material_id": "7e7a11d7-581f-49f8-93b0-6cce2522f331",
+      "revision_id": "8dbae831-6cae-4395-b9ee-340817d31a5c",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Иллюстрация к публикации «Сысертский завод»",
+      "source": "Русь пролетарская",
+      "source_url": "https://t.me/rus_proletarskaya/306",
+      "file": "sysert/sysert-plant-publication-cover.jpg",
+      "sha256": "5df38553b12cab254e1ace03576df6b955d66af1c756195fbc3853476c78093a"
+    }
+  ]
+}
