@@ -1,3 +1,4 @@
+from rus_map.repositories.auth import AdminAuthRepository as AdminAuthRepository
 from rus_map.repositories.material import MaterialPage as MaterialPage
 from rus_map.repositories.material import MaterialRecord as MaterialRecord
 from rus_map.repositories.material import MaterialRepository as MaterialRepository

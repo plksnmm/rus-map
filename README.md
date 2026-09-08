@@ -66,6 +66,7 @@ npm run build
 - [Рабочий процесс разработчика](docs/DEVELOPMENT.md)
 - [Архитектура](docs/ARCHITECTURE.md)
 - [HTTP API](docs/API.md)
+- [Аутентификация администратора](docs/ADMIN_AUTH.md)
 - [База данных](docs/DATABASE.md)
 - [Бэклог мест и материалов](docs/CONTENT_BACKLOG.md)
 - [Закрытый импорт мест](docs/PLACE_IMPORT.md)

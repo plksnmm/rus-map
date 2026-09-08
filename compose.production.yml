@@ -12,6 +12,8 @@ x-backend: &backend
     POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     MEDIA_ROOT: /app/media
+    ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-true}
+    ADMIN_COOKIE_PATH: ${ADMIN_COOKIE_PATH:-/rus-map}
   volumes:
     - media_data:/app/media
 

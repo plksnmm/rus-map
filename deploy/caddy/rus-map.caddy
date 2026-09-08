@@ -1,13 +1,18 @@
 @rus_map_root path /rus-map
 redir @rus_map_root /rus-map/ 308
 
-@rus_map_write method POST PUT PATCH DELETE
+@rus_map_blocked_write {
+    method POST PUT PATCH DELETE
+    not path /rus-map/api/v1/admin/auth/login /rus-map/api/v1/admin/auth/logout
+}
 
 handle /rus-map/api/* {
     route {
-        respond @rus_map_write "Forbidden" 403
+        respond @rus_map_blocked_write "Forbidden" 403
         uri strip_prefix /rus-map
-        reverse_proxy 127.0.0.1:18000
+        reverse_proxy 127.0.0.1:18000 {
+            header_up X-Real-IP {remote_host}
+        }
     }
 }
 
