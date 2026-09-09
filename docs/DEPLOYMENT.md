@@ -316,3 +316,13 @@ Production Compose создаёт том `rus-map-production_media_data` и по
 
 Закрытый импорт выполняется по `docs/IMAGE_IMPORT.md`; каталог исходников
 подключается к одноразовому backend-контейнеру только для чтения.
+# Первый администратор
+
+После миграции создать учётную запись интерактивно:
+
+```bash
+docker compose --env-file .env.production -f compose.production.yml exec backend \
+  python -m rus_map.admin.admin_user create --username editor
+```
+
+Production использует `ADMIN_COOKIE_SECURE=true` и `ADMIN_COOKIE_PATH=/rus-map`. Пароль не добавляется в `.env.production`, Compose или командную строку. Обновлённый Caddyfile разрешает только `/rus-map/api/v1/admin/auth/login` и `/logout` из изменяющих API-запросов. После обновления обязательно повторить validate/reload Caddy по инструкции выше.

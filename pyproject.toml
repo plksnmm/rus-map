@@ -13,6 +13,7 @@ dependencies = [
     "pillow>=11.3.0",
     "sqlalchemy>=2.0.52",
     "uvicorn[standard]>=0.52.4",
+    "pwdlib[argon2]>=0.3.1",
 ]
 
 [project.scripts]
@@ -20,6 +21,7 @@ rus-map = "rus_map:main"
 rus-map-import-materials = "rus_map.admin.material_import:main"
 rus-map-import-places = "rus_map.admin.place_import:main"
 rus-map-import-images = "rus_map.admin.image_import:main"
+rus-map-admin = "rus_map.admin.admin_user:main"
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]

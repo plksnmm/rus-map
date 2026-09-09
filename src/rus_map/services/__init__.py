@@ -1,3 +1,4 @@
+from rus_map.services.auth import AdminAuthService as AdminAuthService
 from rus_map.services.submission import (
     InvalidSubmissionTransition as InvalidSubmissionTransition,
 )

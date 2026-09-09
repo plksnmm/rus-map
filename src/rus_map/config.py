@@ -21,6 +21,14 @@ class Settings(BaseSettings):
     postgres_user: str
     postgres_password: SecretStr
     media_root: Path = Path("var/media")
+    admin_session_ttl_hours: int = Field(default=12, ge=1, le=168)
+    admin_session_cookie_name: str = "rus_map_admin_session"
+    admin_csrf_cookie_name: str = "rus_map_admin_csrf"
+    admin_cookie_path: str = Field(default="/", pattern=r"^/")
+    admin_cookie_secure: bool = False
+    admin_login_max_failures: int = Field(default=5, ge=2, le=20)
+    admin_login_window_minutes: int = Field(default=15, ge=1, le=1440)
+    admin_login_block_minutes: int = Field(default=15, ge=1, le=1440)
 
     @property
     def database_url(self) -> URL:

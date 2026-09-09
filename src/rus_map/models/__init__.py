@@ -1,3 +1,6 @@
+from rus_map.models.auth import AdminLoginThrottle as AdminLoginThrottle
+from rus_map.models.auth import AdminSession as AdminSession
+from rus_map.models.auth import AdminUser as AdminUser
 from rus_map.models.material import Material as Material
 from rus_map.models.material import MaterialRevision as MaterialRevision
 from rus_map.models.material import MaterialType as MaterialType
