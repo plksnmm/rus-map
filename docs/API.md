@@ -191,4 +191,28 @@ WebP только тогда, когда asset связан с опублико�
 
 `POST /api/v1/admin/auth/logout` требует session-cookie и значение CSRF-cookie в заголовке `X-CSRF-Token`. Успех возвращает `204`, отзывает серверную сессию и удаляет обе cookies; неверный CSRF возвращает `403`.
 
-Через Caddy наружу разрешены только POST login/logout. Остальные публичные `POST`, `PUT`, `PATCH` и `DELETE`, включая создание точек, материалов и заявок, остаются заблокированы. Подробности — в `docs/ADMIN_AUTH.md`.
+Через Caddy наружу разрешены POST login/logout и два защищённых решения по
+заявкам. Остальные публичные `POST`, `PUT`, `PATCH` и `DELETE`, включая прямое
+создание точек и материалов, остаются заблокированы. Подробности — в
+`docs/ADMIN_AUTH.md`.
+
+# Административная модерация заявок
+
+Все маршруты требуют действующую административную session-cookie и возвращают
+`Cache-Control: no-store`:
+
+- `GET /api/v1/admin/submissions?status=pending&limit=50&offset=0` — очередь;
+- `GET /api/v1/admin/submissions/{submission_id}` — одна заявка;
+- `POST /api/v1/admin/submissions/{submission_id}/approve` — создать место;
+- `POST /api/v1/admin/submissions/{submission_id}/reject` — отклонить заявку.
+
+Параметр `status` принимает `pending`, `approved`, `rejected`; без параметра
+возвращаются заявки всех статусов. `limit` ограничен диапазоном 1–100. Решения
+принимают тело `{"review_notes": "..."}` и дополнительно требуют
+значение CSRF-cookie в заголовке `X-CSRF-Token`.
+
+Ответ содержит исходные данные заявки, статус, `approved_place_id`,
+`moderated_by_admin_id`, `moderated_at` и примечание. Неизвестная заявка даёт
+`404`, попытка обратить финальное решение — `409`, отсутствие авторизации —
+`401`, неверный CSRF — `403`. Повторное одобрение возвращает прежний результат
+и не создаёт вторую точку.

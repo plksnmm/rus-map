@@ -32,9 +32,27 @@ class PlaceSubmissionService:
         """Store a proposal without publishing a place."""
         return await self._submissions.create(proposal)
 
+    async def list(
+        self,
+        status: SubmissionStatus | None,
+        *,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[PlaceSubmissionRecord], int]:
+        """Return proposals visible to an authenticated moderator."""
+        return await self._submissions.list(status, limit=limit, offset=offset)
+
+    async def get(self, submission_id: UUID) -> PlaceSubmissionRecord:
+        """Return one proposal or raise the service-level not-found error."""
+        submission = await self._submissions.get(submission_id)
+        if submission is None:
+            raise SubmissionNotFound(str(submission_id))
+        return submission
+
     async def approve(
         self,
         submission_id: UUID,
+        admin_id: UUID,
         review_notes: str | None = None,
     ) -> PlaceSubmissionRecord:
         """Publish one pending proposal, or return its existing approval."""
@@ -58,6 +76,7 @@ class PlaceSubmissionService:
         approved = await self._submissions.mark_approved(
             submission.id,
             place.id,
+            admin_id,
             review_notes,
         )
         if approved is None:
@@ -67,6 +86,7 @@ class PlaceSubmissionService:
     async def reject(
         self,
         submission_id: UUID,
+        admin_id: UUID,
         review_notes: str | None = None,
     ) -> PlaceSubmissionRecord:
         """Reject one pending proposal, preserving final decisions."""
@@ -81,6 +101,7 @@ class PlaceSubmissionService:
 
         rejected = await self._submissions.mark_rejected(
             submission.id,
+            admin_id,
             review_notes,
         )
         if rejected is None:

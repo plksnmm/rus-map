@@ -1,5 +1,7 @@
 import re
+from datetime import datetime
 from typing import Annotated
+from uuid import UUID
 
 from pydantic import (
     BaseModel,
@@ -10,6 +12,7 @@ from pydantic import (
     field_validator,
 )
 
+from rus_map.models import SubmissionStatus
 from rus_map.schemas.place import Latitude, Longitude, PlaceDescription, PlaceTitle
 
 MAX_SOURCE_URLS = 10
@@ -58,3 +61,32 @@ class PlaceSubmissionDecision(BaseModel):
     review_notes: SubmissionReviewNotes | None = None
 
     _plain_review_notes = field_validator("review_notes")(reject_html)
+
+
+class PlaceSubmissionResponse(BaseModel):
+    """Complete proposal state returned only to administrators."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    status: SubmissionStatus
+    title: str
+    description: str | None
+    latitude: float
+    longitude: float
+    source_urls: list[str]
+    review_notes: str | None
+    approved_place_id: UUID | None
+    moderated_by_admin_id: UUID | None
+    moderated_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class PlaceSubmissionListResponse(BaseModel):
+    """Paginated administrative submission queue."""
+
+    items: list[PlaceSubmissionResponse]
+    total: int
+    limit: int
+    offset: int

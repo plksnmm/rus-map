@@ -1,11 +1,12 @@
 import os
+from uuid import uuid4
 
 import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from rus_map.db.session import get_engine
-from rus_map.models import Place, PlaceSubmission, SubmissionStatus
+from rus_map.models import AdminUser, Place, PlaceSubmission, SubmissionStatus
 from rus_map.repositories.place import PlaceRepository
 from rus_map.repositories.submission import (
     NewPlaceSubmission,
@@ -32,6 +33,15 @@ async def test_approval_creates_exactly_one_place_in_same_transaction() -> None:
             session = AsyncSession(bind=connection, expire_on_commit=False)
 
             try:
+                admin_id = uuid4()
+                session.add(
+                    AdminUser(
+                        id=admin_id,
+                        username=f"submission-approver-{admin_id.hex}",
+                        password_hash="integration-test-hash",
+                    )
+                )
+                await session.flush()
                 service = PlaceSubmissionService(
                     PlaceSubmissionRepository(session),
                     PlaceRepository(session),
@@ -55,8 +65,8 @@ async def test_approval_creates_exactly_one_place_in_same_transaction() -> None:
                     == 0
                 )
 
-                first = await service.approve(pending.id, "Проверено")
-                second = await service.approve(pending.id, "Повтор")
+                first = await service.approve(pending.id, admin_id, "Проверено")
+                second = await service.approve(pending.id, admin_id, "Повтор")
 
                 assert first.status is SubmissionStatus.APPROVED
                 assert second.approved_place_id == first.approved_place_id
@@ -72,6 +82,7 @@ async def test_approval_creates_exactly_one_place_in_same_transaction() -> None:
                 stored = await session.get(PlaceSubmission, pending.id)
                 assert stored is not None
                 assert stored.review_notes == "Проверено"
+                assert stored.moderated_by_admin_id == admin_id
             finally:
                 await session.close()
                 if transaction.is_active:
@@ -90,6 +101,15 @@ async def test_rejection_keeps_audit_record_without_place() -> None:
             session = AsyncSession(bind=connection, expire_on_commit=False)
 
             try:
+                admin_id = uuid4()
+                session.add(
+                    AdminUser(
+                        id=admin_id,
+                        username=f"submission-rejector-{admin_id.hex}",
+                        password_hash="integration-test-hash",
+                    )
+                )
+                await session.flush()
                 service = PlaceSubmissionService(
                     PlaceSubmissionRepository(session),
                     PlaceRepository(session),
@@ -103,10 +123,11 @@ async def test_rejection_keeps_audit_record_without_place() -> None:
                         source_urls=(),
                     )
                 )
-                rejected = await service.reject(pending.id, "Нет источников")
+                rejected = await service.reject(pending.id, admin_id, "Нет источников")
 
                 assert rejected.status is SubmissionStatus.REJECTED
                 assert rejected.approved_place_id is None
+                assert rejected.moderated_by_admin_id == admin_id
                 assert (
                     await session.scalar(
                         select(func.count())

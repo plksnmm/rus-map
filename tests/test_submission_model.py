@@ -19,6 +19,10 @@ def test_submission_model_has_moderation_constraints_and_index() -> None:
     assert "idx_place_submissions_status_created" in indexes
     assert table.c.approved_place_id.unique is True
     assert (
+        next(iter(table.c.moderated_by_admin_id.foreign_keys)).target_fullname
+        == "app.admin_users.id"
+    )
+    assert (
         next(iter(table.c.approved_place_id.foreign_keys)).target_fullname
         == "app.places.id"
     )
