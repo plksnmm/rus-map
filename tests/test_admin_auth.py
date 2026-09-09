@@ -2,15 +2,33 @@ from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
+import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
+from rus_map.api import dependencies as api_dependencies
 from rus_map.api.dependencies import get_admin_auth_service, get_current_admin_session
 from rus_map.api.routes import admin_auth as admin_auth_routes
 from rus_map.config import Settings
 from rus_map.main import create_app
 from rus_map.repositories.auth import AuthenticatedSession
 from rus_map.services.auth import InvalidCredentialsError, LoginResult
+
+
+@pytest.fixture(autouse=True)
+def auth_settings(monkeypatch: pytest.MonkeyPatch) -> Settings:
+    settings = Settings(
+        postgres_host="localhost",
+        postgres_port=5432,
+        postgres_db="rus_map",
+        postgres_user="rus_map",
+        postgres_password=SecretStr("secret"),
+        admin_cookie_secure=True,
+        admin_cookie_path="/rus-map",
+    )
+    monkeypatch.setattr(admin_auth_routes, "get_settings", lambda: settings)
+    monkeypatch.setattr(api_dependencies, "get_settings", lambda: settings)
+    return settings
 
 
 def active_session() -> AuthenticatedSession:
@@ -23,23 +41,13 @@ def active_session() -> AuthenticatedSession:
     )
 
 
-def test_login_sets_hardened_session_and_csrf_cookies(monkeypatch) -> None:
+def test_login_sets_hardened_session_and_csrf_cookies() -> None:
     application = create_app()
     service = MagicMock()
     service.login = AsyncMock()
     session = active_session()
     service.login.return_value = LoginResult("session-secret", "csrf-secret", session)
     application.dependency_overrides[get_admin_auth_service] = lambda: service
-    production_settings = Settings(
-        postgres_host="localhost",
-        postgres_port=5432,
-        postgres_db="rus_map",
-        postgres_user="rus_map",
-        postgres_password=SecretStr("secret"),
-        admin_cookie_secure=True,
-        admin_cookie_path="/rus-map",
-    )
-    monkeypatch.setattr(admin_auth_routes, "get_settings", lambda: production_settings)
 
     with TestClient(application) as client:
         response = client.post(
