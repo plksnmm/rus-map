@@ -325,4 +325,4 @@ docker compose --env-file .env.production -f compose.production.yml exec backend
   python -m rus_map.admin.admin_user create --username editor
 ```
 
-Production использует `ADMIN_COOKIE_SECURE=true` и `ADMIN_COOKIE_PATH=/rus-map`. Пароль не добавляется в `.env.production`, Compose или командную строку. Обновлённый Caddyfile разрешает только `/rus-map/api/v1/admin/auth/login` и `/logout` из изменяющих API-запросов. После обновления обязательно повторить validate/reload Caddy по инструкции выше.
+Production использует `ADMIN_COOKIE_SECURE=true` и `ADMIN_COOKIE_PATH=/rus-map`. Пароль не добавляется в `.env.production`, Compose или командную строку. Caddy разрешает login/logout и только `POST /rus-map/api/v1/admin/submissions/{uuid}/approve|reject`; авторизацию и CSRF повторно проверяет backend. После обновления обязательно повторить validate/reload Caddy по инструкции выше.

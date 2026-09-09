@@ -22,6 +22,7 @@ def submission_record(
     *,
     submission_id: UUID | None = None,
     approved_place_id: UUID | None = None,
+    moderated_by_admin_id: UUID | None = None,
 ) -> PlaceSubmissionRecord:
     timestamp = datetime.now(UTC)
     return PlaceSubmissionRecord(
@@ -34,6 +35,7 @@ def submission_record(
         source_urls=("https://example.com/factory",),
         review_notes=None,
         approved_place_id=approved_place_id,
+        moderated_by_admin_id=moderated_by_admin_id,
         moderated_at=None if status is SubmissionStatus.PENDING else timestamp,
         created_at=timestamp,
         updated_at=timestamp,
@@ -74,17 +76,19 @@ async def test_approve_creates_one_place_and_records_it() -> None:
     places = AsyncMock()
     pending = submission_record(SubmissionStatus.PENDING)
     place_id = uuid4()
+    admin_id = uuid4()
     approved = submission_record(
         SubmissionStatus.APPROVED,
         submission_id=pending.id,
         approved_place_id=place_id,
+        moderated_by_admin_id=admin_id,
     )
     submissions.get_for_update.return_value = pending
     submissions.mark_approved.return_value = approved
     places.create.return_value = place_record(place_id)
     service = PlaceSubmissionService(submissions, places)
 
-    result = await service.approve(pending.id, "Источники проверены")
+    result = await service.approve(pending.id, admin_id, "Источники проверены")
 
     assert result is approved
     places.create.assert_awaited_once()
@@ -94,6 +98,7 @@ async def test_approve_creates_one_place_and_records_it() -> None:
     submissions.mark_approved.assert_awaited_once_with(
         pending.id,
         place_id,
+        admin_id,
         "Источники проверены",
     )
 
@@ -105,10 +110,13 @@ async def test_repeated_approval_does_not_create_duplicate_place() -> None:
     approved = submission_record(
         SubmissionStatus.APPROVED,
         approved_place_id=uuid4(),
+        moderated_by_admin_id=uuid4(),
     )
     submissions.get_for_update.return_value = approved
 
-    result = await PlaceSubmissionService(submissions, places).approve(approved.id)
+    result = await PlaceSubmissionService(submissions, places).approve(
+        approved.id, uuid4()
+    )
 
     assert result is approved
     places.create.assert_not_awaited()
@@ -120,15 +128,18 @@ async def test_reject_preserves_submission_without_creating_place() -> None:
     submissions = AsyncMock()
     places = AsyncMock()
     pending = submission_record(SubmissionStatus.PENDING)
+    admin_id = uuid4()
     rejected = submission_record(
         SubmissionStatus.REJECTED,
         submission_id=pending.id,
+        moderated_by_admin_id=admin_id,
     )
     submissions.get_for_update.return_value = pending
     submissions.mark_rejected.return_value = rejected
 
     result = await PlaceSubmissionService(submissions, places).reject(
         pending.id,
+        admin_id,
         "Недостаточно источников",
     )
 
@@ -145,15 +156,16 @@ async def test_final_decisions_cannot_be_reversed() -> None:
     submissions.get_for_update.return_value = rejected
 
     with pytest.raises(InvalidSubmissionTransition):
-        await service.approve(rejected.id)
+        await service.approve(rejected.id, uuid4())
 
     approved = submission_record(
         SubmissionStatus.APPROVED,
         approved_place_id=uuid4(),
+        moderated_by_admin_id=uuid4(),
     )
     submissions.get_for_update.return_value = approved
     with pytest.raises(InvalidSubmissionTransition):
-        await service.reject(approved.id)
+        await service.reject(approved.id, uuid4())
 
 
 @pytest.mark.asyncio
@@ -163,4 +175,4 @@ async def test_missing_submission_raises_not_found() -> None:
     submissions.get_for_update.return_value = None
 
     with pytest.raises(SubmissionNotFound):
-        await PlaceSubmissionService(submissions, places).approve(uuid4())
+        await PlaceSubmissionService(submissions, places).approve(uuid4(), uuid4())

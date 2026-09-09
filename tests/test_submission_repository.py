@@ -17,6 +17,7 @@ def submission_row(
     *,
     status: SubmissionStatus = SubmissionStatus.PENDING,
     approved_place_id: UUID | None = None,
+    moderated_by_admin_id: UUID | None = None,
 ) -> tuple[object, ...]:
     timestamp = datetime.now(UTC)
     return (
@@ -29,6 +30,7 @@ def submission_row(
         ["https://example.com/factory"],
         None,
         approved_place_id,
+        moderated_by_admin_id,
         timestamp if status is not SubmissionStatus.PENDING else None,
         timestamp,
         timestamp,
@@ -39,6 +41,14 @@ def execute_result_with(row: tuple[object, ...] | None) -> Mock:
     tuples = Mock()
     tuples.one.return_value = row
     tuples.one_or_none.return_value = row
+    result = Mock()
+    result.tuples.return_value = tuples
+    return result
+
+
+def execute_result_with_rows(rows: list[tuple[object, ...]]) -> Mock:
+    tuples = Mock()
+    tuples.all.return_value = rows
     result = Mock()
     result.tuples.return_value = tuples
     return result
@@ -84,16 +94,45 @@ async def test_get_for_update_locks_submission() -> None:
 
 
 @pytest.mark.asyncio
+async def test_list_filters_status_and_returns_total() -> None:
+    session = AsyncMock(spec=AsyncSession)
+    row = submission_row()
+    session.scalar.return_value = 1
+    session.execute.return_value = execute_result_with_rows([row])
+
+    items, total = await PlaceSubmissionRepository(session).list(
+        SubmissionStatus.PENDING,
+        limit=20,
+        offset=10,
+    )
+
+    assert items[0].id == row[0]
+    assert total == 1
+    statement = session.execute.await_args.args[0]
+    sql = str(statement.compile(dialect=postgresql.dialect()))
+    assert "place_submissions.status =" in sql
+    assert "ORDER BY app.place_submissions.created_at ASC" in sql
+    assert "LIMIT" in sql
+    assert "OFFSET" in sql
+
+
+@pytest.mark.asyncio
 async def test_mark_approved_updates_only_pending_submission() -> None:
     session = AsyncMock(spec=AsyncSession)
     place_id = uuid4()
+    admin_id = uuid4()
     session.execute.return_value = execute_result_with(
-        submission_row(status=SubmissionStatus.APPROVED, approved_place_id=place_id)
+        submission_row(
+            status=SubmissionStatus.APPROVED,
+            approved_place_id=place_id,
+            moderated_by_admin_id=admin_id,
+        )
     )
 
     approved = await PlaceSubmissionRepository(session).mark_approved(
         uuid4(),
         place_id,
+        admin_id,
         "Проверено",
     )
 
@@ -109,12 +148,17 @@ async def test_mark_approved_updates_only_pending_submission() -> None:
 @pytest.mark.asyncio
 async def test_mark_rejected_does_not_create_place() -> None:
     session = AsyncMock(spec=AsyncSession)
+    admin_id = uuid4()
     session.execute.return_value = execute_result_with(
-        submission_row(status=SubmissionStatus.REJECTED)
+        submission_row(
+            status=SubmissionStatus.REJECTED,
+            moderated_by_admin_id=admin_id,
+        )
     )
 
     rejected = await PlaceSubmissionRepository(session).mark_rejected(
         uuid4(),
+        admin_id,
         "Недостаточно источников",
     )
 

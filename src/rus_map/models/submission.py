@@ -53,7 +53,7 @@ class PlaceSubmission(Base):
         ),
         CheckConstraint(
             "(status = 'pending' AND approved_place_id IS NULL "
-            "AND moderated_at IS NULL) OR "
+            "AND moderated_by_admin_id IS NULL AND moderated_at IS NULL) OR "
             "(status = 'approved' AND approved_place_id IS NOT NULL "
             "AND moderated_at IS NOT NULL) OR "
             "(status = 'rejected' AND approved_place_id IS NULL "
@@ -95,6 +95,10 @@ class PlaceSubmission(Base):
         ForeignKey("app.places.id"),
         nullable=True,
         unique=True,
+    )
+    moderated_by_admin_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("app.admin_users.id"),
+        nullable=True,
     )
     moderated_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),

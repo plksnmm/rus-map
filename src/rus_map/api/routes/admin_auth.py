@@ -1,6 +1,10 @@
-from fastapi import APIRouter, Header, HTTPException, Request, Response, status
+from fastapi import APIRouter, HTTPException, Request, Response, status
 
-from rus_map.api.dependencies import AdminAuthServiceDependency, AdminSessionDependency
+from rus_map.api.dependencies import (
+    AdminAuthServiceDependency,
+    AdminSessionDependency,
+    CsrfAdminSessionDependency,
+)
 from rus_map.config import get_settings
 from rus_map.schemas.auth import AdminLoginRequest, AdminLoginResponse, AdminResponse
 from rus_map.services.auth import (
@@ -108,16 +112,8 @@ async def current_admin(
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
     response: Response,
-    session: AdminSessionDependency,
+    session: CsrfAdminSessionDependency,
     service: AdminAuthServiceDependency,
-    csrf_token: str | None = Header(default=None, alias="X-CSRF-Token"),
 ) -> None:
-    try:
-        service.verify_csrf(session, csrf_token)
-    except InvalidCredentialsError as error:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="CSRF validation failed",
-        ) from error
     await service.logout(session)
     clear_auth_cookies(response)
