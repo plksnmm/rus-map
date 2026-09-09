@@ -42,8 +42,8 @@ def raise_http_error(error: Exception) -> NoReturn:
 @router.get("", response_model=PlaceSubmissionListResponse)
 async def list_submissions(
     response: Response,
-    service: PlaceSubmissionServiceDependency,
     _admin: AdminSessionDependency,
+    service: PlaceSubmissionServiceDependency,
     submission_status: Annotated[SubmissionStatus | None, Query(alias="status")] = None,
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
     offset: Annotated[int, Query(ge=0)] = 0,
@@ -66,8 +66,8 @@ async def list_submissions(
 async def get_submission(
     submission_id: UUID,
     response: Response,
-    service: PlaceSubmissionServiceDependency,
     _admin: AdminSessionDependency,
+    service: PlaceSubmissionServiceDependency,
 ) -> PlaceSubmissionResponse:
     try:
         submission = await service.get(submission_id)
@@ -82,8 +82,8 @@ async def approve_submission(
     submission_id: UUID,
     decision: PlaceSubmissionDecision,
     response: Response,
-    service: PlaceSubmissionServiceDependency,
     admin: CsrfAdminSessionDependency,
+    service: PlaceSubmissionServiceDependency,
 ) -> PlaceSubmissionResponse:
     try:
         submission = await service.approve(
@@ -102,8 +102,8 @@ async def reject_submission(
     submission_id: UUID,
     decision: PlaceSubmissionDecision,
     response: Response,
-    service: PlaceSubmissionServiceDependency,
     admin: CsrfAdminSessionDependency,
+    service: PlaceSubmissionServiceDependency,
 ) -> PlaceSubmissionResponse:
     try:
         submission = await service.reject(

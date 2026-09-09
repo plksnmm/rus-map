@@ -13,6 +13,7 @@ from rus_map.api.dependencies import (
     get_place_submission_service,
 )
 from rus_map.config import Settings
+from rus_map.db import session as db_session
 from rus_map.main import create_app
 from rus_map.models import SubmissionStatus
 from rus_map.repositories.auth import AuthenticatedSession
@@ -82,7 +83,13 @@ def authenticated_application(
     return application, session
 
 
-def test_list_requires_authentication() -> None:
+def test_list_requires_authentication(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fail_if_database_settings_are_loaded() -> None:
+        raise AssertionError("database dependency resolved before authentication")
+
+    monkeypatch.setattr(
+        db_session, "get_settings", fail_if_database_settings_are_loaded
+    )
     application = create_app()
     auth_service = MagicMock()
     auth_service.authenticate = AsyncMock(side_effect=InvalidCredentialsError)
