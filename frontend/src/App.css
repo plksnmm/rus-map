@@ -80,6 +80,345 @@
   border-color: rgb(255 255 255 / 28%);
 }
 
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.app-admin-link {
+  border: 0;
+  color: rgb(255 255 255 / 72%);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  letter-spacing: 0.045em;
+}
+
+.app-admin-link:hover,
+.app-admin-link:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.admin-shell {
+  --coal: #151515;
+  --paper: #f2eee5;
+  --signal-red: #a82626;
+  --steel: #606366;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--coal);
+  background:
+    linear-gradient(rgb(21 21 21 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(21 21 21 / 4%) 1px, transparent 1px),
+    var(--paper);
+  background-size: 2rem 2rem;
+}
+
+.admin-site-header .brand-group {
+  color: #fff;
+}
+
+.admin-content {
+  width: min(90rem, 100%);
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-loading,
+.admin-login-card {
+  width: min(28rem, 100%);
+  margin: clamp(2rem, 10vh, 7rem) auto 0;
+  padding: 1.5rem;
+  border: 2px solid var(--coal);
+  border-left: 6px solid var(--signal-red);
+  background: rgb(242 238 229 / 98%);
+  box-shadow: 7px 7px 0 rgb(21 21 21 / 24%);
+}
+
+.admin-login-card h1,
+.admin-toolbar h1,
+.admin-submission-detail h2,
+.admin-detail-section h3 {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+}
+
+.admin-login-card h1 {
+  margin-bottom: 0.75rem;
+  font-size: 1.75rem;
+  text-transform: uppercase;
+}
+
+.admin-login-card .form-control,
+.admin-decision-section .form-control {
+  border: 1px solid rgb(21 21 21 / 45%);
+  border-radius: 0;
+  background: rgb(255 255 255 / 82%);
+}
+
+.admin-login-card .form-control:focus,
+.admin-decision-section .form-control:focus {
+  border-color: var(--signal-red);
+  box-shadow: 0 0 0 0.2rem rgb(168 38 38 / 18%);
+}
+
+.admin-password-field {
+  position: relative;
+}
+
+.admin-password-field .form-control {
+  padding-right: 3rem;
+}
+
+.admin-password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: 2.75rem;
+  height: 100%;
+  border: 0;
+  border-left: 1px solid rgb(21 21 21 / 25%);
+  place-items: center;
+  color: var(--coal);
+  background: transparent;
+  font-size: 1.15rem;
+}
+
+.admin-password-toggle:hover,
+.admin-password-toggle:focus-visible {
+  color: #fff;
+  background: var(--coal);
+}
+
+.admin-primary-button,
+.admin-approve-button {
+  border: 1px solid #651515;
+  border-radius: 0;
+  color: #fff;
+  background: var(--signal-red);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.admin-primary-button:hover,
+.admin-primary-button:focus-visible,
+.admin-approve-button:hover,
+.admin-approve-button:focus-visible {
+  color: #fff;
+  background: #741919;
+}
+
+.admin-dashboard {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-toolbar h1 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.25rem);
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.admin-account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+}
+
+.admin-account .btn {
+  border: 1px solid var(--coal);
+  border-radius: 0;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 0.35rem;
+  padding-bottom: 0.2rem;
+  overflow-x: auto;
+}
+
+.admin-filters button {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgb(21 21 21 / 35%);
+  color: var(--coal);
+  background: rgb(255 255 255 / 55%);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  letter-spacing: 0.035em;
+}
+
+.admin-filters button:hover,
+.admin-filters button:focus-visible,
+.admin-filters button.is-active {
+  color: #fff;
+  background: var(--coal);
+}
+
+.admin-message {
+  margin: 0;
+  border-radius: 0;
+}
+
+.admin-workspace {
+  display: grid;
+  grid-template-columns: minmax(17rem, 24rem) minmax(0, 1fr);
+  min-height: calc(100dvh - 14rem);
+  border: 2px solid var(--coal);
+  background: rgb(242 238 229 / 96%);
+  box-shadow: 8px 8px 0 rgb(21 21 21 / 22%);
+}
+
+.admin-queue {
+  border-right: 2px solid var(--coal);
+  overflow-y: auto;
+}
+
+.admin-queue-item {
+  display: grid;
+  width: 100%;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 0;
+  border-bottom: 1px solid rgb(21 21 21 / 22%);
+  text-align: left;
+  background: transparent;
+}
+
+.admin-queue-item:hover,
+.admin-queue-item:focus-visible,
+.admin-queue-item.is-active {
+  background: #fff;
+  box-shadow: inset 5px 0 0 var(--signal-red);
+}
+
+.admin-queue-item strong {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.025em;
+}
+
+.admin-queue-item > span:not(.admin-status),
+.admin-detail-meta,
+.admin-detail-section small {
+  color: var(--steel);
+  font-size: 0.78rem;
+}
+
+.admin-status {
+  width: fit-content;
+  padding: 0.18rem 0.4rem;
+  border: 1px solid currentcolor;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-status--pending {
+  color: #76520a;
+  background: #fff4ce;
+}
+
+.admin-status--approved {
+  color: #275b37;
+  background: #e0f1e5;
+}
+
+.admin-status--rejected {
+  color: #7b2020;
+  background: #f8dddd;
+}
+
+.admin-detail-panel {
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  overflow-y: auto;
+}
+
+.admin-empty {
+  padding: 2rem 1rem;
+  color: var(--steel);
+  text-align: center;
+}
+
+.admin-submission-detail {
+  max-width: 60rem;
+}
+
+.admin-submission-detail h2 {
+  margin: 0.7rem 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.admin-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(21 21 21 / 22%);
+}
+
+.admin-detail-section,
+.admin-decision-section {
+  margin-top: 1.25rem;
+}
+
+.admin-detail-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-detail-section p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-source-list {
+  display: grid;
+  gap: 0.5rem;
+  padding-left: 1.2rem;
+}
+
+.admin-source-list a,
+.admin-source-list span {
+  color: #651515;
+  overflow-wrap: anywhere;
+}
+
+.admin-decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.admin-reject-button {
+  border: 1px solid var(--signal-red);
+  border-radius: 0;
+  color: var(--signal-red);
+  background: transparent;
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+}
+
+.admin-reject-button:hover,
+.admin-reject-button:focus-visible {
+  color: #fff;
+  background: var(--signal-red);
+}
+
 .map-layout {
   position: relative;
   flex: 1;
@@ -515,6 +854,57 @@
     font-size: 1rem;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .app-header-actions {
+    gap: 0.2rem;
+  }
+
+  .app-admin-link {
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  .admin-site-header .brand-mark {
+    display: none;
+  }
+
+  .admin-content {
+    padding: 1rem 0.75rem 1.5rem;
+  }
+
+  .admin-login-card {
+    margin-top: 1.5rem;
+  }
+
+  .admin-toolbar {
+    align-items: flex-start;
+  }
+
+  .admin-account {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  .admin-workspace {
+    display: block;
+    min-height: 0;
+  }
+
+  .admin-queue {
+    max-height: 14rem;
+    border-right: 0;
+    border-bottom: 2px solid var(--coal);
+  }
+
+  .admin-detail-panel {
+    padding: 1rem;
+  }
+
+  .admin-decision-actions .btn {
+    width: 100%;
   }
 
   .place-panel {

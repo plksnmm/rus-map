@@ -186,3 +186,12 @@ service-тесты проверяют стабильную сортировку,
 модератора. `tests/integration/test_admin_submission_api_integration.py` на
 реальной PostgreSQL выполняет login → list → отказ без CSRF → approve и
 подтверждает созданное место и аудит администратора.
+
+# Проверка интерфейса модератора
+
+`frontend/src/api/admin.test.ts` проверяет контракты входа, текущей сессии,
+очереди и обязательную передачу CSRF для решений и выхода.
+`frontend/src/AdminApp.test.tsx` покрывает отсутствие сессии, вход, загрузку
+pending-очереди, отображение источников, одобрение с примечанием и выход.
+Frontend-проверки выполняются обычными командами `npm test`, `npm run lint` и
+`npm run build`; пароль и реальные production cookies тестам не нужны.

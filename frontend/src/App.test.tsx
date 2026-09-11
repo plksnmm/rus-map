@@ -37,17 +37,31 @@ vi.mock('./components/MapView', () => ({
   ),
 }))
 
+vi.mock('./AdminApp', () => ({
+  default: () => <div>Тестовая панель администратора</div>,
+}))
+
 const fetchPlacesMock = vi.mocked(fetchPlaces)
 const fetchPlaceMock = vi.mocked(fetchPlace)
 const fetchPlaceMaterialsMock = vi.mocked(fetchPlaceMaterials)
 
 describe('App', () => {
   beforeEach(() => {
+    window.history.replaceState({}, '', '/')
     fetchPlacesMock.mockReset()
     fetchPlaceMock.mockReset()
     fetchPlaceMaterialsMock.mockReset()
     fetchPlacesMock.mockResolvedValue({ items: [], total: 0 })
     fetchPlaceMaterialsMock.mockResolvedValue({ items: [], total: 0 })
+  })
+
+  it('opens the administrator interface on its own SPA path', () => {
+    window.history.replaceState({}, '', '/admin')
+
+    render(<App />)
+
+    expect(screen.getByText('Тестовая панель администратора')).toBeInTheDocument()
+    expect(fetchPlacesMock).not.toHaveBeenCalled()
   })
 
   it('renders the map foundation', async () => {
@@ -64,6 +78,10 @@ describe('App', () => {
     expect(
       screen.getByRole('button', { name: 'Добавить место' }),
     ).toBeDisabled()
+    expect(screen.getByRole('link', { name: 'Редакторская' })).toHaveAttribute(
+      'href',
+      '/admin',
+    )
   })
 
   it('shows loading while the API request is pending', () => {

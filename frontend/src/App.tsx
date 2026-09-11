@@ -8,12 +8,13 @@ import {
   type PlaceSummary,
 } from './api/places'
 import './App.css'
+import AdminApp from './AdminApp'
 import PlaceImageGallery from './components/PlaceImageGallery'
 import PlaceMaterials from './components/PlaceMaterials'
 
 const MapView = lazy(() => import('./components/MapView'))
 
-function App() {
+function PublicMapApp() {
   const [places, setPlaces] = useState<PlaceSummary[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
@@ -168,9 +169,17 @@ function App() {
             </span>
           </div>
         </div>
-        <button className="btn app-add-button btn-sm" type="button" disabled>
-          Добавить место
-        </button>
+        <div className="app-header-actions">
+          <a
+            className="btn app-admin-link btn-sm"
+            href={`${import.meta.env.BASE_URL}admin`}
+          >
+            Редакторская
+          </a>
+          <button className="btn app-add-button btn-sm" type="button" disabled>
+            Добавить место
+          </button>
+        </div>
       </header>
 
       <section className="map-layout" aria-label="Карта мест">
@@ -275,6 +284,16 @@ function App() {
       </section>
     </main>
   )
+}
+
+function isAdminPath(pathname: string): boolean {
+  const adminPath = `${import.meta.env.BASE_URL}admin`.replace(/\/$/, '')
+  const normalizedPath = pathname.replace(/\/$/, '')
+  return normalizedPath === adminPath || normalizedPath.startsWith(`${adminPath}/`)
+}
+
+function App() {
+  return isAdminPath(window.location.pathname) ? <AdminApp /> : <PublicMapApp />
 }
 
 export default App
