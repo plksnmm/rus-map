@@ -27,6 +27,10 @@ docker compose --env-file .env.production -f compose.production.yml exec backend
 - `GET /api/v1/admin/auth/me` проверяет текущую сессию;
 - `POST /api/v1/admin/auth/logout` требует заголовок `X-CSRF-Token`.
 
+Frontend использует эти маршруты на странице `/admin` локально и
+`/rus-map/admin` в staging. Session-cookie остаётся `HttpOnly`; интерфейс читает
+только отдельную CSRF-cookie и не сохраняет пароль или токены в Web Storage.
+
 После успешного входа сервер создаёт 256-битные случайные session- и CSRF-токены. В PostgreSQL сохраняются только их SHA-256-хеши. Session-cookie имеет `HttpOnly`, `SameSite=Strict`, ограниченный path и на production также `Secure`. CSRF-cookie намеренно доступна JavaScript: будущая админка прочитает её и передаст то же значение в заголовке. Сам session-токен JavaScript прочитать не сможет.
 
 Сессия действует 12 часов по умолчанию, может быть отозвана logout-запросом и перестаёт работать при деактивации администратора. Изменить срок можно через `ADMIN_SESSION_TTL_HOURS`.
