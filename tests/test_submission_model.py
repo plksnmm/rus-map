@@ -35,3 +35,4 @@ def test_submission_defaults_to_pending_and_uses_jsonb_sources() -> None:
     assert table.c.status.server_default.arg == SubmissionStatus.PENDING.value
     assert table.c.source_urls.server_default is not None
     assert table.c.source_urls.type.compile(dialect=postgresql.dialect()) == "JSONB"
+    assert table.c.address.type.length == 500

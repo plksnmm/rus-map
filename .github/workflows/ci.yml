@@ -110,6 +110,10 @@ jobs:
             status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
               --request POST http://127.0.0.1:18090/rus-map/api/v1/places || true)"
             if [ "$status" = "403" ]; then
+              submission_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                --header 'Content-Type: application/json' \
+                --data '{"title":"Test factory","latitude":55.8,"longitude":37.6}' \
+                http://127.0.0.1:18090/rus-map/api/v1/submissions || true)"
               login_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
                 --header 'Content-Type: application/json' \
                 --data '{"username":"nobody","password":"not-a-password"}' \
@@ -123,6 +127,7 @@ jobs:
               wrong_method_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
                 --request PUT http://127.0.0.1:18090/rus-map/api/v1/admin/submissions/00000000-0000-0000-0000-000000000000/approve || true)"
               test "$login_status" = "502"
+              test "$submission_status" = "502"
               test "$moderation_status" = "502"
               test "$unsupported_admin_write_status" = "403"
               test "$wrong_method_status" = "403"

@@ -84,6 +84,7 @@ class PlaceSubmission(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
+    address: Mapped[str | None] = mapped_column(String(500), nullable=True)
     source_urls: Mapped[list[str]] = mapped_column(
         JSONB,
         nullable=False,

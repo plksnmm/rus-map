@@ -49,6 +49,7 @@ async def test_authenticated_admin_lists_and_approves_submission() -> None:
                         latitude=55.8,
                         longitude=37.6,
                         source_urls=("https://example.com/source",),
+                        address="Москва, Краснобогатырская улица, 2",
                     )
                 )
 
@@ -74,6 +75,12 @@ async def test_authenticated_admin_lists_and_approves_submission() -> None:
                     assert str(pending.id) in {
                         item["id"] for item in queue.json()["items"]
                     }
+                    queued = next(
+                        item
+                        for item in queue.json()["items"]
+                        if item["id"] == str(pending.id)
+                    )
+                    assert queued["address"] == pending.address
 
                     csrf_token = client.cookies.get(
                         get_settings().admin_csrf_cookie_name
@@ -94,6 +101,7 @@ async def test_authenticated_admin_lists_and_approves_submission() -> None:
                 assert body["status"] == SubmissionStatus.APPROVED
                 assert body["moderated_by_admin_id"] == str(admin.id)
                 assert body["approved_place_id"] is not None
+                assert body["address"] == pending.address
             finally:
                 application.dependency_overrides.clear()
                 await session.close()

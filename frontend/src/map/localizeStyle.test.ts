@@ -57,12 +57,12 @@ describe('emphasizeRegionBoundaries', () => {
     expect(map.setPaintProperty).toHaveBeenCalledWith(
       'boundary_state',
       'line-color',
-      '#8a8d91',
+      '#9a876f',
     )
     expect(map.setPaintProperty).toHaveBeenCalledWith(
       'boundary_state',
       'line-opacity',
-      0.9,
+      0.72,
     )
   })
 

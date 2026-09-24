@@ -70,6 +70,7 @@ def submission_record(
         moderated_at=None if status is SubmissionStatus.PENDING else timestamp,
         created_at=timestamp,
         updated_at=timestamp,
+        address="Москва, Краснобогатырская улица, 2",
     )
 
 
@@ -113,6 +114,7 @@ def test_list_returns_filtered_paginated_queue() -> None:
         )
 
     assert response.status_code == 200
+    assert response.json()["items"][0]["address"] == pending.address
     assert response.json()["items"][0]["id"] == str(pending.id)
     assert response.json()["total"] == 1
     assert response.headers["cache-control"] == "no-store"

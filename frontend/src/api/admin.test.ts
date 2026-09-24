@@ -16,6 +16,7 @@ const submission = {
   description: 'Описание',
   latitude: 55.7,
   longitude: 37.6,
+  address: 'Москва, Перовская улица, 66',
   source_urls: ['https://example.com/source'],
   review_notes: null,
   approved_place_id: null,

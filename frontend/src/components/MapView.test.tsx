@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import MapView from './MapView'
 
 type MapEventHandler = (event?: unknown) => void
@@ -24,6 +24,8 @@ const mapLibreMock = vi.hoisted(() => {
     getSource: vi.fn().mockReturnValue(source),
     getStyle: vi.fn().mockReturnValue({ layers: [] }),
     setLayoutProperty: vi.fn(),
+    fitBounds: vi.fn(),
+    flyTo: vi.fn(),
     getCanvas: vi.fn().mockReturnValue({ style: { cursor: '' } }),
     remove: vi.fn(),
     on: vi.fn(
@@ -72,6 +74,11 @@ vi.mock('maplibre-gl', () => ({
 }))
 
 describe('MapView', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mapLibreMock.handlers.clear()
+  })
+
   it('adds a places layer and opens a titled popup on marker click', () => {
     const onSelectPlace = vi.fn()
     const place = {
@@ -90,6 +97,7 @@ describe('MapView', () => {
         center: [94, 64],
         minZoom: 2,
         renderWorldCopies: false,
+        style: 'https://tiles.openfreemap.org/styles/positron',
         zoom: 2.1,
       }),
     )
@@ -115,6 +123,13 @@ describe('MapView', () => {
         type: 'circle',
       }),
     )
+    expect(mapLibreMock.map.addLayer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'submission-location-marker',
+        source: 'submission-location',
+        type: 'circle',
+      }),
+    )
 
     mapLibreMock.handlers.get('click:places-markers')?.({
       features: [{ properties: { id: place.id, title: place.title } }],
@@ -127,5 +142,55 @@ describe('MapView', () => {
 
     unmount()
     expect(mapLibreMock.map.remove).toHaveBeenCalledOnce()
+  })
+
+  it('returns clicked coordinates while selecting a proposed place', () => {
+    const onSelectLocation = vi.fn()
+    const { unmount } = render(
+      <MapView
+        places={[]}
+        onSelectPlace={vi.fn()}
+        isSelectingLocation
+        onSelectLocation={onSelectLocation}
+      />,
+    )
+
+    mapLibreMock.handlers.get('click')?.({
+      lngLat: { lng: 60.809612, lat: 56.494711 },
+    })
+
+    expect(onSelectLocation).toHaveBeenCalledWith({
+      latitude: 56.494711,
+      longitude: 60.809612,
+    })
+    expect(mapLibreMock.map.getCanvas().style.cursor).toBe('crosshair')
+    unmount()
+  })
+
+  it('frames a location found by address search', () => {
+    const { unmount } = render(
+      <MapView
+        places={[]}
+        onSelectPlace={vi.fn()}
+        isSelectingLocation
+        selectedLocation={{ latitude: 55.7433, longitude: 37.803 }}
+        focusLocation={{
+          display_name: 'Перовская улица, 66, Москва, Россия',
+          latitude: 55.7433,
+          longitude: 37.803,
+          bounding_box: [55.742, 55.744, 37.802, 37.804],
+        }}
+        onSelectLocation={vi.fn()}
+      />,
+    )
+
+    expect(mapLibreMock.map.fitBounds).toHaveBeenCalledWith(
+      [
+        [37.802, 55.742],
+        [37.804, 55.744],
+      ],
+      { padding: 72, maxZoom: 16, duration: 700 },
+    )
+    unmount()
   })
 })

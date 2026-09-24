@@ -34,6 +34,7 @@ def submission_row(
         timestamp if status is not SubmissionStatus.PENDING else None,
         timestamp,
         timestamp,
+        "Москва, Краснобогатырская улица",
     )
 
 
@@ -67,10 +68,12 @@ async def test_create_inserts_pending_submission_without_place() -> None:
             latitude=55.8031,
             longitude=37.6917,
             source_urls=("https://example.com/factory",),
+            address="Москва, Краснобогатырская улица",
         )
     )
 
     assert created.status is SubmissionStatus.PENDING
+    assert created.address == "Москва, Краснобогатырская улица"
     assert created.approved_place_id is None
     statement = session.execute.await_args.args[0]
     sql = str(statement.compile(dialect=postgresql.dialect()))

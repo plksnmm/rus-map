@@ -77,11 +77,26 @@ describe('App', () => {
     expect(await screen.findByText('На карте пока нет мест.')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Добавить место' }),
-    ).toBeDisabled()
+    ).toBeEnabled()
     expect(screen.getByRole('link', { name: 'Редакторская' })).toHaveAttribute(
       'href',
       '/admin',
     )
+  })
+
+  it('opens and closes the public place proposal form', async () => {
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Добавить место' }))
+    expect(
+      screen.getByRole('heading', { name: 'Добавьте историю на карту' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Или нажмите на нужное место на карте')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Закрыть форму' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Исследуй историю вокруг' }),
+    ).toBeInTheDocument()
   })
 
   it('shows loading while the API request is pending', () => {

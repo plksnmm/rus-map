@@ -17,6 +17,7 @@ export interface PlaceSubmission {
   description: string | null
   latitude: number
   longitude: number
+  address: string | null
   source_urls: string[]
   review_notes: string | null
   approved_place_id: string | null
@@ -75,6 +76,7 @@ function isPlaceSubmission(value: unknown): value is PlaceSubmission {
     isNullableString(value.description) &&
     typeof value.latitude === 'number' &&
     typeof value.longitude === 'number' &&
+    isNullableString(value.address) &&
     Array.isArray(value.source_urls) &&
     value.source_urls.every((url) => typeof url === 'string') &&
     isNullableString(value.review_notes) &&

@@ -80,6 +80,14 @@
   border-color: rgb(255 255 255 / 28%);
 }
 
+.app-add-button:hover,
+.app-add-button:focus-visible,
+.app-add-button.is-active {
+  border-color: var(--paper);
+  color: var(--coal);
+  background: var(--paper);
+}
+
 .app-header-actions {
   display: flex;
   align-items: center;
@@ -517,6 +525,191 @@
   scrollbar-width: thin;
 }
 
+.submission-form {
+  max-height: min(78vh, 50rem);
+  padding-right: 0.25rem;
+  overflow-y: auto;
+  scrollbar-color: rgb(21 21 21 / 42%) transparent;
+  scrollbar-width: thin;
+}
+
+.submission-intro {
+  color: #54514b;
+  line-height: 1.45;
+}
+
+.submission-location {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0.9rem 0 1rem;
+  padding: 0.75rem;
+  border: 1px dashed rgb(21 21 21 / 48%);
+  color: #57534d;
+  background: rgb(255 255 255 / 50%);
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.submission-address-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+}
+
+.submission-search-button {
+  min-width: 5.5rem;
+  border: 1px solid var(--coal);
+  border-radius: 0;
+  color: var(--coal);
+  background: #fff;
+}
+
+.submission-search-button:hover:not(:disabled),
+.submission-search-button:focus-visible {
+  color: #fff;
+  background: var(--coal);
+}
+
+.submission-address-message {
+  margin-top: 0.5rem;
+  color: #741919;
+  font-size: 0.85rem;
+}
+
+.submission-selected-address {
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.7rem;
+  border-left: 3px solid var(--signal-red);
+  color: var(--coal);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  background: rgb(255 255 255 / 72%);
+}
+
+.submission-address-results {
+  display: grid;
+  gap: 1px;
+  margin: 0.5rem 0 0;
+  padding: 1px;
+  list-style: none;
+  background: rgb(21 21 21 / 20%);
+}
+
+.submission-address-results button {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 0;
+  color: var(--coal);
+  text-align: left;
+  background: #fff;
+}
+
+.submission-address-results button:hover,
+.submission-address-results button:focus-visible {
+  background: #f1e7d8;
+}
+
+.submission-geocoding-attribution {
+  margin-top: 0.45rem;
+  color: #6b6760;
+  font-size: 0.72rem;
+}
+
+.submission-geocoding-attribution a {
+  color: inherit;
+}
+
+.submission-location.is-selected {
+  border-style: solid;
+  border-color: rgb(168 38 38 / 55%);
+  color: var(--coal);
+  background: #fff;
+}
+
+.submission-location-marker {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: 0 0 0.85rem;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--signal-red);
+  box-shadow: 0 0 0 1px var(--signal-red);
+}
+
+.submission-form .form-label {
+  margin: 0.8rem 0 0.3rem;
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.submission-form .form-control {
+  border: 1px solid rgb(21 21 21 / 40%);
+  border-radius: 0;
+  background: rgb(255 255 255 / 88%);
+}
+
+.submission-form .form-control:focus {
+  border-color: var(--signal-red);
+  box-shadow: 0 0 0 0.2rem rgb(168 38 38 / 16%);
+}
+
+.submission-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.submission-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.app-submit-button {
+  border: 1px solid #651515;
+  border-radius: 0;
+  color: #fff;
+  background: var(--signal-red);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  letter-spacing: 0.035em;
+}
+
+.app-submit-button:hover,
+.app-submit-button:focus-visible {
+  color: #fff;
+  background: #741919;
+}
+
+.submission-actions .btn-link {
+  color: var(--coal);
+}
+
+.submission-success {
+  text-align: center;
+}
+
+.submission-success-mark {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  margin: 0.25rem auto 0.8rem;
+  border-radius: 50%;
+  place-items: center;
+  color: #fff;
+  background: var(--signal-red);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.submission-success .submission-actions {
+  justify-content: center;
+}
+
 .place-gallery {
   margin: 0.9rem 0 1.15rem;
   outline: none;
@@ -922,6 +1115,15 @@
 
   .place-detail {
     max-height: calc(100dvh - 7rem);
+  }
+
+  .submission-form {
+    max-height: calc(100dvh - 7rem);
+  }
+
+  .submission-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .place-gallery-stage {
