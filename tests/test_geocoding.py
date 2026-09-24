@@ -2,21 +2,26 @@ from unittest.mock import AsyncMock
 
 import pytest
 from fastapi.testclient import TestClient
+from pydantic import SecretStr
 
 from rus_map.api.dependencies import get_geocoding_service
-from rus_map.config import get_settings
+from rus_map.config import Settings
 from rus_map.main import create_app
 from rus_map.schemas.geocoding import GeocodingResult
 from rus_map.services.geocoding import GeocodingRateLimited, GeocodingService
 
 
-def geocoding_settings():
-    return get_settings().model_copy(
-        update={
-            "geocoding_min_interval_seconds": 1.0,
-            "geocoding_cache_ttl_hours": 24,
-            "geocoding_cache_size": 10,
-        }
+def geocoding_settings() -> Settings:
+    return Settings(
+        _env_file=None,
+        postgres_host="localhost",
+        postgres_port=5432,
+        postgres_db="rus_map",
+        postgres_user="rus_map",
+        postgres_password=SecretStr("test-only"),
+        geocoding_min_interval_seconds=1.0,
+        geocoding_cache_ttl_hours=24,
+        geocoding_cache_size=10,
     )
 
 
