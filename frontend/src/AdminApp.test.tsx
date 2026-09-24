@@ -134,6 +134,12 @@ describe('AdminApp', () => {
     expect(screen.getByText(submission.description!)).toBeInTheDocument()
     expect(screen.getByText(submission.address!)).toBeInTheDocument()
     expect(
+      screen.getByRole('link', { name: 'Проверить точку на OpenStreetMap' }),
+    ).toHaveAttribute(
+      'href',
+      'https://www.openstreetmap.org/?mlat=55.7&mlon=37.6#map=17/55.7/37.6',
+    )
+    expect(
       screen.getByRole('link', { name: submission.source_urls[0] }),
     ).toHaveAttribute('target', '_blank')
     fireEvent.change(screen.getByLabelText('Примечание редактора'), {

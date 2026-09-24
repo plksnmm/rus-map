@@ -40,6 +40,14 @@ function formatDate(value: string): string {
   }).format(date)
 }
 
+function openStreetMapLocationUrl(latitude: number, longitude: number): string {
+  const marker = new URLSearchParams({
+    mlat: String(latitude),
+    mlon: String(longitude),
+  })
+  return `https://www.openstreetmap.org/?${marker.toString()}#map=17/${latitude}/${longitude}`
+}
+
 function messageForError(error: unknown, fallback: string): string {
   if (error instanceof AdminApiError) {
     if (error.status === 401) {
@@ -166,6 +174,16 @@ function SubmissionDetail({
         <span>
           {submission.latitude.toFixed(6)}, {submission.longitude.toFixed(6)}
         </span>
+        <a
+          href={openStreetMapLocationUrl(
+            submission.latitude,
+            submission.longitude,
+          )}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Проверить точку на OpenStreetMap
+        </a>
       </div>
       <section className="admin-detail-section">
         <h3>Описание</h3>
