@@ -63,6 +63,9 @@ chmod 600 .env.production
 ```
 
 Результат `openssl` нужно поместить в `POSTGRES_PASSWORD`. Шаблонный пароль на сервере использовать нельзя.
+`GEOCODING_SEARCH_URL` позволяет без новой сборки переключить совместимый
+Nominatim-провайдер, а `GEOCODING_USER_AGENT` должен оставаться понятным
+идентификатором приложения с действующим URL для связи.
 
 ```bash
 git check-ignore .env.production
@@ -171,6 +174,7 @@ $base = "https://vm-1703.lnvps.cloud"
 curl.exe -sS -o NUL -w "vikunja=%{http_code}`n" "$base/"
 curl.exe -sS -o NUL -w "map=%{http_code}`n" "$base/rus-map/"
 curl.exe -sS -o NUL -w "api-get=%{http_code}`n" "$base/rus-map/api/v1/places"
+curl.exe -sS -o NUL -w "submission=%{http_code}`n" -H "Content-Type: application/json" -d '{}' "$base/rus-map/api/v1/submissions"
 curl.exe -sS -o NUL -w "post=%{http_code}`n" -X POST "$base/rus-map/api/v1/places"
 curl.exe -sS -o NUL -w "put=%{http_code}`n" -X PUT "$base/rus-map/api/v1/places"
 curl.exe -sS -o NUL -w "patch=%{http_code}`n" -X PATCH "$base/rus-map/api/v1/places"
@@ -182,7 +186,8 @@ curl.exe -sS -o NUL -w "delete=%{http_code}`n" -X DELETE "$base/rus-map/api/v1/p
 - корневой URL продолжает возвращать Vikunja;
 - `/rus-map/` возвращает React-приложение;
 - публичный `GET` API успешен;
-- публичные `POST`, `PUT`, `PATCH` и `DELETE` получают `403 Forbidden` от Caddy.
+- точный `POST /api/v1/submissions` доходит до backend и возвращает ожидаемый `422` для пустого тестового тела;
+- остальные публичные `POST`, а также `PUT`, `PATCH` и `DELETE` получают `403 Forbidden` от Caddy.
 
 Прямой порт Vikunja проверяется с локального Windows-компьютера, а не с сервера:
 

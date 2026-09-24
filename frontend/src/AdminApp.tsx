@@ -162,6 +162,7 @@ function SubmissionDetail({
       <h2>{submission.title}</h2>
       <div className="admin-detail-meta">
         <span>Получена {formatDate(submission.created_at)}</span>
+        {submission.address && <span>{submission.address}</span>}
         <span>
           {submission.latitude.toFixed(6)}, {submission.longitude.toFixed(6)}
         </span>

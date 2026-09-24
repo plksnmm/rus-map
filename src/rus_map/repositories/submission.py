@@ -17,6 +17,7 @@ class NewPlaceSubmission:
     latitude: float
     longitude: float
     source_urls: tuple[str, ...]
+    address: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,6 +37,7 @@ class PlaceSubmissionRecord:
     moderated_at: datetime | None
     created_at: datetime
     updated_at: datetime
+    address: str | None = None
 
 
 type SubmissionRow = tuple[
@@ -52,6 +54,7 @@ type SubmissionRow = tuple[
     datetime | None,
     datetime,
     datetime,
+    str | None,
 ]
 
 
@@ -69,6 +72,7 @@ SUBMISSION_COLUMNS = (
     PlaceSubmission.moderated_at,
     PlaceSubmission.created_at,
     PlaceSubmission.updated_at,
+    PlaceSubmission.address,
 )
 
 
@@ -88,6 +92,7 @@ def submission_record(row: SubmissionRow) -> PlaceSubmissionRecord:
         moderated_at=row[10],
         created_at=row[11],
         updated_at=row[12],
+        address=row[13],
     )
 
 
@@ -108,6 +113,7 @@ class PlaceSubmissionRepository:
                 description=proposal.description,
                 latitude=proposal.latitude,
                 longitude=proposal.longitude,
+                address=proposal.address,
                 source_urls=list(proposal.source_urls),
             )
             .returning(*SUBMISSION_COLUMNS)

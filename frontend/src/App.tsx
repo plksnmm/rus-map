@@ -7,10 +7,14 @@ import {
   type PlaceDetail,
   type PlaceSummary,
 } from './api/places'
+import type { GeocodingResult } from './api/geocoding'
 import './App.css'
 import AdminApp from './AdminApp'
 import PlaceImageGallery from './components/PlaceImageGallery'
 import PlaceMaterials from './components/PlaceMaterials'
+import PlaceSubmissionForm, {
+  type MapLocation,
+} from './components/PlaceSubmissionForm'
 
 const MapView = lazy(() => import('./components/MapView'))
 
@@ -25,8 +29,18 @@ function PublicMapApp() {
   const [materials, setMaterials] = useState<PlaceMaterial[]>([])
   const [isMaterialsLoading, setIsMaterialsLoading] = useState(false)
   const [hasMaterialsError, setHasMaterialsError] = useState(false)
+  const [isSubmissionOpen, setIsSubmissionOpen] = useState(false)
+  const [submissionLocation, setSubmissionLocation] =
+    useState<MapLocation | null>(null)
+  const [submissionMapFocus, setSubmissionMapFocus] =
+    useState<GeocodingResult | null>(null)
+  const [submissionSent, setSubmissionSent] = useState(false)
 
   const handleSelectPlace = useCallback((placeId: string) => {
+    setIsSubmissionOpen(false)
+    setSubmissionLocation(null)
+    setSubmissionMapFocus(null)
+    setSubmissionSent(false)
     setSelectedPlaceId(placeId)
     setSelectedPlace(null)
     setIsDetailLoading(true)
@@ -44,6 +58,19 @@ function PublicMapApp() {
     setMaterials([])
     setIsMaterialsLoading(false)
     setHasMaterialsError(false)
+  }, [])
+
+  const handleOpenSubmission = useCallback(() => {
+    handleClosePlace()
+    setIsSubmissionOpen(true)
+    setSubmissionSent(false)
+  }, [handleClosePlace])
+
+  const handleCloseSubmission = useCallback(() => {
+    setIsSubmissionOpen(false)
+    setSubmissionLocation(null)
+    setSubmissionMapFocus(null)
+    setSubmissionSent(false)
   }, [])
 
   useEffect(() => {
@@ -176,17 +203,68 @@ function PublicMapApp() {
           >
             Редакторская
           </a>
-          <button className="btn app-add-button btn-sm" type="button" disabled>
-            Добавить место
+          <button
+            className={`btn app-add-button btn-sm${isSubmissionOpen ? ' is-active' : ''}`}
+            type="button"
+            onClick={isSubmissionOpen ? handleCloseSubmission : handleOpenSubmission}
+          >
+            {isSubmissionOpen ? 'Закрыть форму' : 'Добавить место'}
           </button>
         </div>
       </header>
 
       <section className="map-layout" aria-label="Карта мест">
         <aside
-          className={`place-panel shadow-sm${selectedPlaceId ? ' place-panel--detail' : ''}`}
+          className={`place-panel shadow-sm${selectedPlaceId || isSubmissionOpen ? ' place-panel--detail' : ''}`}
         >
-          {selectedPlaceId === null ? (
+          {isSubmissionOpen ? (
+            submissionSent ? (
+              <div className="submission-success" role="status">
+                <div className="submission-success-mark" aria-hidden="true">
+                  ✓
+                </div>
+                <div className="panel-kicker">Заявка отправлена</div>
+                <h1 className="h5 my-2">Спасибо за новую точку</h1>
+                <p>
+                  Она уже в очереди редактора и появится на карте после
+                  проверки.
+                </p>
+                <div className="submission-actions">
+                  <button
+                    className="btn app-submit-button"
+                    type="button"
+                    onClick={() => {
+                      setSubmissionLocation(null)
+                      setSubmissionMapFocus(null)
+                      setSubmissionSent(false)
+                    }}
+                  >
+                    Предложить ещё место
+                  </button>
+                  <button
+                    className="btn btn-link"
+                    type="button"
+                    onClick={handleCloseSubmission}
+                  >
+                    Вернуться к карте
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <PlaceSubmissionForm
+                location={submissionLocation}
+                onCancel={handleCloseSubmission}
+                onLocationFound={(result) => {
+                  setSubmissionLocation({
+                    latitude: result.latitude,
+                    longitude: result.longitude,
+                  })
+                  setSubmissionMapFocus({ ...result })
+                }}
+                onSubmitted={() => setSubmissionSent(true)}
+              />
+            )
+          ) : selectedPlaceId === null ? (
             <>
               <div className="panel-kicker">Народный архив</div>
               <h1 className="h5 mb-2 text-uppercase">
@@ -279,7 +357,17 @@ function PublicMapApp() {
             </div>
           }
         >
-          <MapView places={places} onSelectPlace={handleSelectPlace} />
+          <MapView
+            places={places}
+            onSelectPlace={handleSelectPlace}
+            isSelectingLocation={isSubmissionOpen && !submissionSent}
+            selectedLocation={submissionLocation}
+            focusLocation={submissionMapFocus}
+            onSelectLocation={(location) => {
+              setSubmissionLocation(location)
+              setSubmissionMapFocus(null)
+            }}
+          />
         </Suspense>
       </section>
     </main>

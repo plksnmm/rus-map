@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     admin_login_max_failures: int = Field(default=5, ge=2, le=20)
     admin_login_window_minutes: int = Field(default=15, ge=1, le=1440)
     admin_login_block_minutes: int = Field(default=15, ge=1, le=1440)
+    geocoding_search_url: str = "https://nominatim.openstreetmap.org/search"
+    geocoding_user_agent: str = "RusMap/0.1 (https://vm-1703.lnvps.cloud/rus-map/)"
+    geocoding_timeout_seconds: float = Field(default=8.0, gt=0, le=30)
+    geocoding_min_interval_seconds: float = Field(default=1.0, ge=1, le=10)
+    geocoding_cache_ttl_hours: int = Field(default=24, ge=1, le=168)
+    geocoding_cache_size: int = Field(default=1_000, ge=10, le=10_000)
 
     @property
     def database_url(self) -> URL:

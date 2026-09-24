@@ -39,6 +39,7 @@ function pendingSubmission(): PlaceSubmission {
     description: 'Историческое промышленное предприятие.',
     latitude: 55.7,
     longitude: 37.6,
+    address: 'Москва, Перовская улица, 66',
     source_urls: ['https://example.com/archive'],
     review_notes: null,
     approved_place_id: null,
@@ -131,6 +132,7 @@ describe('AdminApp', () => {
       await screen.findByRole('heading', { name: submission.title }),
     ).toBeInTheDocument()
     expect(screen.getByText(submission.description!)).toBeInTheDocument()
+    expect(screen.getByText(submission.address!)).toBeInTheDocument()
     expect(
       screen.getByRole('link', { name: submission.source_urls[0] }),
     ).toHaveAttribute('target', '_blank')

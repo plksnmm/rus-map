@@ -22,6 +22,10 @@ SubmissionReviewNotes = Annotated[
     str,
     StringConstraints(strip_whitespace=True, min_length=1, max_length=5_000),
 ]
+SubmissionAddress = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=1, max_length=500),
+]
 
 
 def reject_html(value: str | None) -> str | None:
@@ -40,10 +44,13 @@ class PlaceSubmissionCreate(BaseModel):
     description: PlaceDescription | None = None
     latitude: Latitude
     longitude: Longitude
+    address: SubmissionAddress | None = None
     source_urls: list[HttpUrl] = Field(default_factory=list, max_length=MAX_SOURCE_URLS)
+    website: str = Field(default="", max_length=200, exclude=True)
 
     _plain_title = field_validator("title")(reject_html)
     _plain_description = field_validator("description")(reject_html)
+    _plain_address = field_validator("address")(reject_html)
 
     @field_validator("source_urls")
     @classmethod
@@ -51,6 +58,14 @@ class PlaceSubmissionCreate(BaseModel):
         if len({str(url) for url in urls}) != len(urls):
             raise ValueError("source URLs must be unique")
         return urls
+
+
+class PlaceSubmissionReceipt(BaseModel):
+    """Minimal acknowledgement safe to return to an anonymous contributor."""
+
+    id: UUID
+    status: SubmissionStatus
+    created_at: datetime
 
 
 class PlaceSubmissionDecision(BaseModel):
@@ -74,6 +89,7 @@ class PlaceSubmissionResponse(BaseModel):
     description: str | None
     latitude: float
     longitude: float
+    address: str | None
     source_urls: list[str]
     review_notes: str | None
     approved_place_id: UUID | None

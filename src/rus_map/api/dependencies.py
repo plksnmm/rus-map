@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request, status
@@ -10,6 +11,7 @@ from rus_map.repositories.material import MaterialRepository
 from rus_map.repositories.place import PlaceRepository
 from rus_map.repositories.submission import PlaceSubmissionRepository
 from rus_map.services.auth import AdminAuthService, InvalidCredentialsError
+from rus_map.services.geocoding import GeocodingService
 from rus_map.services.submission import PlaceSubmissionService
 
 SessionDependency = Annotated[AsyncSession, Depends(get_session)]
@@ -58,6 +60,15 @@ def get_place_submission_service(
 PlaceSubmissionServiceDependency = Annotated[
     PlaceSubmissionService, Depends(get_place_submission_service)
 ]
+
+
+@lru_cache
+def get_geocoding_service() -> GeocodingService:
+    """Keep one process-wide cache and provider rate limiter."""
+    return GeocodingService(get_settings())
+
+
+GeocodingServiceDependency = Annotated[GeocodingService, Depends(get_geocoding_service)]
 
 
 def get_admin_auth_repository(session: SessionDependency) -> AdminAuthRepository:

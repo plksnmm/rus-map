@@ -14,6 +14,7 @@ def valid_submission(**overrides: object) -> PlaceSubmissionCreate:
         "description": "Предлагаю проверить историческое предприятие.",
         "latitude": 55.8031,
         "longitude": 37.6917,
+        "address": "Москва, Краснобогатырская улица, 2",
         "source_urls": ["https://example.com/factory"],
     }
     data.update(overrides)
@@ -24,6 +25,7 @@ def test_submission_accepts_plain_text_and_https_sources() -> None:
     submission = valid_submission()
 
     assert submission.title == "Завод Красный богатырь"
+    assert submission.address == "Москва, Краснобогатырская улица, 2"
     assert str(submission.source_urls[0]) == "https://example.com/factory"
 
 
@@ -32,6 +34,7 @@ def test_submission_accepts_plain_text_and_https_sources() -> None:
     [
         ("title", "<strong>Завод</strong>"),
         ("description", "Описание <script>alert(1)</script>"),
+        ("address", "Москва, <b>улица</b>"),
     ],
 )
 def test_submission_rejects_html(field: str, value: str) -> None:

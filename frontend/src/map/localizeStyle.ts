@@ -1,7 +1,7 @@
 import type { Map } from 'maplibre-gl'
 
 const REGION_BOUNDARY_LAYER_ID = 'boundary_state'
-const REGION_BOUNDARY_COLOR = '#8a8d91'
+const REGION_BOUNDARY_COLOR = '#9a876f'
 
 const RUSSIAN_NAME_EXPRESSION: [
   'coalesce',
@@ -45,5 +45,5 @@ export function emphasizeRegionBoundaries(map: Map) {
     'line-color',
     REGION_BOUNDARY_COLOR,
   )
-  map.setPaintProperty(REGION_BOUNDARY_LAYER_ID, 'line-opacity', 0.9)
+  map.setPaintProperty(REGION_BOUNDARY_LAYER_ID, 'line-opacity', 0.72)
 }
