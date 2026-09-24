@@ -14,6 +14,7 @@ export interface MapLocation {
 interface PlaceSubmissionFormProps {
   location: MapLocation | null
   onCancel: () => void
+  onLocationCleared: () => void
   onLocationFound: (result: GeocodingResult) => void
   onSubmitted: () => void
 }
@@ -28,6 +29,7 @@ function parseSourceUrls(value: string): string[] {
 export default function PlaceSubmissionForm({
   location,
   onCancel,
+  onLocationCleared,
   onLocationFound,
   onSubmitted,
 }: PlaceSubmissionFormProps) {
@@ -145,6 +147,7 @@ export default function PlaceSubmissionForm({
             onChange={(event) => {
               setAddress(event.target.value)
               setSelectedAddress(null)
+              onLocationCleared()
               setAddressResults([])
               setAddressSearchAttempted(false)
               setAddressError(null)
@@ -194,6 +197,10 @@ export default function PlaceSubmissionForm({
             <strong>Выбрано:</strong> {selectedAddress}
           </div>
         )}
+        <div className="form-text">
+          После изменения адреса заново выберите найденный вариант или укажите
+          точку на карте.
+        </div>
         <div className="submission-geocoding-attribution">
           Поиск: OpenStreetMap Nominatim ·{' '}
           <a

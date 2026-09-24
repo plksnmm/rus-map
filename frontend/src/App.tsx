@@ -254,6 +254,10 @@ function PublicMapApp() {
               <PlaceSubmissionForm
                 location={submissionLocation}
                 onCancel={handleCloseSubmission}
+                onLocationCleared={() => {
+                  setSubmissionLocation(null)
+                  setSubmissionMapFocus(null)
+                }}
                 onLocationFound={(result) => {
                   setSubmissionLocation({
                     latitude: result.latitude,

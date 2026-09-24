@@ -34,6 +34,7 @@ describe('PlaceSubmissionForm', () => {
       <PlaceSubmissionForm
         location={null}
         onCancel={vi.fn()}
+        onLocationCleared={vi.fn()}
         onLocationFound={vi.fn()}
         onSubmitted={vi.fn()}
       />,
@@ -71,6 +72,7 @@ describe('PlaceSubmissionForm', () => {
       <PlaceSubmissionForm
         location={null}
         onCancel={vi.fn()}
+        onLocationCleared={vi.fn()}
         onLocationFound={onLocationFound}
         onSubmitted={vi.fn()}
       />,
@@ -101,6 +103,7 @@ describe('PlaceSubmissionForm', () => {
       <PlaceSubmissionForm
         location={{ latitude: 56.494711, longitude: 60.809612 }}
         onCancel={vi.fn()}
+        onLocationCleared={vi.fn()}
         onLocationFound={vi.fn()}
         onSubmitted={onSubmitted}
       />,
@@ -130,5 +133,24 @@ describe('PlaceSubmissionForm', () => {
       source_urls: ['https://example.com/one', 'https://example.com/two'],
       website: '',
     })
+  })
+
+  it('clears stale coordinates when the address changes', () => {
+    const onLocationCleared = vi.fn()
+    render(
+      <PlaceSubmissionForm
+        location={{ latitude: 43.200203, longitude: 40.566317 }}
+        onCancel={vi.fn()}
+        onLocationCleared={onLocationCleared}
+        onLocationFound={vi.fn()}
+        onSubmitted={vi.fn()}
+      />,
+    )
+
+    fireEvent.change(screen.getByLabelText('Адрес или название места'), {
+      target: { value: 'Санкт-Петербург, Московское шоссе, 13АЕ' },
+    })
+
+    expect(onLocationCleared).toHaveBeenCalledOnce()
   })
 })
