@@ -6,8 +6,40 @@ import pytest
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from rus_map.models import MaterialType
+from rus_map.models import Material, MaterialRevision, MaterialType, ModerationStatus
 from rus_map.repositories.material import MaterialRepository
+
+
+@pytest.mark.asyncio
+async def test_publish_submission_sources_creates_published_links() -> None:
+    place_id = uuid4()
+    session = AsyncMock(spec=AsyncSession)
+
+    await MaterialRepository(session).publish_submission_sources(
+        place_id,
+        (
+            "https://youtu.be/zLVj52ZePag",
+            "https://example.com/history",
+        ),
+    )
+
+    added = [call.args[0] for call in session.add.call_args_list]
+    materials = [item for item in added if isinstance(item, Material)]
+    revisions = [item for item in added if isinstance(item, MaterialRevision)]
+    assert [material.type for material in materials] == [
+        MaterialType.VIDEO,
+        MaterialType.EXTERNAL_LINK,
+    ]
+    assert all(
+        material.place_id == place_id and material.status is ModerationStatus.PUBLISHED
+        for material in materials
+    )
+    assert [revision.url for revision in revisions] == [
+        "https://youtu.be/zLVj52ZePag",
+        "https://example.com/history",
+    ]
+    assert all(revision.status is ModerationStatus.PUBLISHED for revision in revisions)
+    session.flush.assert_awaited_once()
 
 
 @pytest.mark.asyncio

@@ -53,8 +53,9 @@ PlaceSubmissionRepositoryDependency = Annotated[
 def get_place_submission_service(
     submissions: PlaceSubmissionRepositoryDependency,
     places: PlaceRepositoryDependency,
+    materials: MaterialRepositoryDependency,
 ) -> PlaceSubmissionService:
-    return PlaceSubmissionService(submissions, places)
+    return PlaceSubmissionService(submissions, places, materials)
 
 
 PlaceSubmissionServiceDependency = Annotated[

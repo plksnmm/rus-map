@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
-from uuid import UUID
+from urllib.parse import urlsplit
+from uuid import UUID, uuid4
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,6 +54,43 @@ class MaterialRepository:
 
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
+
+    async def publish_submission_sources(
+        self,
+        place_id: UUID,
+        source_urls: tuple[str, ...],
+    ) -> None:
+        """Publish moderator-approved submission links with the new place."""
+        total = len(source_urls)
+        for index, url in enumerate(source_urls, start=1):
+            hostname = (urlsplit(url).hostname or "").lower().removeprefix("www.")
+            is_youtube = hostname == "youtu.be" or hostname == "youtube.com"
+            material_type = (
+                MaterialType.VIDEO if is_youtube else MaterialType.EXTERNAL_LINK
+            )
+            base_title = "Видео о месте" if is_youtube else "Источник о месте"
+            title = base_title if total == 1 else f"{base_title} {index}"
+            material_id = uuid4()
+            self._session.add(
+                Material(
+                    id=material_id,
+                    place_id=place_id,
+                    type=material_type,
+                    status=ModerationStatus.PUBLISHED,
+                    title=title,
+                    source="YouTube" if is_youtube else hostname,
+                )
+            )
+            self._session.add(
+                MaterialRevision(
+                    id=uuid4(),
+                    material_id=material_id,
+                    revision_number=1,
+                    status=ModerationStatus.PUBLISHED,
+                    url=url,
+                )
+            )
+        await self._session.flush()
 
     async def list_published_for_place(
         self,

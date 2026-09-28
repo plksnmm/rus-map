@@ -6,7 +6,16 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from rus_map.db.session import get_engine
-from rus_map.models import AdminUser, Place, PlaceSubmission, SubmissionStatus
+from rus_map.models import (
+    AdminUser,
+    Material,
+    MaterialRevision,
+    MaterialType,
+    Place,
+    PlaceSubmission,
+    SubmissionStatus,
+)
+from rus_map.repositories.material import MaterialRepository
 from rus_map.repositories.place import PlaceRepository
 from rus_map.repositories.submission import (
     NewPlaceSubmission,
@@ -45,6 +54,7 @@ async def test_approval_creates_exactly_one_place_in_same_transaction() -> None:
                 service = PlaceSubmissionService(
                     PlaceSubmissionRepository(session),
                     PlaceRepository(session),
+                    MaterialRepository(session),
                 )
                 pending = await service.create(
                     NewPlaceSubmission(
@@ -52,7 +62,7 @@ async def test_approval_creates_exactly_one_place_in_same_transaction() -> None:
                         description="Temporary proposal",
                         latitude=55.8,
                         longitude=37.6,
-                        source_urls=("https://example.com/source",),
+                        source_urls=("https://youtu.be/zLVj52ZePag",),
                     )
                 )
                 assert pending.status is SubmissionStatus.PENDING
@@ -79,6 +89,18 @@ async def test_approval_creates_exactly_one_place_in_same_transaction() -> None:
                     )
                     == 1
                 )
+                material = await session.scalar(
+                    select(Material).where(Material.place_id == first.approved_place_id)
+                )
+                assert material is not None
+                assert material.type is MaterialType.VIDEO
+                revision = await session.scalar(
+                    select(MaterialRevision).where(
+                        MaterialRevision.material_id == material.id
+                    )
+                )
+                assert revision is not None
+                assert revision.url == "https://youtu.be/zLVj52ZePag"
                 stored = await session.get(PlaceSubmission, pending.id)
                 assert stored is not None
                 assert stored.review_notes == "Проверено"
@@ -113,6 +135,7 @@ async def test_rejection_keeps_audit_record_without_place() -> None:
                 service = PlaceSubmissionService(
                     PlaceSubmissionRepository(session),
                     PlaceRepository(session),
+                    MaterialRepository(session),
                 )
                 pending = await service.create(
                     NewPlaceSubmission(
