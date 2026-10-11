@@ -17,9 +17,11 @@ vi.mock('./api/places', async (importOriginal) => {
 vi.mock('./components/MapView', () => ({
   default: ({
     places,
+    routePlaces = [],
     onSelectPlace,
   }: {
     places: { id: string }[]
+    routePlaces?: { id: string }[]
     onSelectPlace: (placeId: string) => void
   }) => (
     <>
@@ -27,6 +29,7 @@ vi.mock('./components/MapView', () => ({
         role="application"
         aria-label="Интерактивная карта"
         data-place-count={places.length}
+        data-route-place-count={routePlaces.length}
       />
       {places[0] && (
         <button type="button" onClick={() => onSelectPlace(places[0].id)}>
@@ -144,6 +147,53 @@ describe('App', () => {
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),
     ).toBeInTheDocument()
+  })
+
+  it('opens the Yaroslavl route and its ordered stops', async () => {
+    const routePlaces = [
+      {
+        id: '531c004b-e7d4-40a4-9605-13481401931a',
+        title:
+          'Церковь апостолов Петра и Павла при Ярославской Большой мануфактуре',
+        latitude: 57.602525,
+        longitude: 39.8438529,
+      },
+      {
+        id: '1ee1a2eb-b60f-4b31-bc7d-81afe5664724',
+        title: 'Братская могила рабочих ЯБМ',
+        latitude: 57.6038212,
+        longitude: 39.8303953,
+      },
+      {
+        id: '38ed1b06-8e68-4ca1-96d5-2c47baf66d78',
+        title: 'Ярославская Большая мануфактура',
+        latitude: 57.611773,
+        longitude: 39.830268,
+      },
+    ]
+    fetchPlacesMock.mockResolvedValue({ items: routePlaces, total: 3 })
+
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Маршруты' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Маршруты' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /«Красный Перекоп»/ }),
+    )
+
+    expect(
+      screen.getByRole('heading', { name: '«Красный Перекоп»' }),
+    ).toBeInTheDocument()
+    expect(screen.getAllByRole('listitem')).toHaveLength(3)
+    expect(
+      screen.getByRole('application', { name: 'Интерактивная карта' }),
+    ).toHaveAttribute('data-route-place-count', '3')
+    expect(screen.getByRole('link', { name: 'Видеоэкскурсия' })).toHaveAttribute(
+      'href',
+      'https://youtu.be/R3Q6pv-eEm4',
+    )
   })
 
   it('shows complete place details after a marker is selected', async () => {

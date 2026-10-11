@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   fetchPlace,
   fetchPlaceMaterials,
@@ -10,11 +10,13 @@ import {
 import type { GeocodingResult } from './api/geocoding'
 import './App.css'
 import AdminApp from './AdminApp'
+import CuratedRoutesPanel from './components/CuratedRoutesPanel'
 import PlaceImageGallery from './components/PlaceImageGallery'
 import PlaceMaterials from './components/PlaceMaterials'
 import PlaceSubmissionForm, {
   type MapLocation,
 } from './components/PlaceSubmissionForm'
+import { curatedRoutes } from './data/curatedRoutes'
 
 const MapView = lazy(() => import('./components/MapView'))
 
@@ -35,6 +37,21 @@ function PublicMapApp() {
   const [submissionMapFocus, setSubmissionMapFocus] =
     useState<GeocodingResult | null>(null)
   const [submissionSent, setSubmissionSent] = useState(false)
+  const [isRoutesOpen, setIsRoutesOpen] = useState(false)
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null)
+
+  const selectedRoute = useMemo(
+    () =>
+      curatedRoutes.find((route) => route.id === selectedRouteId) ?? null,
+    [selectedRouteId],
+  )
+  const routePlaces = useMemo(
+    () =>
+      selectedRoute?.placeIds
+        .map((placeId) => places.find((place) => place.id === placeId))
+        .filter((place): place is PlaceSummary => place !== undefined) ?? [],
+    [places, selectedRoute],
+  )
 
   const handleSelectPlace = useCallback((placeId: string) => {
     setIsSubmissionOpen(false)
@@ -62,6 +79,8 @@ function PublicMapApp() {
 
   const handleOpenSubmission = useCallback(() => {
     handleClosePlace()
+    setIsRoutesOpen(false)
+    setSelectedRouteId(null)
     setIsSubmissionOpen(true)
     setSubmissionSent(false)
   }, [handleClosePlace])
@@ -72,6 +91,25 @@ function PublicMapApp() {
     setSubmissionMapFocus(null)
     setSubmissionSent(false)
   }, [])
+
+  const handleCloseRoutes = useCallback(() => {
+    handleClosePlace()
+    setIsRoutesOpen(false)
+    setSelectedRouteId(null)
+  }, [handleClosePlace])
+
+  const handleToggleRoutes = useCallback(() => {
+    if (isRoutesOpen) {
+      handleCloseRoutes()
+      return
+    }
+    handleClosePlace()
+    setIsSubmissionOpen(false)
+    setSubmissionLocation(null)
+    setSubmissionMapFocus(null)
+    setSubmissionSent(false)
+    setIsRoutesOpen(true)
+  }, [handleClosePlace, handleCloseRoutes, isRoutesOpen])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -197,6 +235,13 @@ function PublicMapApp() {
           </div>
         </div>
         <div className="app-header-actions">
+          <button
+            className={`btn app-route-button btn-sm${isRoutesOpen ? ' is-active' : ''}`}
+            type="button"
+            onClick={handleToggleRoutes}
+          >
+            {isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
+          </button>
           <a
             className="btn app-admin-link btn-sm"
             href={`${import.meta.env.BASE_URL}admin`}
@@ -215,7 +260,7 @@ function PublicMapApp() {
 
       <section className="map-layout" aria-label="Карта мест">
         <aside
-          className={`place-panel shadow-sm${selectedPlaceId || isSubmissionOpen ? ' place-panel--detail' : ''}`}
+          className={`place-panel shadow-sm${selectedPlaceId || isSubmissionOpen || isRoutesOpen ? ' place-panel--detail' : ''}`}
         >
           {isSubmissionOpen ? (
             submissionSent ? (
@@ -268,39 +313,7 @@ function PublicMapApp() {
                 onSubmitted={() => setSubmissionSent(true)}
               />
             )
-          ) : selectedPlaceId === null ? (
-            <>
-              <div className="panel-kicker">Народный архив</div>
-              <h1 className="h5 mb-2 text-uppercase">
-                Исследуй историю вокруг
-              </h1>
-              <p className="text-secondary mb-3">
-                Здесь появятся памятники, заводы, культурные пространства и
-                маршруты.
-              </p>
-              {isLoading && (
-                <div className="alert alert-light border mb-0" role="status">
-                  Загружаем места…
-                </div>
-              )}
-              {!isLoading && hasError && (
-                <div className="alert alert-warning mb-0" role="alert">
-                  Не удалось загрузить места. Карта продолжает работать —
-                  попробуйте обновить страницу позже.
-                </div>
-              )}
-              {!isLoading && !hasError && places.length === 0 && (
-                <div className="alert alert-light border mb-0" role="status">
-                  На карте пока нет мест.
-                </div>
-              )}
-              {!isLoading && !hasError && places.length > 0 && (
-                <div className="place-count" role="status">
-                  На карте мест: <strong>{places.length}</strong>
-                </div>
-              )}
-            </>
-          ) : (
+          ) : selectedPlaceId !== null ? (
             <article className="place-detail" aria-live="polite">
               <div className="place-detail-header">
                 <div className="panel-kicker mb-0">Карточка места</div>
@@ -351,6 +364,50 @@ function PublicMapApp() {
                 </>
               )}
             </article>
+          ) : isRoutesOpen ? (
+            <CuratedRoutesPanel
+              routes={curatedRoutes}
+              selectedRoute={selectedRoute}
+              places={places}
+              isPlacesLoading={isLoading}
+              hasPlacesError={hasError}
+              onSelectRoute={setSelectedRouteId}
+              onSelectPlace={handleSelectPlace}
+              onBack={() => setSelectedRouteId(null)}
+              onClose={handleCloseRoutes}
+            />
+          ) : (
+            <>
+              <div className="panel-kicker">Народный архив</div>
+              <h1 className="h5 mb-2 text-uppercase">
+                Исследуй историю вокруг
+              </h1>
+              <p className="text-secondary mb-3">
+                Здесь появятся памятники, заводы, культурные пространства и
+                маршруты.
+              </p>
+              {isLoading && (
+                <div className="alert alert-light border mb-0" role="status">
+                  Загружаем места…
+                </div>
+              )}
+              {!isLoading && hasError && (
+                <div className="alert alert-warning mb-0" role="alert">
+                  Не удалось загрузить места. Карта продолжает работать —
+                  попробуйте обновить страницу позже.
+                </div>
+              )}
+              {!isLoading && !hasError && places.length === 0 && (
+                <div className="alert alert-light border mb-0" role="status">
+                  На карте пока нет мест.
+                </div>
+              )}
+              {!isLoading && !hasError && places.length > 0 && (
+                <div className="place-count" role="status">
+                  На карте мест: <strong>{places.length}</strong>
+                </div>
+              )}
+            </>
           )}
         </aside>
 
@@ -363,6 +420,7 @@ function PublicMapApp() {
         >
           <MapView
             places={places}
+            routePlaces={routePlaces}
             onSelectPlace={handleSelectPlace}
             isSelectingLocation={isSubmissionOpen && !submissionSent}
             selectedLocation={submissionLocation}

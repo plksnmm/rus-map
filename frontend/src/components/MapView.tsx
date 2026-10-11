@@ -16,6 +16,7 @@ import {
   localizeMapLabels,
 } from '../map/localizeStyle'
 import { placesToGeoJson } from '../map/placesGeoJson'
+import { routeLineToGeoJson, routeStopsToGeoJson } from '../map/routeGeoJson'
 
 const INITIAL_CENTER: [number, number] = [94, 64]
 const INITIAL_ZOOM = 2.1
@@ -23,6 +24,11 @@ const MIN_ZOOM = 2
 const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
 const PLACES_SOURCE_ID = 'places'
 const PLACES_LAYER_ID = 'places-markers'
+const ROUTE_LINE_SOURCE_ID = 'curated-route-line'
+const ROUTE_LINE_LAYER_ID = 'curated-route-line'
+const ROUTE_STOPS_SOURCE_ID = 'curated-route-stops'
+const ROUTE_STOPS_LAYER_ID = 'curated-route-stops'
+const ROUTE_STOP_LABELS_LAYER_ID = 'curated-route-stop-labels'
 const DRAFT_SOURCE_ID = 'submission-location'
 const DRAFT_LAYER_ID = 'submission-location-marker'
 
@@ -30,11 +36,36 @@ setWorkerUrl(maplibreWorkerUrl)
 
 interface MapViewProps {
   places: PlaceSummary[]
+  routePlaces?: PlaceSummary[]
   onSelectPlace: (placeId: string) => void
   isSelectingLocation?: boolean
   selectedLocation?: MapLocation | null
   focusLocation?: GeocodingResult | null
   onSelectLocation?: (location: MapLocation) => void
+}
+
+function frameRoute(map: Map, places: PlaceSummary[]) {
+  if (places.length === 0) {
+    return
+  }
+  if (places.length === 1) {
+    map.flyTo({
+      center: [places[0].longitude, places[0].latitude],
+      zoom: 15,
+      duration: 700,
+    })
+    return
+  }
+
+  const longitudes = places.map((place) => place.longitude)
+  const latitudes = places.map((place) => place.latitude)
+  map.fitBounds(
+    [
+      [Math.min(...longitudes), Math.min(...latitudes)],
+      [Math.max(...longitudes), Math.max(...latitudes)],
+    ],
+    { padding: 88, maxZoom: 15, duration: 700 },
+  )
 }
 
 function locationGeoJson(location: MapLocation | null | undefined) {
@@ -79,6 +110,7 @@ function focusMap(map: Map, focusLocation: GeocodingResult | null | undefined) {
 
 export default function MapView({
   places,
+  routePlaces = [],
   onSelectPlace,
   isSelectingLocation = false,
   selectedLocation = null,
@@ -88,6 +120,7 @@ export default function MapView({
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<Map>(null)
   const placesDataRef = useRef(placesToGeoJson(places))
+  const routePlacesRef = useRef(routePlaces)
   const selectingRef = useRef(isSelectingLocation)
   const focusLocationRef = useRef(focusLocation)
   const onSelectLocationRef = useRef(onSelectLocation)
@@ -99,6 +132,19 @@ export default function MapView({
       ?.getSource<GeoJSONSource>(PLACES_SOURCE_ID)
       ?.setData(placesData)
   }, [places])
+
+  useEffect(() => {
+    routePlacesRef.current = routePlaces
+    mapRef.current
+      ?.getSource<GeoJSONSource>(ROUTE_LINE_SOURCE_ID)
+      ?.setData(routeLineToGeoJson(routePlaces))
+    mapRef.current
+      ?.getSource<GeoJSONSource>(ROUTE_STOPS_SOURCE_ID)
+      ?.setData(routeStopsToGeoJson(routePlaces))
+    if (mapRef.current) {
+      frameRoute(mapRef.current, routePlaces)
+    }
+  }, [routePlaces])
 
   useEffect(() => {
     selectingRef.current = isSelectingLocation
@@ -145,6 +191,21 @@ export default function MapView({
     map.on('load', () => {
       localizeMapLabels(map)
       emphasizeRegionBoundaries(map)
+      map.addSource(ROUTE_LINE_SOURCE_ID, {
+        type: 'geojson',
+        data: routeLineToGeoJson(routePlacesRef.current),
+      })
+      map.addLayer({
+        id: ROUTE_LINE_LAYER_ID,
+        type: 'line',
+        source: ROUTE_LINE_SOURCE_ID,
+        paint: {
+          'line-color': '#a82626',
+          'line-width': 4,
+          'line-opacity': 0.75,
+          'line-dasharray': [2, 2],
+        },
+      })
       map.addSource(PLACES_SOURCE_ID, {
         type: 'geojson',
         data: placesDataRef.current,
@@ -158,6 +219,33 @@ export default function MapView({
           'circle-radius': 8,
           'circle-stroke-color': '#ffffff',
           'circle-stroke-width': 2,
+        },
+      })
+      map.addSource(ROUTE_STOPS_SOURCE_ID, {
+        type: 'geojson',
+        data: routeStopsToGeoJson(routePlacesRef.current),
+      })
+      map.addLayer({
+        id: ROUTE_STOPS_LAYER_ID,
+        type: 'circle',
+        source: ROUTE_STOPS_SOURCE_ID,
+        paint: {
+          'circle-color': '#a82626',
+          'circle-radius': 12,
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 3,
+        },
+      })
+      map.addLayer({
+        id: ROUTE_STOP_LABELS_LAYER_ID,
+        type: 'symbol',
+        source: ROUTE_STOPS_SOURCE_ID,
+        layout: {
+          'text-field': ['get', 'order'],
+          'text-size': 12,
+        },
+        paint: {
+          'text-color': '#ffffff',
         },
       })
       map.addSource(DRAFT_SOURCE_ID, {
@@ -176,6 +264,7 @@ export default function MapView({
         },
       })
       focusMap(map, focusLocationRef.current)
+      frameRoute(map, routePlacesRef.current)
 
       map.on('click', (event) => {
         if (!selectingRef.current || !onSelectLocationRef.current) {
@@ -198,9 +287,28 @@ export default function MapView({
           return
         }
 
+        if (routePlacesRef.current.some((place) => place.id === placeId)) {
+          return
+        }
+
         onSelectPlace(placeId)
 
         new Popup({ offset: 12 })
+          .setLngLat(event.lngLat)
+          .setText(title)
+          .addTo(map)
+      })
+
+      map.on('click', ROUTE_STOPS_LAYER_ID, (event) => {
+        const title = event.features?.[0]?.properties.title
+        const placeId = event.features?.[0]?.properties.id
+
+        if (typeof title !== 'string' || typeof placeId !== 'string') {
+          return
+        }
+
+        onSelectPlace(placeId)
+        new Popup({ offset: 16 })
           .setLngLat(event.lngLat)
           .setText(title)
           .addTo(map)
@@ -212,6 +320,14 @@ export default function MapView({
         }
       })
       map.on('mouseleave', PLACES_LAYER_ID, () => {
+        map.getCanvas().style.cursor = selectingRef.current ? 'crosshair' : ''
+      })
+      map.on('mouseenter', ROUTE_STOPS_LAYER_ID, () => {
+        if (!selectingRef.current) {
+          map.getCanvas().style.cursor = 'pointer'
+        }
+      })
+      map.on('mouseleave', ROUTE_STOPS_LAYER_ID, () => {
         map.getCanvas().style.cursor = selectingRef.current ? 'crosshair' : ''
       })
     })

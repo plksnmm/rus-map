@@ -66,7 +66,8 @@
   text-transform: uppercase;
 }
 
-.app-add-button {
+.app-add-button,
+.app-route-button {
   border: 1px solid rgb(255 255 255 / 55%);
   border-radius: 0;
   color: #fff;
@@ -75,14 +76,18 @@
   letter-spacing: 0.035em;
 }
 
-.app-add-button:disabled {
+.app-add-button:disabled,
+.app-route-button:disabled {
   color: rgb(255 255 255 / 58%);
   border-color: rgb(255 255 255 / 28%);
 }
 
 .app-add-button:hover,
 .app-add-button:focus-visible,
-.app-add-button.is-active {
+.app-add-button.is-active,
+.app-route-button:hover,
+.app-route-button:focus-visible,
+.app-route-button.is-active {
   border-color: var(--paper);
   color: var(--coal);
   background: var(--paper);
@@ -523,6 +528,136 @@
   overflow-y: auto;
   scrollbar-color: rgb(21 21 21 / 42%) transparent;
   scrollbar-width: thin;
+}
+
+.routes-panel,
+.route-detail {
+  max-height: min(76vh, 48rem);
+  padding-right: 0.15rem;
+  overflow-y: auto;
+  scrollbar-color: rgb(21 21 21 / 42%) transparent;
+  scrollbar-width: thin;
+}
+
+.route-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.route-card {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgb(21 21 21 / 35%);
+  border-left: 4px solid var(--signal-red);
+  color: var(--coal);
+  text-align: left;
+  background: rgb(255 255 255 / 72%);
+}
+
+.route-card:hover,
+.route-card:focus-visible {
+  border-color: var(--coal);
+  background: #fff;
+}
+
+.route-card-city {
+  color: var(--signal-red);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.route-card > span:last-child {
+  color: #68635c;
+  font-size: 0.82rem;
+}
+
+.route-description {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.route-map-note {
+  padding: 0.65rem 0.75rem;
+  border-left: 3px solid var(--signal-red);
+  color: #57534d;
+  background: rgb(255 255 255 / 55%);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.route-stops-title {
+  margin: 1rem 0 0.55rem;
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.route-stops {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route-stops button {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem;
+  border: 0;
+  color: var(--coal);
+  text-align: left;
+  background: transparent;
+}
+
+.route-stops button:hover:not(:disabled),
+.route-stops button:focus-visible:not(:disabled) {
+  background: rgb(255 255 255 / 78%);
+}
+
+.route-stops button:disabled {
+  opacity: 0.58;
+}
+
+.route-stop-number {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--signal-red);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-weight: 700;
+}
+
+.route-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 1rem;
+}
+
+.route-links a {
+  color: #7f1d1d;
+  font-weight: 650;
+  text-underline-offset: 0.18rem;
+}
+
+.route-back {
+  margin-top: 0.8rem;
+  padding-left: 0;
+  color: var(--coal);
 }
 
 .submission-form {
@@ -1056,6 +1191,13 @@
   .app-admin-link {
     padding-right: 0.25rem;
     padding-left: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  .app-route-button,
+  .app-add-button {
+    padding-right: 0.4rem;
+    padding-left: 0.4rem;
     font-size: 0.75rem;
   }
 
