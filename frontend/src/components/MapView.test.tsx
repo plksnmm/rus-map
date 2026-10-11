@@ -193,4 +193,70 @@ describe('MapView', () => {
     )
     unmount()
   })
+
+  it('draws, frames, and opens places from a curated route', () => {
+    const onSelectPlace = vi.fn()
+    const routePlaces = [
+      {
+        id: 'first',
+        title: 'Церковь Петра и Павла',
+        latitude: 57.602525,
+        longitude: 39.8438529,
+      },
+      {
+        id: 'second',
+        title: 'Ярославская Большая мануфактура',
+        latitude: 57.611773,
+        longitude: 39.830268,
+      },
+    ]
+
+    const { unmount } = render(
+      <MapView
+        places={routePlaces}
+        routePlaces={routePlaces}
+        onSelectPlace={onSelectPlace}
+      />,
+    )
+
+    expect(mapLibreMock.map.addLayer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'curated-route-line',
+        source: 'curated-route-line',
+        type: 'line',
+      }),
+    )
+    expect(mapLibreMock.map.addLayer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'curated-route-stop-labels',
+        source: 'curated-route-stops',
+        type: 'symbol',
+      }),
+    )
+    expect(mapLibreMock.map.fitBounds).toHaveBeenCalledWith(
+      [
+        [39.830268, 57.602525],
+        [39.8438529, 57.611773],
+      ],
+      { padding: 88, maxZoom: 15, duration: 700 },
+    )
+
+    const firstStopEvent = {
+      features: [
+        { properties: { id: routePlaces[0].id, title: routePlaces[0].title } },
+      ],
+      lngLat: {
+        lng: routePlaces[0].longitude,
+        lat: routePlaces[0].latitude,
+      },
+    }
+    mapLibreMock.handlers.get('click:places-markers')?.(firstStopEvent)
+    expect(onSelectPlace).not.toHaveBeenCalled()
+
+    mapLibreMock.handlers.get('click:curated-route-stops')?.(firstStopEvent)
+
+    expect(onSelectPlace).toHaveBeenCalledWith(routePlaces[0].id)
+    expect(mapLibreMock.popup.setText).toHaveBeenCalledWith(routePlaces[0].title)
+    unmount()
+  })
 })
