@@ -16,7 +16,11 @@ import {
   localizeMapLabels,
 } from '../map/localizeStyle'
 import { placesToGeoJson } from '../map/placesGeoJson'
-import { routeLineToGeoJson, routeStopsToGeoJson } from '../map/routeGeoJson'
+import {
+  type RouteCoordinate,
+  routeLineToGeoJson,
+  routeStopsToGeoJson,
+} from '../map/routeGeoJson'
 
 const INITIAL_CENTER: [number, number] = [94, 64]
 const INITIAL_ZOOM = 2.1
@@ -37,6 +41,7 @@ setWorkerUrl(maplibreWorkerUrl)
 interface MapViewProps {
   places: PlaceSummary[]
   routePlaces?: PlaceSummary[]
+  routePath?: readonly RouteCoordinate[]
   onSelectPlace: (placeId: string) => void
   isSelectingLocation?: boolean
   selectedLocation?: MapLocation | null
@@ -44,21 +49,21 @@ interface MapViewProps {
   onSelectLocation?: (location: MapLocation) => void
 }
 
-function frameRoute(map: Map, places: PlaceSummary[]) {
-  if (places.length === 0) {
+function frameRoute(map: Map, coordinates: readonly RouteCoordinate[]) {
+  if (coordinates.length === 0) {
     return
   }
-  if (places.length === 1) {
+  if (coordinates.length === 1) {
     map.flyTo({
-      center: [places[0].longitude, places[0].latitude],
+      center: [coordinates[0][0], coordinates[0][1]],
       zoom: 15,
       duration: 700,
     })
     return
   }
 
-  const longitudes = places.map((place) => place.longitude)
-  const latitudes = places.map((place) => place.latitude)
+  const longitudes = coordinates.map(([longitude]) => longitude)
+  const latitudes = coordinates.map(([, latitude]) => latitude)
   map.fitBounds(
     [
       [Math.min(...longitudes), Math.min(...latitudes)],
@@ -111,6 +116,7 @@ function focusMap(map: Map, focusLocation: GeocodingResult | null | undefined) {
 export default function MapView({
   places,
   routePlaces = [],
+  routePath = [],
   onSelectPlace,
   isSelectingLocation = false,
   selectedLocation = null,
@@ -121,6 +127,7 @@ export default function MapView({
   const mapRef = useRef<Map>(null)
   const placesDataRef = useRef(placesToGeoJson(places))
   const routePlacesRef = useRef(routePlaces)
+  const routePathRef = useRef(routePath)
   const selectingRef = useRef(isSelectingLocation)
   const focusLocationRef = useRef(focusLocation)
   const onSelectLocationRef = useRef(onSelectLocation)
@@ -136,15 +143,19 @@ export default function MapView({
   useEffect(() => {
     routePlacesRef.current = routePlaces
     mapRef.current
-      ?.getSource<GeoJSONSource>(ROUTE_LINE_SOURCE_ID)
-      ?.setData(routeLineToGeoJson(routePlaces))
-    mapRef.current
       ?.getSource<GeoJSONSource>(ROUTE_STOPS_SOURCE_ID)
       ?.setData(routeStopsToGeoJson(routePlaces))
-    if (mapRef.current) {
-      frameRoute(mapRef.current, routePlaces)
-    }
   }, [routePlaces])
+
+  useEffect(() => {
+    routePathRef.current = routePath
+    mapRef.current
+      ?.getSource<GeoJSONSource>(ROUTE_LINE_SOURCE_ID)
+      ?.setData(routeLineToGeoJson(routePath))
+    if (mapRef.current) {
+      frameRoute(mapRef.current, routePath)
+    }
+  }, [routePath])
 
   useEffect(() => {
     selectingRef.current = isSelectingLocation
@@ -193,7 +204,7 @@ export default function MapView({
       emphasizeRegionBoundaries(map)
       map.addSource(ROUTE_LINE_SOURCE_ID, {
         type: 'geojson',
-        data: routeLineToGeoJson(routePlacesRef.current),
+        data: routeLineToGeoJson(routePathRef.current),
       })
       map.addLayer({
         id: ROUTE_LINE_LAYER_ID,
@@ -201,9 +212,8 @@ export default function MapView({
         source: ROUTE_LINE_SOURCE_ID,
         paint: {
           'line-color': '#a82626',
-          'line-width': 4,
-          'line-opacity': 0.75,
-          'line-dasharray': [2, 2],
+          'line-width': 5,
+          'line-opacity': 0.82,
         },
       })
       map.addSource(PLACES_SOURCE_ID, {
@@ -264,7 +274,7 @@ export default function MapView({
         },
       })
       focusMap(map, focusLocationRef.current)
-      frameRoute(map, routePlacesRef.current)
+      frameRoute(map, routePathRef.current)
 
       map.on('click', (event) => {
         if (!selectingRef.current || !onSelectLocationRef.current) {

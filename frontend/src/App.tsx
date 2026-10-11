@@ -17,6 +17,7 @@ import PlaceSubmissionForm, {
   type MapLocation,
 } from './components/PlaceSubmissionForm'
 import { curatedRoutes } from './data/curatedRoutes'
+import { decodeRoutePath } from './map/routeGeoJson'
 
 const MapView = lazy(() => import('./components/MapView'))
 
@@ -51,6 +52,10 @@ function PublicMapApp() {
         .map((placeId) => places.find((place) => place.id === placeId))
         .filter((place): place is PlaceSummary => place !== undefined) ?? [],
     [places, selectedRoute],
+  )
+  const routePath = useMemo(
+    () => decodeRoutePath(selectedRoute?.pathSegments ?? []),
+    [selectedRoute],
   )
 
   const handleSelectPlace = useCallback((placeId: string) => {
@@ -421,6 +426,7 @@ function PublicMapApp() {
           <MapView
             places={places}
             routePlaces={routePlaces}
+            routePath={routePath}
             onSelectPlace={handleSelectPlace}
             isSelectingLocation={isSubmissionOpen && !submissionSent}
             selectedLocation={submissionLocation}
