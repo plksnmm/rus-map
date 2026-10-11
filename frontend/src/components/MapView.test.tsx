@@ -210,11 +210,17 @@ describe('MapView', () => {
         longitude: 39.830268,
       },
     ]
+    const routePath = [
+      [39.8438529, 57.602525],
+      [39.82776, 57.605624],
+      [39.830268, 57.611773],
+    ] as const
 
     const { unmount } = render(
       <MapView
         places={routePlaces}
         routePlaces={routePlaces}
+        routePath={routePath}
         onSelectPlace={onSelectPlace}
       />,
     )
@@ -235,7 +241,7 @@ describe('MapView', () => {
     )
     expect(mapLibreMock.map.fitBounds).toHaveBeenCalledWith(
       [
-        [39.830268, 57.602525],
+        [39.82776, 57.602525],
         [39.8438529, 57.611773],
       ],
       { padding: 88, maxZoom: 15, duration: 700 },

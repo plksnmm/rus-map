@@ -18,10 +18,12 @@ vi.mock('./components/MapView', () => ({
   default: ({
     places,
     routePlaces = [],
+    routePath = [],
     onSelectPlace,
   }: {
     places: { id: string }[]
     routePlaces?: { id: string }[]
+    routePath?: readonly (readonly [number, number])[]
     onSelectPlace: (placeId: string) => void
   }) => (
     <>
@@ -30,6 +32,7 @@ vi.mock('./components/MapView', () => ({
         aria-label="Интерактивная карта"
         data-place-count={places.length}
         data-route-place-count={routePlaces.length}
+        data-route-coordinate-count={routePath.length}
       />
       {places[0] && (
         <button type="button" onClick={() => onSelectPlace(places[0].id)}>
@@ -190,6 +193,20 @@ describe('App', () => {
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),
     ).toHaveAttribute('data-route-place-count', '3')
+    expect(
+      Number(
+        screen
+          .getByRole('application', { name: 'Интерактивная карта' })
+          .getAttribute('data-route-coordinate-count'),
+      ),
+    ).toBeGreaterThan(50)
+    expect(screen.getByText('2,3 км')).toBeInTheDocument()
+    expect(screen.getByText('около 30 минут')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', {
+        name: 'Открыть пеший маршрут в Яндекс Картах',
+      }),
+    ).toHaveAttribute('href', expect.stringContaining('rtt=pd'))
     expect(screen.getByRole('link', { name: 'Видеоэкскурсия' })).toHaveAttribute(
       'href',
       'https://youtu.be/R3Q6pv-eEm4',

@@ -80,6 +80,10 @@ export default function CuratedRoutesPanel({
     placeId,
     place: places.find((place) => place.id === placeId),
   }))
+  const distance = selectedRoute.distanceKilometers.toLocaleString('ru-RU', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })
 
   return (
     <article className="route-detail" aria-labelledby="route-title">
@@ -100,8 +104,27 @@ export default function CuratedRoutesPanel({
         {selectedRoute.title}
       </h1>
       <p className="route-description">{selectedRoute.description}</p>
+      <div className="route-summary" aria-label="Параметры маршрута">
+        <span>
+          <strong>{distance} км</strong>
+          <small>длина пути</small>
+        </span>
+        <span>
+          <strong>около {selectedRoute.walkingTimeMinutes} минут</strong>
+          <small>без остановок</small>
+        </span>
+      </div>
+      <a
+        className="btn route-navigation-link"
+        href={selectedRoute.navigationUrl}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Открыть пеший маршрут в Яндекс Картах
+      </a>
       <p className="route-map-note">
-        Пунктир на карте показывает порядок остановок, а не точный пешеходный путь.
+        Линия на карте идёт по пешеходным дорогам. Перед прогулкой проверяйте доступность
+        проходов на месте.
       </p>
 
       <h2 className="route-stops-title">Остановки</h2>
@@ -137,6 +160,13 @@ export default function CuratedRoutesPanel({
           </a>
         ))}
       </div>
+      <p className="route-attribution">
+        Пешеходный путь рассчитан Valhalla по данным{' '}
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
+          OpenStreetMap
+        </a>
+        .
+      </p>
       <button className="btn btn-link route-back" type="button" onClick={onBack}>
         Все маршруты
       </button>
