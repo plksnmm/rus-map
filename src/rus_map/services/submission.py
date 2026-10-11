@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from rus_map.models import SubmissionStatus
+from rus_map.repositories.material import MaterialRepository
 from rus_map.repositories.place import NewPlace, PlaceRepository
 from rus_map.repositories.submission import (
     NewPlaceSubmission,
@@ -24,9 +25,11 @@ class PlaceSubmissionService:
         self,
         submissions: PlaceSubmissionRepository,
         places: PlaceRepository,
+        materials: MaterialRepository,
     ) -> None:
         self._submissions = submissions
         self._places = places
+        self._materials = materials
 
     async def create(self, proposal: NewPlaceSubmission) -> PlaceSubmissionRecord:
         """Store a proposal without publishing a place."""
@@ -72,6 +75,10 @@ class PlaceSubmissionService:
                 latitude=submission.latitude,
                 longitude=submission.longitude,
             ),
+        )
+        await self._materials.publish_submission_sources(
+            place.id,
+            submission.source_urls,
         )
         approved = await self._submissions.mark_approved(
             submission.id,

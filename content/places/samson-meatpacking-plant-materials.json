@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "place_id": "c237ed0b-9c49-4afe-b455-df792a7d2d13",
+  "materials": [
+    {
+      "id": "74da9b00-3595-4d07-ae63-d80a32d6bac1",
+      "type": "video",
+      "status": "published",
+      "title": "«Самсон». Документальная экскурсия по мясокомбинату им. Кирова",
+      "source": "Русь Пролетарская на YouTube",
+      "revisions": [
+        {
+          "id": "3a197aa0-03f1-466e-aa63-fb8da25b8473",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://youtu.be/zLVj52ZePag"
+        }
+      ]
+    }
+  ]
+}
