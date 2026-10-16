@@ -11,6 +11,9 @@ interface CuratedRoutesPanelProps {
   onSelectPlace: (placeId: string) => void
   onBack: () => void
   onClose: () => void
+  mobileSheetState: 'compact' | 'half' | 'expanded'
+  onToggleMobileSheet: () => void
+  onToggleMobileSecondaryDetails: () => void
 }
 
 function formatPlaceCount(count: number): string {
@@ -37,6 +40,9 @@ export default function CuratedRoutesPanel({
   onSelectPlace,
   onBack,
   onClose,
+  mobileSheetState,
+  onToggleMobileSheet,
+  onToggleMobileSecondaryDetails,
 }: CuratedRoutesPanelProps) {
   if (selectedRoute === null) {
     return (
@@ -87,6 +93,19 @@ export default function CuratedRoutesPanel({
 
   return (
     <article className="route-detail" aria-labelledby="route-title">
+      <button
+        className="route-sheet-handle"
+        type="button"
+        aria-label={
+          mobileSheetState === 'compact'
+            ? 'Показать подробности маршрута'
+            : 'Свернуть подробности маршрута'
+        }
+        aria-expanded={mobileSheetState !== 'compact'}
+        onClick={onToggleMobileSheet}
+      >
+        <span aria-hidden="true" />
+      </button>
       <div className="place-detail-header">
         <div className="panel-kicker mb-0">
           Маршрут · {selectedRoute.city}
@@ -103,7 +122,6 @@ export default function CuratedRoutesPanel({
       <h1 className="h5 my-2" id="route-title">
         {selectedRoute.title}
       </h1>
-      <p className="route-description">{selectedRoute.description}</p>
       <div className="route-summary" aria-label="Параметры маршрута">
         <span>
           <strong>{distance} км</strong>
@@ -114,59 +132,79 @@ export default function CuratedRoutesPanel({
           <small>без остановок</small>
         </span>
       </div>
-      <a
-        className="btn route-navigation-link"
-        href={selectedRoute.navigationUrl}
-        target="_blank"
-        rel="noreferrer"
-      >
-        Открыть пеший маршрут в Яндекс Картах
-      </a>
-      <p className="route-map-note">
-        Линия на карте идёт по пешеходным дорогам. Перед прогулкой проверяйте доступность
-        проходов на месте.
-      </p>
-
-      <h2 className="route-stops-title">Остановки</h2>
-      {isPlacesLoading && <p className="text-secondary">Загружаем места…</p>}
-      {!isPlacesLoading && hasPlacesError && (
-        <div className="alert alert-warning" role="alert">
-          Не удалось загрузить остановки маршрута.
-        </div>
-      )}
-      {!isPlacesLoading && !hasPlacesError && (
-        <ol className="route-stops">
-          {routePlaces.map(({ placeId, place }, index) => (
-            <li key={placeId}>
-              <button
-                type="button"
-                onClick={() => onSelectPlace(placeId)}
-                disabled={!place}
-              >
-                <span className="route-stop-number" aria-hidden="true">
-                  {index + 1}
-                </span>
-                <span>{place?.title ?? 'Место пока недоступно'}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      )}
-
-      <div className="route-links" aria-label="Материалы маршрута">
-        {selectedRoute.links.map((link) => (
-          <a key={link.url} href={link.url} target="_blank" rel="noreferrer">
-            {link.label}
-          </a>
-        ))}
-      </div>
-      <p className="route-attribution">
-        Пешеходный путь рассчитан Valhalla по данным{' '}
-        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
-          OpenStreetMap
+      <div className="route-primary-details">
+        <a
+          className="btn route-navigation-link"
+          href={selectedRoute.navigationUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Открыть пеший маршрут в Яндекс Картах
         </a>
-        .
-      </p>
+
+        <h2 className="route-stops-title">Остановки</h2>
+        {isPlacesLoading && <p className="text-secondary">Загружаем места…</p>}
+        {!isPlacesLoading && hasPlacesError && (
+          <div className="alert alert-warning" role="alert">
+            Не удалось загрузить остановки маршрута.
+          </div>
+        )}
+        {!isPlacesLoading && !hasPlacesError && (
+          <ol className="route-stops">
+            {routePlaces.map(({ placeId, place }, index) => (
+              <li key={placeId}>
+                <button
+                  type="button"
+                  onClick={() => onSelectPlace(placeId)}
+                  disabled={!place}
+                >
+                  <span className="route-stop-number" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <span>{place?.title ?? 'Место пока недоступно'}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+
+      <button
+        className="route-secondary-toggle"
+        type="button"
+        aria-expanded={mobileSheetState === 'expanded'}
+        onClick={onToggleMobileSecondaryDetails}
+      >
+        {mobileSheetState === 'expanded'
+          ? 'Скрыть описание и материалы'
+          : 'Описание и материалы'}
+      </button>
+
+      <div className="route-secondary-details">
+        <p className="route-description">{selectedRoute.description}</p>
+        <p className="route-map-note">
+          Линия на карте идёт по пешеходным дорогам. Перед прогулкой проверяйте
+          доступность проходов на месте.
+        </p>
+        <div className="route-links" aria-label="Материалы маршрута">
+          {selectedRoute.links.map((link) => (
+            <a key={link.url} href={link.url} target="_blank" rel="noreferrer">
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <p className="route-attribution">
+          Пешеходный путь рассчитан Valhalla по данным{' '}
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noreferrer"
+          >
+            OpenStreetMap
+          </a>
+          .
+        </p>
+      </div>
       <button className="btn btn-link route-back" type="button" onClick={onBack}>
         Все маршруты
       </button>

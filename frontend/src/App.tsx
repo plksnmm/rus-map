@@ -21,6 +21,8 @@ import { decodeRoutePath } from './map/routeGeoJson'
 
 const MapView = lazy(() => import('./components/MapView'))
 
+type MobileSheetState = 'compact' | 'half' | 'expanded'
+
 function PublicMapApp() {
   const [places, setPlaces] = useState<PlaceSummary[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -40,6 +42,8 @@ function PublicMapApp() {
   const [submissionSent, setSubmissionSent] = useState(false)
   const [isRoutesOpen, setIsRoutesOpen] = useState(false)
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null)
+  const [mobileRouteSheetState, setMobileRouteSheetState] =
+    useState<MobileSheetState>('half')
 
   const selectedRoute = useMemo(
     () =>
@@ -101,7 +105,25 @@ function PublicMapApp() {
     handleClosePlace()
     setIsRoutesOpen(false)
     setSelectedRouteId(null)
+    setMobileRouteSheetState('half')
   }, [handleClosePlace])
+
+  const handleSelectRoute = useCallback((routeId: string) => {
+    setSelectedRouteId(routeId)
+    setMobileRouteSheetState('compact')
+  }, [])
+
+  const handleToggleMobileRouteSheet = useCallback(() => {
+    setMobileRouteSheetState((current) =>
+      current === 'compact' ? 'half' : 'compact',
+    )
+  }, [])
+
+  const handleToggleMobileRouteSecondaryDetails = useCallback(() => {
+    setMobileRouteSheetState((current) =>
+      current === 'expanded' ? 'half' : 'expanded',
+    )
+  }, [])
 
   const handleToggleRoutes = useCallback(() => {
     if (isRoutesOpen) {
@@ -114,6 +136,7 @@ function PublicMapApp() {
     setSubmissionMapFocus(null)
     setSubmissionSent(false)
     setIsRoutesOpen(true)
+    setMobileRouteSheetState('half')
   }, [handleClosePlace, handleCloseRoutes, isRoutesOpen])
 
   useEffect(() => {
@@ -243,9 +266,15 @@ function PublicMapApp() {
           <button
             className={`btn app-route-button btn-sm${isRoutesOpen ? ' is-active' : ''}`}
             type="button"
+            aria-label={isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
             onClick={handleToggleRoutes}
           >
-            {isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
+            <span className="route-button-wide-label">
+              {isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
+            </span>
+            <span className="route-button-mobile-label">
+              {isRoutesOpen ? 'Закрыть' : 'Маршруты'}
+            </span>
           </button>
           <a
             className="btn app-admin-link btn-sm"
@@ -260,12 +289,46 @@ function PublicMapApp() {
           >
             {isSubmissionOpen ? 'Закрыть форму' : 'Добавить место'}
           </button>
+          <details className="app-mobile-menu">
+            <summary aria-label="Другие действия">•••</summary>
+            <div className="app-mobile-menu-popover">
+              <a
+                href={`${import.meta.env.BASE_URL}admin`}
+                aria-label="Открыть редакторскую"
+              >
+                Редакторская
+              </a>
+              <button
+                type="button"
+                aria-label={
+                  isSubmissionOpen
+                    ? 'Закрыть форму из мобильного меню'
+                    : 'Предложить место через мобильное меню'
+                }
+                onClick={(event) => {
+                  event.currentTarget.closest('details')?.removeAttribute('open')
+                  if (isSubmissionOpen) {
+                    handleCloseSubmission()
+                  } else {
+                    handleOpenSubmission()
+                  }
+                }}
+              >
+                {isSubmissionOpen ? 'Закрыть форму' : 'Предложить место'}
+              </button>
+            </div>
+          </details>
         </div>
       </header>
 
       <section className="map-layout" aria-label="Карта мест">
+        {!isLoading && !hasError && places.length > 0 && (
+          <div className="mobile-map-status" role="status">
+            На карте: {places.length}
+          </div>
+        )}
         <aside
-          className={`place-panel shadow-sm${selectedPlaceId || isSubmissionOpen || isRoutesOpen ? ' place-panel--detail' : ''}`}
+          className={`place-panel shadow-sm${selectedPlaceId || isSubmissionOpen || isRoutesOpen ? ' place-panel--detail' : ' place-panel--overview'}${selectedPlaceId ? ' place-panel--place' : ''}${isSubmissionOpen ? ' place-panel--submission' : ''}${isRoutesOpen && selectedRoute === null ? ' place-panel--routes' : ''}${selectedRoute ? ` place-panel--route mobile-sheet--${mobileRouteSheetState}` : ''}`}
         >
           {isSubmissionOpen ? (
             submissionSent ? (
@@ -376,10 +439,18 @@ function PublicMapApp() {
               places={places}
               isPlacesLoading={isLoading}
               hasPlacesError={hasError}
-              onSelectRoute={setSelectedRouteId}
+              onSelectRoute={handleSelectRoute}
               onSelectPlace={handleSelectPlace}
-              onBack={() => setSelectedRouteId(null)}
+              onBack={() => {
+                setSelectedRouteId(null)
+                setMobileRouteSheetState('half')
+              }}
               onClose={handleCloseRoutes}
+              mobileSheetState={mobileRouteSheetState}
+              onToggleMobileSheet={handleToggleMobileRouteSheet}
+              onToggleMobileSecondaryDetails={
+                handleToggleMobileRouteSecondaryDetails
+              }
             />
           ) : (
             <>
@@ -427,6 +498,7 @@ function PublicMapApp() {
             places={places}
             routePlaces={routePlaces}
             routePath={routePath}
+            routePanelState={mobileRouteSheetState}
             onSelectPlace={handleSelectPlace}
             isSelectingLocation={isSubmissionOpen && !submissionSent}
             selectedLocation={submissionLocation}

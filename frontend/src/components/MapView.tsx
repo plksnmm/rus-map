@@ -42,6 +42,7 @@ interface MapViewProps {
   places: PlaceSummary[]
   routePlaces?: PlaceSummary[]
   routePath?: readonly RouteCoordinate[]
+  routePanelState?: 'compact' | 'half' | 'expanded'
   onSelectPlace: (placeId: string) => void
   isSelectingLocation?: boolean
   selectedLocation?: MapLocation | null
@@ -49,7 +50,31 @@ interface MapViewProps {
   onSelectLocation?: (location: MapLocation) => void
 }
 
-function frameRoute(map: Map, coordinates: readonly RouteCoordinate[]) {
+function routeFramePadding(
+  panelState: 'compact' | 'half' | 'expanded',
+): number | { top: number; right: number; bottom: number; left: number } {
+  if (window.innerWidth > 575.98) {
+    return 88
+  }
+
+  const panelHeight =
+    panelState === 'half'
+      ? Math.min(window.innerHeight * 0.52, 430)
+      : 176
+
+  return {
+    top: 76,
+    right: 28,
+    bottom: Math.round(panelHeight + 24),
+    left: 28,
+  }
+}
+
+function frameRoute(
+  map: Map,
+  coordinates: readonly RouteCoordinate[],
+  panelState: 'compact' | 'half' | 'expanded',
+) {
   if (coordinates.length === 0) {
     return
   }
@@ -69,7 +94,11 @@ function frameRoute(map: Map, coordinates: readonly RouteCoordinate[]) {
       [Math.min(...longitudes), Math.min(...latitudes)],
       [Math.max(...longitudes), Math.max(...latitudes)],
     ],
-    { padding: 88, maxZoom: 15, duration: 700 },
+    {
+      padding: routeFramePadding(panelState),
+      maxZoom: 15,
+      duration: 700,
+    },
   )
 }
 
@@ -117,6 +146,7 @@ export default function MapView({
   places,
   routePlaces = [],
   routePath = [],
+  routePanelState = 'compact',
   onSelectPlace,
   isSelectingLocation = false,
   selectedLocation = null,
@@ -128,6 +158,7 @@ export default function MapView({
   const placesDataRef = useRef(placesToGeoJson(places))
   const routePlacesRef = useRef(routePlaces)
   const routePathRef = useRef(routePath)
+  const routePanelStateRef = useRef(routePanelState)
   const selectingRef = useRef(isSelectingLocation)
   const focusLocationRef = useRef(focusLocation)
   const onSelectLocationRef = useRef(onSelectLocation)
@@ -149,13 +180,14 @@ export default function MapView({
 
   useEffect(() => {
     routePathRef.current = routePath
+    routePanelStateRef.current = routePanelState
     mapRef.current
       ?.getSource<GeoJSONSource>(ROUTE_LINE_SOURCE_ID)
       ?.setData(routeLineToGeoJson(routePath))
     if (mapRef.current) {
-      frameRoute(mapRef.current, routePath)
+      frameRoute(mapRef.current, routePath, routePanelState)
     }
-  }, [routePath])
+  }, [routePanelState, routePath])
 
   useEffect(() => {
     selectingRef.current = isSelectingLocation
@@ -274,7 +306,7 @@ export default function MapView({
         },
       })
       focusMap(map, focusLocationRef.current)
-      frameRoute(map, routePathRef.current)
+      frameRoute(map, routePathRef.current, routePanelStateRef.current)
 
       map.on('click', (event) => {
         if (!selectingRef.current || !onSelectLocationRef.current) {
@@ -342,7 +374,14 @@ export default function MapView({
       })
     })
 
+    const handleResize = () => {
+      map.resize()
+      frameRoute(map, routePathRef.current, routePanelStateRef.current)
+    }
+    window.addEventListener('resize', handleResize)
+
     return () => {
+      window.removeEventListener('resize', handleResize)
       mapRef.current = null
       map.remove()
     }
