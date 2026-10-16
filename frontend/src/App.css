@@ -103,20 +103,6 @@
   display: none;
 }
 
-.app-admin-link {
-  border: 0;
-  color: rgb(255 255 255 / 72%);
-  font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  letter-spacing: 0.045em;
-}
-
-.app-admin-link:hover,
-.app-admin-link:focus-visible {
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 0.25rem;
-}
-
 .admin-shell {
   --coal: #151515;
   --paper: #f2eee5;
@@ -1276,7 +1262,6 @@
     display: inline;
   }
 
-  .app-admin-link,
   .app-add-button {
     display: none;
   }

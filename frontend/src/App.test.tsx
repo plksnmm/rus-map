@@ -84,7 +84,8 @@ describe('App', () => {
     expect(
       screen.getByRole('button', { name: 'Добавить место' }),
     ).toBeEnabled()
-    expect(screen.getByRole('link', { name: 'Редакторская' })).toHaveAttribute(
+    expect(screen.queryByRole('link', { name: 'Редакторская' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Открыть редакторскую' })).toHaveAttribute(
       'href',
       '/admin',
     )
