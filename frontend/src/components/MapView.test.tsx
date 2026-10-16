@@ -26,6 +26,7 @@ const mapLibreMock = vi.hoisted(() => {
     setLayoutProperty: vi.fn(),
     fitBounds: vi.fn(),
     flyTo: vi.fn(),
+    resize: vi.fn(),
     getCanvas: vi.fn().mockReturnValue({ style: { cursor: '' } }),
     remove: vi.fn(),
     on: vi.fn(
@@ -264,5 +265,74 @@ describe('MapView', () => {
     expect(onSelectPlace).toHaveBeenCalledWith(routePlaces[0].id)
     expect(mapLibreMock.popup.setText).toHaveBeenCalledWith(routePlaces[0].title)
     unmount()
+  })
+
+  it('keeps a mobile route above the current bottom-sheet height', () => {
+    const originalWidth = window.innerWidth
+    const originalHeight = window.innerHeight
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 390,
+    })
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: 780,
+    })
+    const routePath = [
+      [39.8438529, 57.602525],
+      [39.830268, 57.611773],
+    ] as const
+
+    const { rerender, unmount } = render(
+      <MapView
+        places={[]}
+        routePath={routePath}
+        routePanelState="compact"
+        onSelectPlace={vi.fn()}
+      />,
+    )
+
+    expect(mapLibreMock.map.fitBounds).toHaveBeenLastCalledWith(
+      [
+        [39.830268, 57.602525],
+        [39.8438529, 57.611773],
+      ],
+      {
+        padding: { top: 76, right: 28, bottom: 200, left: 28 },
+        maxZoom: 15,
+        duration: 700,
+      },
+    )
+
+    rerender(
+      <MapView
+        places={[]}
+        routePath={routePath}
+        routePanelState="half"
+        onSelectPlace={vi.fn()}
+      />,
+    )
+
+    expect(mapLibreMock.map.fitBounds).toHaveBeenLastCalledWith(
+      [
+        [39.830268, 57.602525],
+        [39.8438529, 57.611773],
+      ],
+      {
+        padding: { top: 76, right: 28, bottom: 430, left: 28 },
+        maxZoom: 15,
+        duration: 700,
+      },
+    )
+
+    unmount()
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: originalWidth,
+    })
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: originalHeight,
+    })
   })
 })

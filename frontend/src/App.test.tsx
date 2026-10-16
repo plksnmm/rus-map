@@ -189,6 +189,26 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: '«Красный Перекоп»' }),
     ).toBeInTheDocument()
+    const routePanel = screen
+      .getByRole('heading', { name: '«Красный Перекоп»' })
+      .closest('aside')
+    expect(routePanel).toHaveClass('mobile-sheet--compact')
+    const sheetHandle = screen.getByRole('button', {
+      name: 'Показать подробности маршрута',
+    })
+    expect(sheetHandle).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(sheetHandle)
+    expect(routePanel).toHaveClass('mobile-sheet--half')
+    expect(
+      screen.getByRole('button', { name: 'Свернуть подробности маршрута' }),
+    ).toHaveAttribute('aria-expanded', 'true')
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Описание и материалы' }),
+    )
+    expect(routePanel).toHaveClass('mobile-sheet--expanded')
+    expect(
+      screen.getByRole('button', { name: 'Скрыть описание и материалы' }),
+    ).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getAllByRole('listitem')).toHaveLength(3)
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),
