@@ -276,12 +276,6 @@ function PublicMapApp() {
               {isRoutesOpen ? 'Закрыть' : 'Маршруты'}
             </span>
           </button>
-          <a
-            className="btn app-admin-link btn-sm"
-            href={`${import.meta.env.BASE_URL}admin`}
-          >
-            Редакторская
-          </a>
           <button
             className={`btn app-add-button btn-sm${isSubmissionOpen ? ' is-active' : ''}`}
             type="button"
