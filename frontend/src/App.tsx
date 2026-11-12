@@ -269,12 +269,7 @@ function PublicMapApp() {
             aria-label={isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
             onClick={handleToggleRoutes}
           >
-            <span className="route-button-wide-label">
-              {isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
-            </span>
-            <span className="route-button-mobile-label">
-              {isRoutesOpen ? 'Закрыть' : 'Маршруты'}
-            </span>
+            {isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
           </button>
           <button
             className={`btn app-add-button btn-sm${isSubmissionOpen ? ' is-active' : ''}`}
@@ -284,14 +279,28 @@ function PublicMapApp() {
             {isSubmissionOpen ? 'Закрыть форму' : 'Добавить место'}
           </button>
           <details className="app-mobile-menu">
-            <summary aria-label="Другие действия">•••</summary>
+            <summary aria-label="Открыть меню">
+              <span className="app-mobile-menu-icon" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </span>
+            </summary>
             <div className="app-mobile-menu-popover">
-              <a
-                href={`${import.meta.env.BASE_URL}admin`}
-                aria-label="Открыть редакторскую"
+              <button
+                type="button"
+                aria-label={
+                  isRoutesOpen
+                    ? 'Закрыть маршрут из мобильного меню'
+                    : 'Открыть маршруты из мобильного меню'
+                }
+                onClick={(event) => {
+                  event.currentTarget.closest('details')?.removeAttribute('open')
+                  handleToggleRoutes()
+                }}
               >
-                Редакторская
-              </a>
+                {isRoutesOpen ? 'Закрыть маршрут' : 'Маршруты'}
+              </button>
               <button
                 type="button"
                 aria-label={
@@ -310,6 +319,12 @@ function PublicMapApp() {
               >
                 {isSubmissionOpen ? 'Закрыть форму' : 'Предложить место'}
               </button>
+              <a
+                href={`${import.meta.env.BASE_URL}admin`}
+                aria-label="Открыть редакторскую"
+              >
+                Редакторская
+              </a>
             </div>
           </details>
         </div>

@@ -84,11 +84,41 @@ describe('App', () => {
     expect(
       screen.getByRole('button', { name: 'Добавить место' }),
     ).toBeEnabled()
+    expect(screen.getByLabelText('Открыть меню')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', {
+        name: 'Открыть маршруты из мобильного меню',
+      }),
+    ).toHaveTextContent('Маршруты')
     expect(screen.queryByRole('link', { name: 'Редакторская' })).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Открыть редакторскую' })).toHaveAttribute(
       'href',
       '/admin',
     )
+  })
+
+  it('opens routes from the mobile menu and closes the menu', async () => {
+    render(<App />)
+
+    const mobileMenu = screen.getByLabelText('Открыть меню').closest('details')
+    expect(mobileMenu).not.toBeNull()
+    mobileMenu?.setAttribute('open', '')
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Открыть маршруты из мобильного меню',
+      }),
+    )
+
+    expect(mobileMenu).not.toHaveAttribute('open')
+    expect(
+      await screen.findByRole('heading', { name: 'Маршруты' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', {
+        name: 'Закрыть маршрут из мобильного меню',
+      }),
+    ).toBeInTheDocument()
   })
 
   it('opens and closes the public place proposal form', async () => {
