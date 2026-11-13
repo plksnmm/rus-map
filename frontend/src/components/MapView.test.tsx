@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import MapView from './MapView'
 
@@ -6,6 +6,7 @@ type MapEventHandler = (event?: unknown) => void
 
 const mapLibreMock = vi.hoisted(() => {
   const handlers = new globalThis.Map<string, MapEventHandler>()
+  const markerElements: HTMLButtonElement[] = []
   const mapOptions: { current?: Record<string, unknown> } = {}
   const source = { setData: vi.fn() }
   const popup = {
@@ -24,6 +25,7 @@ const mapLibreMock = vi.hoisted(() => {
     getSource: vi.fn().mockReturnValue(source),
     getStyle: vi.fn().mockReturnValue({ layers: [] }),
     setLayoutProperty: vi.fn(),
+    getZoom: vi.fn().mockReturnValue(2.1),
     fitBounds: vi.fn(),
     flyTo: vi.fn(),
     resize: vi.fn(),
@@ -53,7 +55,7 @@ const mapLibreMock = vi.hoisted(() => {
     ),
   }
 
-  return { handlers, map, mapOptions, popup, source }
+  return { handlers, map, mapOptions, markerElements, popup, source }
 })
 
 vi.mock('maplibre-gl', () => ({
@@ -62,6 +64,27 @@ vi.mock('maplibre-gl', () => ({
     constructor(options: Record<string, unknown>) {
       mapLibreMock.mapOptions.current = options
       return mapLibreMock.map
+    }
+  },
+  Marker: class {
+    element: HTMLButtonElement
+
+    constructor({ element }: { element: HTMLButtonElement }) {
+      this.element = element
+      mapLibreMock.markerElements.push(element)
+    }
+
+    setLngLat() {
+      return this
+    }
+
+    addTo() {
+      document.body.append(this.element)
+      return this
+    }
+
+    remove() {
+      this.element.remove()
     }
   },
   NavigationControl: vi.fn(),
@@ -78,13 +101,15 @@ describe('MapView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mapLibreMock.handlers.clear()
+    mapLibreMock.markerElements.length = 0
+    mapLibreMock.map.getZoom.mockReturnValue(2.1)
   })
 
-  it('adds a places layer and opens a titled popup on marker click', () => {
+  it('adds scalable semantic icons and opens a titled popup on marker click', async () => {
     const onSelectPlace = vi.fn()
     const place = {
-      id: 'db21fe63-a06c-49de-8762-70cbe9c51601',
-      title: 'Завод «Красный богатырь»',
+      id: 'e2457cad-b0e2-45b4-8e76-81e09b3d1fed',
+      title: 'Сысертский электротехнический завод',
       latitude: 55.811,
       longitude: 37.691,
     }
@@ -124,6 +149,20 @@ describe('MapView', () => {
         type: 'circle',
       }),
     )
+
+    const marker = await screen.findByRole('button', { name: place.title })
+    expect(marker).toHaveClass(
+      'place-svg-marker',
+      'place-svg-marker--active',
+      'place-svg-marker--factory',
+    )
+    expect(marker).toHaveStyle({ width: '24px', height: '24px' })
+    const shape = marker.querySelector<HTMLElement>('.place-svg-marker__shape')
+    expect(shape?.style.maskImage).toContain('working-factory.svg')
+
+    mapLibreMock.map.getZoom.mockReturnValue(14)
+    mapLibreMock.handlers.get('zoom')?.()
+    expect(marker).toHaveStyle({ width: '69px', height: '69px' })
     expect(mapLibreMock.map.addLayer).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'submission-location-marker',
@@ -132,10 +171,7 @@ describe('MapView', () => {
       }),
     )
 
-    mapLibreMock.handlers.get('click:places-markers')?.({
-      features: [{ properties: { id: place.id, title: place.title } }],
-      lngLat: { lng: place.longitude, lat: place.latitude },
-    })
+    fireEvent.click(marker)
 
     expect(onSelectPlace).toHaveBeenCalledWith(place.id)
     expect(mapLibreMock.popup.setText).toHaveBeenCalledWith(place.title)
@@ -143,6 +179,25 @@ describe('MapView', () => {
 
     unmount()
     expect(mapLibreMock.map.remove).toHaveBeenCalledOnce()
+  })
+
+  it('uses the inactive color class for a closed factory', async () => {
+    const place = {
+      id: 'bbe880f1-4bf5-4b49-889a-7ccab143a6dd',
+      title: 'Кусковский химический завод',
+      latitude: 55.7433,
+      longitude: 37.803,
+    }
+
+    const { unmount } = render(
+      <MapView places={[place]} onSelectPlace={vi.fn()} />,
+    )
+
+    expect(
+      await screen.findByRole('button', { name: place.title }),
+    ).toHaveClass('place-svg-marker--inactive', 'place-svg-marker--factory')
+
+    unmount()
   })
 
   it('returns clicked coordinates while selecting a proposed place', () => {

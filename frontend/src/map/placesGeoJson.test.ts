@@ -24,6 +24,7 @@ describe('placesToGeoJson', () => {
           properties: {
             id: 'db21fe63-a06c-49de-8762-70cbe9c51601',
             title: 'Завод «Красный богатырь»',
+            markerKind: null,
           },
         },
       ],
@@ -35,5 +36,20 @@ describe('placesToGeoJson', () => {
       type: 'FeatureCollection',
       features: [],
     })
+  })
+
+  it('adds the configured semantic marker kind', () => {
+    const result = placesToGeoJson([
+      {
+        id: 'bbe880f1-4bf5-4b49-889a-7ccab143a6dd',
+        title: 'Кусковский химический завод',
+        latitude: 55.733,
+        longitude: 37.81,
+      },
+    ])
+
+    expect(result.features[0].properties.markerKind).toBe(
+      'destroyed-factory',
+    )
   })
 })

@@ -1,4 +1,5 @@
 import type { PlaceSummary } from '../api/places'
+import { getPlaceMarkerKind, type PlaceMarkerKind } from './placeMarkerKinds'
 
 export interface PlaceFeatureCollection {
   type: 'FeatureCollection'
@@ -14,6 +15,7 @@ interface PlaceFeature {
   properties: {
     id: string
     title: string
+    markerKind: PlaceMarkerKind | null
   }
 }
 
@@ -31,6 +33,7 @@ export function placesToGeoJson(
       properties: {
         id: place.id,
         title: place.title,
+        markerKind: getPlaceMarkerKind(place.id),
       },
     })),
   }

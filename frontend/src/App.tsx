@@ -257,9 +257,7 @@ function PublicMapApp() {
           />
           <div className="brand-copy">
             <span className="navbar-brand mb-0 h1">Русь пролетарская</span>
-            <span className="app-subtitle d-none d-sm-block">
-              Карта мест пролетарской силы
-            </span>
+            <span className="app-subtitle">места пролетарской силы</span>
           </div>
         </div>
         <div className="app-header-actions">
@@ -319,23 +317,12 @@ function PublicMapApp() {
               >
                 {isSubmissionOpen ? 'Закрыть форму' : 'Предложить место'}
               </button>
-              <a
-                href={`${import.meta.env.BASE_URL}admin`}
-                aria-label="Открыть редакторскую"
-              >
-                Редакторская
-              </a>
             </div>
           </details>
         </div>
       </header>
 
       <section className="map-layout" aria-label="Карта мест">
-        {!isLoading && !hasError && places.length > 0 && (
-          <div className="mobile-map-status" role="status">
-            На карте: {places.length}
-          </div>
-        )}
         <aside
           className={`place-panel shadow-sm${selectedPlaceId || isSubmissionOpen || isRoutesOpen ? ' place-panel--detail' : ' place-panel--overview'}${selectedPlaceId ? ' place-panel--place' : ''}${isSubmissionOpen ? ' place-panel--submission' : ''}${isRoutesOpen && selectedRoute === null ? ' place-panel--routes' : ''}${selectedRoute ? ` place-panel--route mobile-sheet--${mobileRouteSheetState}` : ''}`}
         >
