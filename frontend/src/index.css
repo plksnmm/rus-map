@@ -1,7 +1,14 @@
 :root {
+  --palette-ink: #081919;
+  --palette-dark: #223330;
+  --palette-mid: #4d524b;
+  --palette-light: #837f78;
+  --palette-red-dark: #65060e;
+  --palette-red: #ce1a1e;
+
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #212529;
-  background: #f8f9fa;
+  color: var(--palette-ink);
+  background: var(--palette-dark);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

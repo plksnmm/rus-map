@@ -85,16 +85,16 @@ describe('App', () => {
       screen.getByRole('button', { name: 'Добавить место' }),
     ).toBeEnabled()
     expect(screen.getByLabelText('Открыть меню')).toBeInTheDocument()
+    expect(screen.getByText('места пролетарской силы')).toBeInTheDocument()
     expect(
       screen.getByRole('button', {
         name: 'Открыть маршруты из мобильного меню',
       }),
     ).toHaveTextContent('Маршруты')
     expect(screen.queryByRole('link', { name: 'Редакторская' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Открыть редакторскую' })).toHaveAttribute(
-      'href',
-      '/admin',
-    )
+    expect(
+      screen.queryByRole('link', { name: 'Открыть редакторскую' }),
+    ).not.toBeInTheDocument()
   })
 
   it('opens routes from the mobile menu and closes the menu', async () => {
@@ -165,6 +165,8 @@ describe('App', () => {
     expect(await screen.findByText('На карте мест:')).toHaveTextContent(
       'На карте мест: 1',
     )
+    expect(screen.queryByText('На карте: 1')).not.toBeInTheDocument()
+    expect(screen.queryByText('На карте: 1')).not.toBeInTheDocument()
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),
     ).toHaveAttribute('data-place-count', '1')

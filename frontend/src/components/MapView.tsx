@@ -2,20 +2,31 @@ import { useEffect, useRef } from 'react'
 import {
   GeoJSONSource,
   Map,
+  type MapLayerMouseEvent,
+  Marker,
   NavigationControl,
   Popup,
   ScaleControl,
   setWorkerUrl,
 } from 'maplibre-gl'
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
+import activeProtestMarkerUrl from '../assets/map-markers/active-protest.svg?no-inline'
+import destroyedFactoryMarkerUrl from '../assets/map-markers/destroyed-factory.svg?no-inline'
+import endedProtestMarkerUrl from '../assets/map-markers/ended-protest.svg?no-inline'
+import workingFactoryMarkerUrl from '../assets/map-markers/working-factory.svg?no-inline'
 import type { GeocodingResult } from '../api/geocoding'
 import type { PlaceSummary } from '../api/places'
 import type { MapLocation } from './PlaceSubmissionForm'
 import {
   emphasizeRegionBoundaries,
   localizeMapLabels,
+  recolorBaseMap,
 } from '../map/localizeStyle'
 import { placesToGeoJson } from '../map/placesGeoJson'
+import {
+  getPlaceMarkerKind,
+  type PlaceMarkerKind,
+} from '../map/placeMarkerKinds'
 import {
   type RouteCoordinate,
   routeLineToGeoJson,
@@ -33,8 +44,37 @@ const ROUTE_LINE_LAYER_ID = 'curated-route-line'
 const ROUTE_STOPS_SOURCE_ID = 'curated-route-stops'
 const ROUTE_STOPS_LAYER_ID = 'curated-route-stops'
 const ROUTE_STOP_LABELS_LAYER_ID = 'curated-route-stop-labels'
+const MAP_ACCENT_COLOR = '#ce1a1e'
+const MAP_INK_COLOR = '#081919'
+const MAP_DARK_COLOR = '#223330'
+const MAP_LIGHT_COLOR = '#837f78'
 const DRAFT_SOURCE_ID = 'submission-location'
 const DRAFT_LAYER_ID = 'submission-location-marker'
+
+const PLACE_MARKER_URLS: Record<PlaceMarkerKind, string> = {
+  'active-protest': activeProtestMarkerUrl,
+  'ended-protest': endedProtestMarkerUrl,
+  'working-factory': workingFactoryMarkerUrl,
+  'destroyed-factory': destroyedFactoryMarkerUrl,
+}
+
+const ACTIVE_PLACE_MARKER_KINDS: ReadonlySet<PlaceMarkerKind> = new Set([
+  'active-protest',
+  'working-factory',
+])
+
+const PLACE_MARKER_SIZE_STOPS = [
+  [2, 24],
+  [6, 34],
+  [10, 50],
+  [14, 69],
+  [18, 88],
+] as const
+
+interface SemanticPlaceMarker {
+  marker: Marker
+  element: HTMLButtonElement
+}
 
 setWorkerUrl(maplibreWorkerUrl)
 
@@ -142,6 +182,108 @@ function focusMap(map: Map, focusLocation: GeocodingResult | null | undefined) {
   })
 }
 
+function placeMarkerSize(zoom: number): number {
+  const first = PLACE_MARKER_SIZE_STOPS[0]
+  if (zoom <= first[0]) {
+    return first[1]
+  }
+
+  for (let index = 1; index < PLACE_MARKER_SIZE_STOPS.length; index += 1) {
+    const previous = PLACE_MARKER_SIZE_STOPS[index - 1]
+    const current = PLACE_MARKER_SIZE_STOPS[index]
+    if (zoom <= current[0]) {
+      const progress = (zoom - previous[0]) / (current[0] - previous[0])
+      return previous[1] + progress * (current[1] - previous[1])
+    }
+  }
+
+  return PLACE_MARKER_SIZE_STOPS.at(-1)?.[1] ?? first[1]
+}
+
+function updateSemanticMarkerSizes(
+  markers: globalThis.Map<string, SemanticPlaceMarker>,
+  zoom: number,
+) {
+  const size = `${Math.round(placeMarkerSize(zoom))}px`
+  for (const { element } of markers.values()) {
+    element.style.width = size
+    element.style.height = size
+  }
+}
+
+function updateSemanticMarkerRouteState(
+  markers: globalThis.Map<string, SemanticPlaceMarker>,
+  routePlaces: readonly PlaceSummary[],
+) {
+  const routePlaceIds = new Set(routePlaces.map((place) => place.id))
+  for (const [placeId, { element }] of markers) {
+    element.hidden = routePlaceIds.has(placeId)
+  }
+}
+
+function updateSemanticMarkerSelectionState(
+  markers: globalThis.Map<string, SemanticPlaceMarker>,
+  isSelectingLocation: boolean,
+) {
+  for (const { element } of markers.values()) {
+    element.style.pointerEvents = isSelectingLocation ? 'none' : ''
+  }
+}
+
+function syncSemanticPlaceMarkers(
+  map: Map,
+  places: readonly PlaceSummary[],
+  markers: globalThis.Map<string, SemanticPlaceMarker>,
+  onSelectPlace: (placeId: string) => void,
+  routePlaces: readonly PlaceSummary[],
+  isSelectingLocation: boolean,
+) {
+  for (const { marker } of markers.values()) {
+    marker.remove()
+  }
+  markers.clear()
+
+  for (const place of places) {
+    const markerKind = getPlaceMarkerKind(place.id)
+    if (!markerKind) {
+      continue
+    }
+
+    const element = document.createElement('button')
+    element.type = 'button'
+    element.className = `place-svg-marker place-svg-marker--${
+      ACTIVE_PLACE_MARKER_KINDS.has(markerKind) ? 'active' : 'inactive'
+    }${markerKind.endsWith('factory') ? ' place-svg-marker--factory' : ''}`
+    element.setAttribute('aria-label', place.title)
+
+    const shape = document.createElement('span')
+    shape.className = 'place-svg-marker__shape'
+    shape.setAttribute('aria-hidden', 'true')
+    const maskUrl = `url("${PLACE_MARKER_URLS[markerKind]}")`
+    shape.style.maskImage = maskUrl
+    shape.style.setProperty('-webkit-mask-image', maskUrl)
+    element.append(shape)
+
+    element.addEventListener('click', (event) => {
+      event.stopPropagation()
+      onSelectPlace(place.id)
+      new Popup({ offset: 12 })
+        .setLngLat([place.longitude, place.latitude])
+        .setText(place.title)
+        .addTo(map)
+    })
+
+    const marker = new Marker({ element, anchor: 'center' })
+      .setLngLat([place.longitude, place.latitude])
+      .addTo(map)
+    markers.set(place.id, { marker, element })
+  }
+
+  updateSemanticMarkerSizes(markers, map.getZoom())
+  updateSemanticMarkerRouteState(markers, routePlaces)
+  updateSemanticMarkerSelectionState(markers, isSelectingLocation)
+}
+
 export default function MapView({
   places,
   routePlaces = [],
@@ -155,6 +297,9 @@ export default function MapView({
 }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<Map>(null)
+  const semanticMarkersRef = useRef(
+    new globalThis.Map<string, SemanticPlaceMarker>(),
+  )
   const placesDataRef = useRef(placesToGeoJson(places))
   const routePlacesRef = useRef(routePlaces)
   const routePathRef = useRef(routePath)
@@ -166,13 +311,27 @@ export default function MapView({
   useEffect(() => {
     const placesData = placesToGeoJson(places)
     placesDataRef.current = placesData
-    mapRef.current
-      ?.getSource<GeoJSONSource>(PLACES_SOURCE_ID)
-      ?.setData(placesData)
-  }, [places])
+    const map = mapRef.current
+    const source = map?.getSource<GeoJSONSource>(PLACES_SOURCE_ID)
+    source?.setData(placesData)
+    if (map && source) {
+      syncSemanticPlaceMarkers(
+        map,
+        places,
+        semanticMarkersRef.current,
+        onSelectPlace,
+        routePlacesRef.current,
+        selectingRef.current,
+      )
+    }
+  }, [onSelectPlace, places])
 
   useEffect(() => {
     routePlacesRef.current = routePlaces
+    updateSemanticMarkerRouteState(
+      semanticMarkersRef.current,
+      routePlaces,
+    )
     mapRef.current
       ?.getSource<GeoJSONSource>(ROUTE_STOPS_SOURCE_ID)
       ?.setData(routeStopsToGeoJson(routePlaces))
@@ -197,6 +356,10 @@ export default function MapView({
         ? 'crosshair'
         : ''
     }
+    updateSemanticMarkerSelectionState(
+      semanticMarkersRef.current,
+      isSelectingLocation,
+    )
   }, [isSelectingLocation, onSelectLocation])
 
   useEffect(() => {
@@ -216,6 +379,7 @@ export default function MapView({
     if (!mapContainer.current) {
       return
     }
+    const semanticMarkers = semanticMarkersRef.current
 
     const map = new Map({
       container: mapContainer.current,
@@ -233,6 +397,7 @@ export default function MapView({
 
     map.on('load', () => {
       localizeMapLabels(map)
+      recolorBaseMap(map)
       emphasizeRegionBoundaries(map)
       map.addSource(ROUTE_LINE_SOURCE_ID, {
         type: 'geojson',
@@ -243,7 +408,7 @@ export default function MapView({
         type: 'line',
         source: ROUTE_LINE_SOURCE_ID,
         paint: {
-          'line-color': '#a82626',
+          'line-color': MAP_DARK_COLOR,
           'line-width': 5,
           'line-opacity': 0.82,
         },
@@ -256,10 +421,11 @@ export default function MapView({
         id: PLACES_LAYER_ID,
         type: 'circle',
         source: PLACES_SOURCE_ID,
+        filter: ['==', ['get', 'markerKind'], null],
         paint: {
-          'circle-color': '#a82626',
-          'circle-radius': 8,
-          'circle-stroke-color': '#ffffff',
+          'circle-color': MAP_DARK_COLOR,
+          'circle-radius': 7,
+          'circle-stroke-color': MAP_INK_COLOR,
           'circle-stroke-width': 2,
         },
       })
@@ -272,9 +438,9 @@ export default function MapView({
         type: 'circle',
         source: ROUTE_STOPS_SOURCE_ID,
         paint: {
-          'circle-color': '#a82626',
+          'circle-color': MAP_INK_COLOR,
           'circle-radius': 12,
-          'circle-stroke-color': '#ffffff',
+          'circle-stroke-color': MAP_LIGHT_COLOR,
           'circle-stroke-width': 3,
         },
       })
@@ -287,7 +453,7 @@ export default function MapView({
           'text-size': 12,
         },
         paint: {
-          'text-color': '#ffffff',
+          'text-color': MAP_LIGHT_COLOR,
         },
       })
       map.addSource(DRAFT_SOURCE_ID, {
@@ -299,9 +465,9 @@ export default function MapView({
         type: 'circle',
         source: DRAFT_SOURCE_ID,
         paint: {
-          'circle-color': '#a82626',
+          'circle-color': MAP_ACCENT_COLOR,
           'circle-radius': 10,
-          'circle-stroke-color': '#f7f1e7',
+          'circle-stroke-color': MAP_LIGHT_COLOR,
           'circle-stroke-width': 4,
         },
       })
@@ -318,7 +484,7 @@ export default function MapView({
         })
       })
 
-      map.on('click', PLACES_LAYER_ID, (event) => {
+      const handlePlaceClick = (event: MapLayerMouseEvent) => {
         if (selectingRef.current) {
           return
         }
@@ -339,6 +505,42 @@ export default function MapView({
           .setLngLat(event.lngLat)
           .setText(title)
           .addTo(map)
+      }
+
+      const addPlaceLayerInteractions = (layerId: string) => {
+        map.on('click', layerId, handlePlaceClick)
+        map.on('mouseenter', layerId, () => {
+          if (!selectingRef.current) {
+            map.getCanvas().style.cursor = 'pointer'
+          }
+        })
+        map.on('mouseleave', layerId, () => {
+          map.getCanvas().style.cursor = selectingRef.current
+            ? 'crosshair'
+            : ''
+        })
+      }
+
+      addPlaceLayerInteractions(PLACES_LAYER_ID)
+
+      syncSemanticPlaceMarkers(
+        map,
+        placesDataRef.current.features.map((feature) => ({
+          id: feature.properties.id,
+          title: feature.properties.title,
+          longitude: feature.geometry.coordinates[0],
+          latitude: feature.geometry.coordinates[1],
+        })),
+        semanticMarkers,
+        onSelectPlace,
+        routePlacesRef.current,
+        selectingRef.current,
+      )
+      map.on('zoom', () => {
+        updateSemanticMarkerSizes(
+          semanticMarkers,
+          map.getZoom(),
+        )
       })
 
       map.on('click', ROUTE_STOPS_LAYER_ID, (event) => {
@@ -356,14 +558,6 @@ export default function MapView({
           .addTo(map)
       })
 
-      map.on('mouseenter', PLACES_LAYER_ID, () => {
-        if (!selectingRef.current) {
-          map.getCanvas().style.cursor = 'pointer'
-        }
-      })
-      map.on('mouseleave', PLACES_LAYER_ID, () => {
-        map.getCanvas().style.cursor = selectingRef.current ? 'crosshair' : ''
-      })
       map.on('mouseenter', ROUTE_STOPS_LAYER_ID, () => {
         if (!selectingRef.current) {
           map.getCanvas().style.cursor = 'pointer'
@@ -372,6 +566,7 @@ export default function MapView({
       map.on('mouseleave', ROUTE_STOPS_LAYER_ID, () => {
         map.getCanvas().style.cursor = selectingRef.current ? 'crosshair' : ''
       })
+
     })
 
     const handleResize = () => {
@@ -382,6 +577,10 @@ export default function MapView({
 
     return () => {
       window.removeEventListener('resize', handleResize)
+      for (const { marker } of semanticMarkers.values()) {
+        marker.remove()
+      }
+      semanticMarkers.clear()
       mapRef.current = null
       map.remove()
     }
