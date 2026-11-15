@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "place_id": "854cc672-1f90-53fe-a9da-9a6d715d73a4",
+  "images": [
+    {
+      "media_id": "b00774c2-b56c-535d-a75d-496516d99411",
+      "material_id": "9ccdf71b-169b-5add-9ec8-cda7c1aa2076",
+      "revision_id": "9b08155a-aed5-5e7a-8afa-f60b73396959",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Трактор «Универсал» у Владимирского тракторного завода: историческая модель, снимок 2011 года.",
+      "source": "Aleksandr Markin; CC BY-SA 2.0; https://commons.wikimedia.org/wiki/File:Tractor_%22Universal%22._Tractor_factory,_Vladimir.(HDR)_(6153536736).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Tractor_%22Universal%22._Tractor_factory,_Vladimir.(HDR)_(6153536736).jpg",
+      "file": "vladimir-tractor/universal-tractor-2011.jpg",
+      "sha256": "05c9f5377b91f253cedaa4f96442f686800f6d9328cd29ce8a60e7e77b669d3f"
+    }
+  ]
+}

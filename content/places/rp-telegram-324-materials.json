@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "place_id": "0b6c3e44-ca0f-55b3-a54b-25756e3dc03e",
+  "materials": [
+    {
+      "id": "e1170374-5725-5b4e-bbf4-e59709132749",
+      "type": "text",
+      "status": "published",
+      "title": "Точность координат",
+      "source": "telegram_rus_proletarskaya_import_ready.json",
+      "revisions": [
+        {
+          "id": "ce61fd9f-7e69-5c41-8695-2da4e9b1a9d5",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Тип точки: large_park_reference_point\n\nУверенность: medium_area_only\n\nПримечание: Геометка обзорная, в центральной части большого лесопарка. Конкретный участок предполагаемых работ не локализован."
+        }
+      ]
+    },
+    {
+      "id": "7b94b3ad-0b04-56a1-8dab-1edbcb1cb7b5",
+      "type": "external_link",
+      "status": "published",
+      "title": "Исходная публикация «Русь пролетарская» №324",
+      "source": "Видеообращение по проекту трасс в Битцевском лесу.",
+      "revisions": [
+        {
+          "id": "367fccf8-e91b-59d9-b78e-b271d8ba52fa",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://t.me/rus_proletarskaya/324"
+        }
+      ]
+    },
+    {
+      "id": "8fa65654-8218-5ca2-8f16-444d2fd4e6c1",
+      "type": "external_link",
+      "status": "published",
+      "title": "Исходная публикация «Русь пролетарская» №309",
+      "source": "Ещё один материал о Битцевском лесе; объединить с карточкой #324.",
+      "revisions": [
+        {
+          "id": "6c3196b0-c145-52ed-9820-e44324e5e87a",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://t.me/rus_proletarskaya/309"
+        }
+      ]
+    },
+    {
+      "id": "03aa1fdf-8516-51bf-a8ba-d826836e2635",
+      "type": "external_link",
+      "status": "published",
+      "title": "Источник координат",
+      "source": "Ссылка из подготовленного пакета данных",
+      "revisions": [
+        {
+          "id": "a527ea20-f002-5862-8130-f929a9b65462",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://moy-region.ru/objects/bitsevskiy-les-moskva"
+        }
+      ]
+    },
+    {
+      "id": "eda63c22-95f5-5573-91f4-8942307073b1",
+      "type": "external_link",
+      "status": "published",
+      "title": "Дополнительный источник: commons.wikimedia.org",
+      "source": "Ссылка из подготовленного пакета данных",
+      "revisions": [
+        {
+          "id": "630148f1-ca26-5189-bd8d-be407dafdf26",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://commons.wikimedia.org/wiki/File:Moscow_aerial_view_looking_towards_the_south-east.JPG"
+        }
+      ]
+    }
+  ]
+}

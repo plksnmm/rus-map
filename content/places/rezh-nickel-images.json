@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "place_id": "a4e5d685-2aef-4cf8-b2c6-51bbfe7b2aaf",
+  "images": [
+    {
+      "media_id": "29d01f83-3721-406e-a143-6a91b0a4a935",
+      "material_id": "41bab9cb-d586-4464-b3ce-bd416ab17533",
+      "revision_id": "513c664f-7bd4-4d67-ad0d-8417bc221146",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Корпуса бывшего завода «Режникель», 2024 год",
+      "source": "Vyacheslav Bukharov / Wikimedia Commons, CC BY-SA 4.0",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Industry_of_Rezh_(July_2024)_-_1.jpg",
+      "file": "rezh-nickel/factory-buildings-2024.jpg",
+      "sha256": "b5fa6d2a878edc330a39b554cf4fcf00c595f4778fb166e8ff7b9ea2ebd72b1f"
+    },
+    {
+      "media_id": "5912bb9a-324d-4ffe-b980-496b2481c294",
+      "material_id": "fdb00622-085d-4b49-a0ed-68376220c008",
+      "revision_id": "e8f4ade8-0e94-4b83-b93b-07cc1ecb913a",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Шлаковые отвалы бывшего Режского никелевого завода, 2024 год",
+      "source": "Vyacheslav Bukharov / Wikimedia Commons, CC BY-SA 4.0",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Slag_heaps_in_Rezh_(July_2024)_-_1.jpg",
+      "file": "rezh-nickel/slag-heaps-2024.jpg",
+      "sha256": "4f6758b9105c2c2eeca7deab5a0643c7baf96802ad77f96b0c560608dfdbc09d"
+    }
+  ]
+}

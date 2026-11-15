@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "place_id": "71cd30a1-b2a7-5c2e-bca6-e9cc3d654d3c",
+  "materials": [
+    {
+      "id": "16c838ff-b8aa-5ff3-bd35-a0dbc482f054",
+      "type": "text",
+      "status": "published",
+      "title": "Статус предприятия",
+      "source": "central_siberia_closed_factories_5.json",
+      "revisions": [
+        {
+          "id": "3af5641a-20f2-5724-b9ab-c35d285fb0b1",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Начало работы: 1942 (запуск производства после эвакуации оборудования)\n\nОстановка производства: 2008–2009 (попытка возобновления 2008, остановка в январе 2009)\n\nЮридический статус: ОАО «Алтайский трактор» ликвидировано после банкротства (документы переданы в архив в 2012 году); отдельное ООО «Алтайский трактор» признано банкротом в 2011 году.\n\nСостояние площадки: Историческое тракторное производство закрыто; часть площадки продолжает использоваться другими организациями."
+        }
+      ]
+    },
+    {
+      "id": "5c96d95b-63df-5753-9844-9433d68ad7d0",
+      "type": "external_link",
+      "status": "published",
+      "title": "Банкфакс — банкротство наследника «Алттрака»",
+      "source": "Попытка возобновления выпуска в августе 2008, остановка в январе 2009 без заказов, банкротство 2011.",
+      "revisions": [
+        {
+          "id": "9fdc719f-7139-5cd3-ab9c-6e46475bc7cb",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.bankfax.ru/news/79451/"
+        }
+      ]
+    },
+    {
+      "id": "4c8251b9-9b13-56c0-881e-6abfef572f4b",
+      "type": "external_link",
+      "status": "published",
+      "title": "Сохранность документов ОАО «Алтайский трактор»",
+      "source": "Ликвидация старого ОАО, передача кадровых архивов за 1942–2011 годы.",
+      "revisions": [
+        {
+          "id": "35572768-4b1c-5d53-8635-193d7f28c776",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.flatik.ru/sohrannoste-dokumentov-oao-altajskij-traktor-obespechena-rubco"
+        }
+      ]
+    },
+    {
+      "id": "162d53c5-0344-5d90-8a49-d1cf96fb9c81",
+      "type": "external_link",
+      "status": "published",
+      "title": "Постановление, исторический адрес предприятия",
+      "source": "Исторический адрес: Рубцовск, ул. Тракторная, 17.",
+      "revisions": [
+        {
+          "id": "61f02785-fc46-540c-b25b-0007e2145b71",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://base.garant.ru/7450289/2ef42a8e87c84be095b5900e7a41860a/"
+        }
+      ]
+    },
+    {
+      "id": "ad5e8741-f419-5bed-99ed-89d020568fbd",
+      "type": "external_link",
+      "status": "published",
+      "title": "Адресный справочник, Тракторная 17",
+      "source": "Примерные координаты современного адресного объекта.",
+      "revisions": [
+        {
+          "id": "a828eee5-0f19-5d45-b390-d9895aa6ee93",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://alt.guidebook.ru/rubtsovsk/traktornaya/telefonika.html"
+        }
+      ]
+    },
+    {
+      "id": "803eab65-3313-5af6-a53f-3c234b57cc6e",
+      "type": "external_link",
+      "status": "published",
+      "title": "Wikimedia Commons — территория АТЗ, 2024",
+      "source": "Современное состояние территории и фото с лицензией.",
+      "revisions": [
+        {
+          "id": "55faa781-cd6e-5f5a-8fd0-33e63a91dfc8",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://commons.wikimedia.org/wiki/File:Territory_of_Altai_tractor_plant_in_Rubtsovsk_-_2024-09-21a.jpg"
+        }
+      ]
+    }
+  ]
+}

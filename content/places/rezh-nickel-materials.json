@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "place_id": "a4e5d685-2aef-4cf8-b2c6-51bbfe7b2aaf",
+  "materials": [
+    {
+      "id": "f088fe8b-6195-4b43-8389-22ef93996cac",
+      "type": "external_link",
+      "status": "published",
+      "title": "ГАСО — архивный фонд Режского никелевого завода",
+      "source": "Архивный фонд: документы производства, кадров и профкома; история ОАО до 2001 года.",
+      "revisions": [
+        {
+          "id": "ee4db803-6b79-4175-93c3-c18c3047a49e",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://gaso-ural.ru/nsa/spravochnik2021/fondi-organov-gosvlasti/promishlennost__/promishl-predpriatia/predpriatia-metallurg-promishl_/"
+        }
+      ]
+    },
+    {
+      "id": "54cd2fb4-6d53-4880-ad87-c332cc3c68ed",
+      "type": "external_link",
+      "status": "published",
+      "title": "MediaLike — история, продукция, закрытие и координаты",
+      "source": "Продукция, сырьевая база, остановка производства в 2017 году, увольнения и альтернативная координата.",
+      "revisions": [
+        {
+          "id": "9da8f9d1-bbfe-4d36-a017-c0bf0c91b5b6",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://medialike.ru/zavody/13832-rezhskij-nikelevyj-zavod.html"
+        }
+      ]
+    },
+    {
+      "id": "c3237e6b-1c6c-45d2-a37c-6d8cee1f2dc9",
+      "type": "external_link",
+      "status": "published",
+      "title": "Государственный доклад по окружающей среде",
+      "source": "Исчерпание местных руд к 1994 году и использование серовской руды.",
+      "revisions": [
+        {
+          "id": "4b60ce51-1897-48ca-a7c4-fb5fb233a620",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://burondt.ru/files/PublicDiscussion/PublicDiscussionFile221.pdf"
+        }
+      ]
+    },
+    {
+      "id": "cf5777a2-4f64-491e-ad99-69ae1fd4e78b",
+      "type": "external_link",
+      "status": "published",
+      "title": "Wikimedia Commons — категория Rezhnickel",
+      "source": "Координатная отметка и фотографии с открытыми лицензиями.",
+      "revisions": [
+        {
+          "id": "dec2dbd1-a4a5-4433-8104-8a4adc7327eb",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://commons.wikimedia.org/wiki/Category:Rezhnickel"
+        }
+      ]
+    },
+    {
+      "id": "fcb4dd70-f90f-4513-b279-a5e7592ee623",
+      "type": "external_link",
+      "status": "published",
+      "title": "«Правда коммунизма», 2 ноября 1978 года",
+      "source": "Историческая газетная публикация о работе цеха подготовки сырья и шахты.",
+      "revisions": [
+        {
+          "id": "05a6ff96-d35b-48be-b275-5539f4087386",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://elib.uraic.ru/bitstream/123456789/9560/1/0014288.pdf"
+        }
+      ]
+    }
+  ]
+}

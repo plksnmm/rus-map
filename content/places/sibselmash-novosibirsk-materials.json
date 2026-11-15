@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "place_id": "b4880ed8-e7bd-5093-9814-370afe4920f6",
+  "materials": [
+    {
+      "id": "54ac9852-1a2a-511a-8cbe-5f074bdee9ad",
+      "type": "text",
+      "status": "published",
+      "title": "Статус предприятия",
+      "source": "central_siberia_closed_factories_5.json",
+      "revisions": [
+        {
+          "id": "1b7e721d-b3a9-5b6c-b7d5-b8c794e69372",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Начало работы: 1929 (строительство «Сибкомбайна»)\n\nОстановка производства: 2012 (остановка промышленного производства)\n\nЮридический статус: ОАО НПО «Сибсельмаш» ликвидировано 14 августа 2025 года по итогам банкротства.\n\nСостояние площадки: Историческое производство закрыто; промышленная территория частично занята другими пользователями, правовой статус части имущества изменялся и после банкротства."
+        }
+      ]
+    },
+    {
+      "id": "169b209f-bf31-5c54-9626-22dbec522135",
+      "type": "external_link",
+      "status": "published",
+      "title": "Коммерсантъ — завершено банкротство «Сибсельмаша»",
+      "source": "Судебное завершение конкурсного производства в 2025 году.",
+      "revisions": [
+        {
+          "id": "fe254985-f0ff-5b85-a217-5f28ceb11528",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.kommersant.ru/doc/7925755"
+        }
+      ]
+    },
+    {
+      "id": "8d673674-5078-5804-bb7d-bee272a70890",
+      "type": "external_link",
+      "status": "published",
+      "title": "АиФ Новосибирск — ликвидация юридического лица",
+      "source": "Дата юридической ликвидации 14.08.2025.",
+      "revisions": [
+        {
+          "id": "d8fa62da-fb76-5fde-8768-b25f0fa2219e",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://nsk.aif.ru/business/yuridicheskoe-lico-zavoda-sibselmash-likvidirovano-v-novaosibirske"
+        }
+      ]
+    },
+    {
+      "id": "6cfaf665-10ff-5ae9-9529-e345ab9357fe",
+      "type": "external_link",
+      "status": "published",
+      "title": "НГС — судьба имущества бывшего завода, сентябрь 2026",
+      "source": "Банкротство, продажа имущества, современная судьба территории.",
+      "revisions": [
+        {
+          "id": "9b51b390-e0b8-55ec-96a9-1b4daa634c7f",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://ngs.ru/text/business/2026/09/09/76622618/"
+        }
+      ]
+    },
+    {
+      "id": "b687ddae-f41b-501a-bb7e-79bb91d4cbfc",
+      "type": "external_link",
+      "status": "published",
+      "title": "Фотогеометка проходной и авторство",
+      "source": "Фотография проходной 2024 года и координаты.",
+      "revisions": [
+        {
+          "id": "75a44e8b-2e0f-5cae-bed5-cf3305dc681b",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://commons.wikimedia.org/wiki/File:Sibselmash_01.jpg"
+        }
+      ]
+    },
+    {
+      "id": "55011346-ccd2-59b6-8eb7-d3adde141432",
+      "type": "external_link",
+      "status": "published",
+      "title": "Строительство Сибкомбайна — историческая фотография",
+      "source": "Фото строительства завода в 1930-х, уточнить юридический статус.",
+      "revisions": [
+        {
+          "id": "a16b11aa-4a3b-560d-93d5-51a11522f8e3",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://commons.wikimedia.org/wiki/File:Строительство_Сибкомбайна.jpg"
+        }
+      ]
+    }
+  ]
+}

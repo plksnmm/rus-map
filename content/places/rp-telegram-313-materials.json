@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "place_id": "65687e47-08a0-5efc-b07c-2af0ded59424",
+  "materials": [
+    {
+      "id": "a7604144-fe94-5231-adc0-a4c8ef87f145",
+      "type": "text",
+      "status": "published",
+      "title": "Точность координат",
+      "source": "telegram_rus_proletarskaya_import_ready.json",
+      "revisions": [
+        {
+          "id": "3b09e350-171a-56c2-a395-e2ffbe698a50",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Тип точки: historical_sports_complex\n\nУверенность: medium\n\nПримечание: Координаты исторического спорткомплекса из краеведческого форума со ссылкой на Росреестр. Для точного контура участка потребуется кадастровая схема."
+        }
+      ]
+    },
+    {
+      "id": "ae6ea14e-a5be-5ee3-a847-e3a6e13778ce",
+      "type": "external_link",
+      "status": "published",
+      "title": "Исходная публикация «Русь пролетарская» №313",
+      "source": "Видео о застройке территории «Трудовых резервов».",
+      "revisions": [
+        {
+          "id": "3aefa04f-23b9-5923-9f7a-0ed526c4c59b",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://t.me/rus_proletarskaya/313"
+        }
+      ]
+    },
+    {
+      "id": "4b53adf8-7e55-5788-a30c-9fc594150ea8",
+      "type": "external_link",
+      "status": "published",
+      "title": "Дополнительный источник: msk1.ru",
+      "source": "Фоторепортаж МСК1 об изменениях в парке «Трудовые резервы», 27 марта 2026; фото без разрешения не перепубликовывать.",
+      "revisions": [
+        {
+          "id": "12317124-ade8-50e0-b539-40d8181433e5",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://msk1.ru/text/gorod/2026/03/27/76333375/"
+        }
+      ]
+    },
+    {
+      "id": "cab0c3fc-2a8f-5e97-9a08-2c9627a50531",
+      "type": "external_link",
+      "status": "published",
+      "title": "Дополнительный источник: www.mn.ru",
+      "source": "Ссылка из подготовленного пакета данных",
+      "revisions": [
+        {
+          "id": "a6522acd-efba-507a-9c13-3fcc7faec1ba",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.mn.ru/short/v-yuzhnom-tushine-nachinayut-stroit-futbolnuyu-akademiyu-dinamo"
+        }
+      ]
+    },
+    {
+      "id": "a4764157-febf-5e40-b926-bfaddaea3661",
+      "type": "external_link",
+      "status": "published",
+      "title": "Источник координат",
+      "source": "Источник географической привязки из подготовленного пакета",
+      "revisions": [
+        {
+          "id": "ddd59842-462b-5145-b521-687c8a4b5329",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://tushinec.ru/topic/foto-starogo-tushino-iz-semeynykh-albomov?page=29"
+        }
+      ]
+    },
+    {
+      "id": "63b751ab-8a51-596c-80de-d0a5517afe69",
+      "type": "external_link",
+      "status": "published",
+      "title": "Открыть исходный материал",
+      "source": "Архивные виды парка «Трудовые резервы» до работ; проверка прав обязательна.",
+      "revisions": [
+        {
+          "id": "a83ee14e-fadd-5a42-8a3c-6cb1c1e7c0f2",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://tushinec.ru/article/vremena-goda-park-trudovyye-rezervy"
+        }
+      ]
+    }
+  ]
+}

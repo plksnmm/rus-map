@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "place_id": "71cd30a1-b2a7-5c2e-bca6-e9cc3d654d3c",
+  "images": [
+    {
+      "media_id": "fee4fc88-74cc-54d6-a0b6-5b011e212185",
+      "material_id": "1baea45d-1d3f-5754-ade6-4e0a083269e2",
+      "revision_id": "4f8697db-bd18-532d-ae71-a6386c2f2527",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Бывшая территория Алтайского тракторного завода в Рубцовске, вид А.",
+      "source": "Dinamik; CC BY-SA 4.0; https://commons.wikimedia.org/wiki/File:Territory_of_Altai_tractor_plant_in_Rubtsovsk_-_2024-09-21a.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Territory_of_Altai_tractor_plant_in_Rubtsovsk_-_2024-09-21a.jpg",
+      "file": "altai-tractor-rubtsovsk/territory-a-2024.jpg",
+      "sha256": "1a08161e3467fa871588e9001fdbbe0cf5962af5081c4b63962b783ee3e87019"
+    },
+    {
+      "media_id": "96f55fb0-e20d-5033-b7f4-72e8cac14ec4",
+      "material_id": "30a9d75e-59fc-5281-99bf-b8d002e1eaf9",
+      "revision_id": "91f426de-5c32-511d-a646-c5e8cf2662e2",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Бывшая территория Алтайского тракторного завода, другой ракурс.",
+      "source": "Dinamik; CC BY-SA 4.0; https://commons.wikimedia.org/wiki/File:Territory_of_Altai_tractor_plant_in_Rubtsovsk_-_2024-09-21c.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Territory_of_Altai_tractor_plant_in_Rubtsovsk_-_2024-09-21c.jpg",
+      "file": "altai-tractor-rubtsovsk/territory-c-2024.jpg",
+      "sha256": "53b88b6aabce4111d088a97d57e5fc894d917d8815575da5a2d3ce8867507ca2"
+    }
+  ]
+}

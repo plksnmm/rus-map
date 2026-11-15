@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "place_id": "ca440df3-adb8-5343-98c4-7683a49bebef",
+  "materials": [
+    {
+      "id": "375fbff0-4376-5764-89c5-c71f2b2b1d55",
+      "type": "text",
+      "status": "published",
+      "title": "Статус предприятия",
+      "source": "central_siberia_closed_factories_5.json",
+      "revisions": [
+        {
+          "id": "3a861b8c-1d98-55c5-8530-479892bb5636",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Начало работы: 1916 (история АМО)\n\nОстановка производства: 2016-09-14 (последний грузовик; главный конвейер остановлен 2013-12-13)\n\nЮридический статус: Юридическая ликвидация исходного ПАО АМО ЗИЛ не подтверждена; отдельное ООО «ЗИЛ» было ликвидировано в 2019 г. Не смешивать юридические лица.\n\nСостояние площадки: Историческое автомобильное производство остановлено; значительная часть бывшей площадки застроена или перепрофилирована."
+        }
+      ]
+    },
+    {
+      "id": "33471ffb-2ce2-5968-aa5f-42e2f8f7e481",
+      "type": "external_link",
+      "status": "published",
+      "title": "За рулём — история последних грузовиков ЗИЛ",
+      "source": "Конвейер остановился 13 декабря 2013 года, последний грузовик изготовлен 14 сентября 2016 года.",
+      "revisions": [
+        {
+          "id": "0dd63999-448c-56fa-8020-bdab8d8b9db4",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.zr.ru/content/news/928553-zhizn-posle-smerti-istoriya-sa/"
+        }
+      ]
+    },
+    {
+      "id": "e236cbe1-a400-599f-ba62-d3b0f7eb7684",
+      "type": "external_link",
+      "status": "published",
+      "title": "История ЗИЛ — памятные даты",
+      "source": "Исторические этапы и основные виды продукции.",
+      "revisions": [
+        {
+          "id": "32e6d0c7-7230-58eb-ad47-460e45553f0c",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://amozil.su/daty/"
+        }
+      ]
+    },
+    {
+      "id": "e0158950-0ca4-5112-be55-d77fc4353c14",
+      "type": "external_link",
+      "status": "published",
+      "title": "Москва в фотографиях — ЗИЛ",
+      "source": "Исторический контекст, фотоматериалы.",
+      "revisions": [
+        {
+          "id": "bc5e8c7b-85fa-5ed1-a25e-10b1d7967ca3",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://russiainphoto.ru/exhibitions/622/"
+        }
+      ]
+    },
+    {
+      "id": "f58a7cdd-f7c2-5296-b925-0f38a035886c",
+      "type": "external_link",
+      "status": "published",
+      "title": "Wikimedia Commons — бывший 2-й инструментальный цех",
+      "source": "Координаты исторического корпуса и лицензия изображения.",
+      "revisions": [
+        {
+          "id": "981839d9-92f6-5ad5-b5fb-ae0c0e7b945e",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://commons.wikimedia.org/wiki/File:Moscow,_Avtozavodskaya_Street_23_k.7_-_former_ZIL_plant_(30463480213).jpg"
+        }
+      ]
+    }
+  ]
+}

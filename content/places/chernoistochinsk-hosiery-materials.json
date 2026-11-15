@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "place_id": "0d332342-352e-4056-a682-fba4033756b6",
+  "materials": [
+    {
+      "id": "d2f2721a-295a-4150-aec9-af63f9f2682e",
+      "type": "external_link",
+      "status": "published",
+      "title": "Муниципальная история Черноисточинска — Тагил-пресс",
+      "source": "Строительство в 1947 году, переименование в 1965 году и ликвидация в августе 1999 года.",
+      "revisions": [
+        {
+          "id": "2d219d39-a338-4030-bf1a-bffe3573b969",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://tagil-press.ru/publications/46483/istorija-poselka-chernoistochinsk"
+        }
+      ]
+    },
+    {
+      "id": "c32c3b23-2204-4e9f-9a0b-03c7b5a7f614",
+      "type": "external_link",
+      "status": "published",
+      "title": "Фотолетопись Черноисточинска, часть 4 — Наш Урал",
+      "source": "Фотографии цеха 1970-х, работники и производственная программа 1955 года.",
+      "revisions": [
+        {
+          "id": "89989192-82e3-42fc-935e-a5f48fc9f084",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://nashural.ru/dostoprimechatelnosti-urala/sverdlovskaya-oblast/fotoletopis-poselka-chernoistochinsk-chernoistochinsk-v-istorii-urala-chast-4/"
+        }
+      ]
+    },
+    {
+      "id": "ffc1af79-8563-403a-aabc-f30c3c6edb3c",
+      "type": "external_link",
+      "status": "published",
+      "title": "Креативный кластер в Черноисточинске — Наш Урал",
+      "source": "Повторное использование корпусов и фотографии современного состояния площадки.",
+      "revisions": [
+        {
+          "id": "e10366fc-ebd4-4a38-9421-0b9585916fdc",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://nashural.ru/dostoprimechatelnosti-urala/sverdlovskaya-oblast/kreativnyj-klaster-v-poselke-chernoistochinsk-chast-1/"
+        }
+      ]
+    },
+    {
+      "id": "872274e6-8be6-4b3d-8e77-d6754e2f25fb",
+      "type": "external_link",
+      "status": "published",
+      "title": "Официальный перечень координат адресов Свердловской области",
+      "source": "Координаты адреса: посёлок Черноисточинск, улица Кирова, 2а; страница 48, строка 3245.",
+      "revisions": [
+        {
+          "id": "d18ea6bb-c163-4186-99d9-77946c231d7e",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.pravo.gov66.ru/media/pravo/367.pdf"
+        }
+      ]
+    },
+    {
+      "id": "088e1f72-7e94-4b93-949a-5d388a409c6d",
+      "type": "external_link",
+      "status": "published",
+      "title": "Коммерсантъ — «Арт-резиденция» на заводе",
+      "source": "Покупка промышленного здания и создание арт-резиденции.",
+      "revisions": [
+        {
+          "id": "283eb72b-3c00-4e98-a645-2cfb58a72b9d",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.kommersant.ru/doc/4299141"
+        }
+      ]
+    }
+  ]
+}

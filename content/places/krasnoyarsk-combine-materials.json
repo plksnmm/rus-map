@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "place_id": "da9c2fd1-a194-5ad8-bb55-883cf4424640",
+  "materials": [
+    {
+      "id": "6a72b776-2083-5b10-83ae-09fe0560512f",
+      "type": "text",
+      "status": "published",
+      "title": "Статус предприятия",
+      "source": "central_siberia_closed_factories_5.json",
+      "revisions": [
+        {
+          "id": "8d3fd36f-5c65-5c81-a0cc-c5ae9576a29d",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Начало работы: 1941 (создание на основе эвакуированных производств)\n\nОстановка производства: 2013–2014 (закрытие сборки и перенос производства, отдельные компоненты до 2014)\n\nЮридический статус: АО «ПО Красноярский завод комбайнов» признано банкротом в 2016 году; точная дата исключения из ЕГРЮЛ требует уточнения.\n\nСостояние площадки: Выпуск комбайнов прекращён; большая часть старых корпусов снесена, территория переосваивается."
+        }
+      ]
+    },
+    {
+      "id": "3e7e3818-5a97-5708-8bd9-921d76178aef",
+      "type": "external_link",
+      "status": "published",
+      "title": "Newslab — досье Красноярского завода комбайнов",
+      "source": "Годы, выпуск 2008–2012, закрытие, перенос сборки и увольнения.",
+      "revisions": [
+        {
+          "id": "47503eaa-cb8a-5731-848d-e2ebe0a1bd8d",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://election.newslab.ru/info/dossier/oao-proizvodstvennoe-obedinenie-krasnoyarskij-zavod-kombajnov"
+        }
+      ]
+    },
+    {
+      "id": "2d59d2f1-3402-5aaa-93d6-c144607f1479",
+      "type": "external_link",
+      "status": "published",
+      "title": "Коммерсантъ — банкротство и проект застройки",
+      "source": "Банкротство в 2016 году, площадка, планы застройки.",
+      "revisions": [
+        {
+          "id": "2fb9737c-955f-5929-ad7c-e65a26b75137",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.kommersant.ru/doc/3029700"
+        }
+      ]
+    },
+    {
+      "id": "8ada3674-fd3a-5ec8-8988-d935c0fe777a",
+      "type": "external_link",
+      "status": "published",
+      "title": "Сибновости — решение собственника 2013",
+      "source": "Перенос производственных мощностей в Чебоксары и Курган.",
+      "revisions": [
+        {
+          "id": "7e2e5e19-e8c1-510c-8f2d-9cb2ee9eaaab",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://sibnovosti.ru/news/224758/"
+        }
+      ]
+    },
+    {
+      "id": "e1d11b7e-3e50-5fc7-b3c7-a3d5bfa24672",
+      "type": "external_link",
+      "status": "published",
+      "title": "Вести Красноярск — воспоминания рабочего и снос",
+      "source": "Воспоминания рабочего Виктора Анисимова, сокращение, снос промзоны.",
+      "revisions": [
+        {
+          "id": "afd2ccaf-10e8-54f1-9d5d-cf584eae7980",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.vesti-krasnoyarsk.ru/news/obshestvo/post-16020/"
+        }
+      ]
+    },
+    {
+      "id": "beabc3df-a265-5547-9b3b-ffd7a25702e3",
+      "type": "external_link",
+      "status": "published",
+      "title": "Адресный ориентир, ул. Профсоюзов, 3с8",
+      "source": "Координата одного строения бывшей промышленной площадки.",
+      "revisions": [
+        {
+          "id": "d25229b6-45fc-5fb7-9d16-4e9d37935563",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://yandex.com/maps/62/krasnoyarsk/house/ulitsa_profsoyuzov_3s8/bUsYfgNlSEAFQFtsfXxxc3lhYg%3D%3D/"
+        }
+      ]
+    }
+  ]
+}

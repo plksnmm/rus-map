@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "place_id": "854cc672-1f90-53fe-a9da-9a6d715d73a4",
+  "materials": [
+    {
+      "id": "5952f602-2b60-5e2f-9afa-35c543c865d6",
+      "type": "text",
+      "status": "published",
+      "title": "Статус предприятия",
+      "source": "central_siberia_closed_factories_5.json",
+      "revisions": [
+        {
+          "id": "d229a15f-a126-50e1-b353-48808567aa95",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Начало работы: 1943 (строительство; первые тракторы в 1944; официальное открытие в 1945)\n\nОстановка производства: 2017–2018 (перевод работников в простой и массовое сокращение)\n\nЮридический статус: ООО «Владимирский моторо-тракторный завод» ликвидировано после завершения банкротства в сентябре 2021 года.\n\nСостояние площадки: Тракторное производство прекращено; часть территории перепрофилируется."
+        }
+      ]
+    },
+    {
+      "id": "a0477d91-5724-509d-a23c-e36e93eda7ce",
+      "type": "external_link",
+      "status": "published",
+      "title": "Владимирская областная научная библиотека — история ВТЗ",
+      "source": "Строительство, тракторы, последние годы, сокращения 2017–2018, ликвидация 2021.",
+      "revisions": [
+        {
+          "id": "62043341-ab6c-54a9-8414-ad3d33534367",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://land.lib33.ru/site/publication/3500"
+        }
+      ]
+    },
+    {
+      "id": "9799e569-0bdf-589a-82d2-749f6bc0f5fd",
+      "type": "external_link",
+      "status": "published",
+      "title": "День в истории Владимирского края — ВТЗ",
+      "source": "История открытия и завершение предприятия.",
+      "revisions": [
+        {
+          "id": "5e2b82ed-0ac1-58dd-a31d-84ffc890223e",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://calendar.lib33.ru/event/3500/19450424"
+        }
+      ]
+    },
+    {
+      "id": "ef64d8a2-b04d-505f-a508-ac28fea343a4",
+      "type": "external_link",
+      "status": "published",
+      "title": "Владимир: бывший тракторный завод, адресная точка",
+      "source": "Адрес заводской площадки, координатная точка.",
+      "revisions": [
+        {
+          "id": "6d4f4855-9a61-58af-8b36-15a15daf200b",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://vdm.guidebook.ru/vladimir/traktornaya/vladimirskiy-traktorniy-zavod.html"
+        }
+      ]
+    },
+    {
+      "id": "ffb02dd0-9c3e-55ef-8be1-e10f8142c86a",
+      "type": "external_link",
+      "status": "published",
+      "title": "Фотохроника ВТЗ, тракторный цех 1974 года",
+      "source": "Архивное изображение сборочного производства.",
+      "revisions": [
+        {
+          "id": "eaac8960-7b9d-589c-9ac6-edce419a24c9",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://lubovbezusl.ru/publ/istorija/vtz/m/108-1-0-8686"
+        }
+      ]
+    }
+  ]
+}

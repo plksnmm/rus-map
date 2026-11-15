@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "place_id": "5fc2e406-ddd7-578f-aa20-186e6bbe8d1d",
+  "materials": [
+    {
+      "id": "e78d1c4d-1ec8-5e41-b421-6825cb9ab912",
+      "type": "text",
+      "status": "published",
+      "title": "Точность координат",
+      "source": "telegram_rus_proletarskaya_import_ready.json",
+      "revisions": [
+        {
+          "id": "3d86df74-9603-5300-bb47-2ebe890592db",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Тип точки: reported_nearby_landmark\n\nУверенность: medium\n\nПримечание: Геометка относится к стадиону «Медик», возле которого по сообщению жителей проходило обсуждение. НЕ точные координаты строительных работ."
+        }
+      ]
+    },
+    {
+      "id": "a9aaa411-0df3-5b2c-81c2-31c1800d57c5",
+      "type": "external_link",
+      "status": "published",
+      "title": "Исходная публикация «Русь пролетарская» №342",
+      "source": "Авторские видео обсуждения ситуации в парке «Москворецкий» у стадиона «Медик».",
+      "revisions": [
+        {
+          "id": "a569391d-2725-55e3-bea8-c9d8966dc5b3",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://t.me/rus_proletarskaya/342"
+        }
+      ]
+    },
+    {
+      "id": "6f22872d-1cef-5013-a32c-15f79102673b",
+      "type": "external_link",
+      "status": "published",
+      "title": "Источник координат",
+      "source": "Ссылка из подготовленного пакета данных",
+      "revisions": [
+        {
+          "id": "e62a5a03-c0eb-5ffd-b191-3358d3105afb",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://orgeo.ru/place/6002"
+        }
+      ]
+    },
+    {
+      "id": "4025ee25-41a1-5280-8caf-099feef03b9b",
+      "type": "external_link",
+      "status": "published",
+      "title": "Открыть исходный материал",
+      "source": "Фотография стадиона «Медик» (ориентир, не доказательство работ); права не подтверждены.",
+      "revisions": [
+        {
+          "id": "ac83e39d-6bb0-583b-8c76-b4f0f02ddd5f",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.tripadvisor.ru/Attraction_Review-g298484-d10072834-Reviews-Stadium_Medik-Moscow_Central_Russia.html"
+        }
+      ]
+    }
+  ]
+}

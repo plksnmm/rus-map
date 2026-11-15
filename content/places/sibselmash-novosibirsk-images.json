@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "place_id": "b4880ed8-e7bd-5093-9814-370afe4920f6",
+  "images": [
+    {
+      "media_id": "5a8bf4b5-eed6-5a26-882c-a1c541d8fd17",
+      "material_id": "648e1a32-2421-5b74-81d2-45b9784bf88e",
+      "revision_id": "da90458b-5139-554f-a5a7-33a8da5baa6f",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Вход на территорию бывшего объединения «Сибсельмаш».",
+      "source": "Msgevans00; CC BY-SA 4.0; https://commons.wikimedia.org/wiki/File:Sibselmash_01.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Sibselmash_01.jpg",
+      "file": "sibselmash-novosibirsk/gate-2024.jpg",
+      "sha256": "3c2563423d872f1422d5c2aaa0975ef9fc9c1948226c2bc2f053a3f0fc8e4c03"
+    }
+  ]
+}

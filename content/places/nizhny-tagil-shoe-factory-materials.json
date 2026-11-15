@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "place_id": "26bfa8c5-e320-4c19-8c5a-93f647101bd4",
+  "materials": [
+    {
+      "id": "ac8c883a-00e9-409a-8672-3d3cb73d12b6",
+      "type": "external_link",
+      "status": "published",
+      "title": "Муниципальный архив Нижнего Тагила — «Обувных дел мастера»",
+      "source": "Военный период, подростки на производстве, 1964 год, новое здание 1988 года, штат, продукция и прекращение работы.",
+      "revisions": [
+        {
+          "id": "7ed00ccf-9d9f-41bb-8803-aefd0b006481",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://maspd.ru/post/307/"
+        }
+      ]
+    },
+    {
+      "id": "942288ba-4a93-4b18-8aec-4c82fbd5ce2e",
+      "type": "external_link",
+      "status": "published",
+      "title": "Муниципальный архив Нижнего Тагила — справочник фондов",
+      "source": "Архивный контекст и фонды предприятий.",
+      "revisions": [
+        {
+          "id": "10f48867-a480-4c54-9db6-3ecd3d8944b2",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://maspd.ru/pages/479/"
+        }
+      ]
+    },
+    {
+      "id": "ccd062ea-1821-4e82-a49b-a80ea022ebbb",
+      "type": "external_link",
+      "status": "published",
+      "title": "Карточка юрлица — Нижнетагильская обувная фабрика",
+      "source": "Сведения о ликвидации юридического лица в 2002 году; дата требует проверки по ЕГРЮЛ.",
+      "revisions": [
+        {
+          "id": "f5789f51-9269-4d2c-bc4d-f42847c05304",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.prima-inform.ru/cat/cc/nizhnetagilskaya-obuvnaya-fabrika-1026601367913-6668003071"
+        }
+      ]
+    },
+    {
+      "id": "9b7a5bec-25e5-4118-9b86-a1215a078e38",
+      "type": "external_link",
+      "status": "published",
+      "title": "UrbanPlaces — Черноисточинское шоссе, 82",
+      "source": "Адрес и GPS-точка современного адресного объекта.",
+      "revisions": [
+        {
+          "id": "3e42b465-a235-4fd4-82e8-9c4b46dc9276",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://urbanplaces.su/ru_sverdlovskaya-oblast/nizhnij-tagil-gorodskoj-okrug-nizhnij-tagil/card-3564668-zheleznyij-karkas"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "place_id": "740f3d9b-ea79-5adc-ab54-84663ad29ed5",
+  "materials": [
+    {
+      "id": "3d0a2992-1d9f-574f-9680-31a313db9a46",
+      "type": "text",
+      "status": "published",
+      "title": "Точность координат",
+      "source": "telegram_rus_proletarskaya_import_ready.json",
+      "revisions": [
+        {
+          "id": "fc639359-cd67-5aad-9f61-2e53022c3917",
+          "revision_number": 1,
+          "status": "published",
+          "content": "Тип точки: public_access_point\n\nУверенность: high_for_access_not_worksite\n\nПримечание: Координаты входа/места встречи из другого поста того же канала, подтверждены Яндекс Картами как адрес ул. Советская, 113. Не обозначать их как конкретное место будущей дороги."
+        }
+      ]
+    },
+    {
+      "id": "6056d0ad-0a2b-56d3-8b3a-d85a171724cd",
+      "type": "external_link",
+      "status": "published",
+      "title": "Исходная публикация «Русь пролетарская» №325",
+      "source": "Видео о дороге через Ромашковский лес.",
+      "revisions": [
+        {
+          "id": "41fb3612-0c85-51e5-b341-5273b83a0363",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://t.me/rus_proletarskaya/325"
+        }
+      ]
+    },
+    {
+      "id": "5d08d941-b7ee-5c95-8d57-814ffa9ceafe",
+      "type": "external_link",
+      "status": "published",
+      "title": "Дополнительный источник: t.me",
+      "source": "Ссылка из подготовленного пакета данных",
+      "revisions": [
+        {
+          "id": "2b5489e5-dbb9-5c4b-abb5-6f03c6d9d1f0",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://t.me/s/rus_proletarskaya/324"
+        }
+      ]
+    },
+    {
+      "id": "94f82667-9e1d-5f30-9f75-f43985ddff17",
+      "type": "external_link",
+      "status": "published",
+      "title": "Источник координат",
+      "source": "Ссылка из подготовленного пакета данных",
+      "revisions": [
+        {
+          "id": "ce50916c-af1f-5da8-9656-6cb52a40d468",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://yandex.com/maps/1/moscow-and-moscow-oblast/house/Z04YdQJlSEUEQFtvfXtydXhiZA%3D%3D/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "place_id": "0b6c3e44-ca0f-55b3-a54b-25756e3dc03e",
+  "images": [
+    {
+      "media_id": "18a7e74a-04e9-5e79-99bd-b925c1e27c08",
+      "material_id": "782d6551-39c5-5260-a289-be83a2c21a44",
+      "revision_id": "ab91ec3c-7c9b-5805-82c1-575c49903e01",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Вид на Москву с воздуха, видна территория Битцевского леса; архивный общий вид, не фото работ 2026 года.",
+      "source": "Texmon; CC BY-SA 3.0; https://commons.wikimedia.org/wiki/File:Moscow_aerial_view_looking_towards_the_south-east.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Moscow_aerial_view_looking_towards_the_south-east.JPG",
+      "file": "rp-telegram-324/bitsevskiy-forest-aerial.jpg",
+      "sha256": "4c89acd4c972e6db9af11aff332451cb30c2cad1afec1fa771169c6f971f9fea"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "place_id": "da9c2fd1-a194-5ad8-bb55-883cf4424640",
+  "images": [
+    {
+      "media_id": "d84f8a7a-095b-594e-8159-e57e0695a9bd",
+      "material_id": "6aa054a2-1aff-5492-9b35-9439e7fda7f1",
+      "revision_id": "66e9ee43-3804-5b10-a7db-80d5e9c2065e",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Центральная проходная Красноярского завода комбайнов до закрытия.",
+      "source": "Andrey Pivovarov (Efenstor); CC BY-SA 2.5; https://commons.wikimedia.org/wiki/File:Combine_Plant.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Combine_Plant.JPG",
+      "file": "krasnoyarsk-combine/gate-2006.jpg",
+      "sha256": "399b153ce7ee76d4a823ea9d16ecff6801e874de41a1cb5165ae492257b80151"
+    },
+    {
+      "media_id": "70406f08-1b99-5f40-82d3-1dcce5f4f348",
+      "material_id": "55ca34f5-a03e-5b73-8097-7189f75d0343",
+      "revision_id": "f2d3066c-2537-5283-8281-8d7b0540d3a1",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Дымящая заводская труба и промышленные корпуса КЗК, фото до закрытия.",
+      "source": "Stanislav Solomakhin; CC BY 3.0; https://commons.wikimedia.org/wiki/File:Стучит,_дымит_родной_завод...КЗК._-_panoramio.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Стучит,_дымит_родной_завод...КЗК._-_panoramio.jpg",
+      "file": "krasnoyarsk-combine/factory-2006.jpg",
+      "sha256": "b5b87a176e0b962a3922355c952a18fa9e4eafc1850b934c84090998779394cc"
+    }
+  ]
+}

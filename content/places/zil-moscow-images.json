@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "place_id": "ca440df3-adb8-5343-98c4-7683a49bebef",
+  "images": [
+    {
+      "media_id": "b251f0f7-5cbe-5eb8-bf48-59f8f45624b3",
+      "material_id": "3c5f9e75-dd8a-5eb2-9fa6-2ab786e3802c",
+      "revision_id": "a82faf21-d86f-543a-a95b-7161bd15a70b",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Завод ЗИЛ, историческое фото из архива Москвы.",
+      "source": "Главархив Москвы / Mos.ru; CC BY 4.0; https://commons.wikimedia.org/wiki/File:History_of_ZIL_Factory_04.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:History_of_ZIL_Factory_04.jpg",
+      "file": "zil-moscow/history-of-zil-1960s.jpg",
+      "sha256": "7e16ec8763c4a68b8b2d68bffe2ca04352049c5d7b95b7c84b7a09b7ab0239c3"
+    },
+    {
+      "media_id": "920aca8a-4d6e-5e95-a899-bff7e311fd2d",
+      "material_id": "65641485-072c-57d9-aa4f-fe7d40ed5fad",
+      "revision_id": "8ab19732-3c42-5de4-847a-f1b8f200b86f",
+      "revision_number": 1,
+      "status": "published",
+      "title": "Бывший второй инструментальный цех ЗИЛа, корпус 7 на Автозаводской улице.",
+      "source": "Gennady Grachev; CC BY 2.0; https://commons.wikimedia.org/wiki/File:Moscow,_Avtozavodskaya_Street_23_k.7_-_former_ZIL_plant_(30463480213).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Moscow,_Avtozavodskaya_Street_23_k.7_-_former_ZIL_plant_(30463480213).jpg",
+      "file": "zil-moscow/former-tool-shop-2016.jpg",
+      "sha256": "16bc257414ef57e44b9a3799f0fc6421e884adf2c4eea9a458e6d589b3364273"
+    }
+  ]
+}
