@@ -541,14 +541,6 @@
   pointer-events: none;
 }
 
-.overview-brand-mark {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 0 1px rgb(240 239 237 / 88%))
-    drop-shadow(0 2px 8px rgb(8 25 25 / 56%));
-}
-
 .place-panel--overview .alert {
   pointer-events: auto;
 }

@@ -75,8 +75,8 @@ describe('App', () => {
 
     expect(screen.getByText('Русь пролетарская')).toBeInTheDocument()
     expect(
-      screen.getByRole('img', { name: 'Полный логотип «Русь пролетарская»' }),
-    ).toBeInTheDocument()
+      screen.queryByRole('img', { name: 'Полный логотип «Русь пролетарская»' }),
+    ).not.toBeInTheDocument()
     expect(
       screen.getByRole('img', { name: 'Логотип «Русь пролетарская»' }),
     ).toBeInTheDocument()
@@ -138,10 +138,10 @@ describe('App', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Закрыть форму' }))
     expect(
-      await screen.findByRole('img', {
+      screen.queryByRole('img', {
         name: 'Полный логотип «Русь пролетарская»',
       }),
-    ).toBeInTheDocument()
+    ).not.toBeInTheDocument()
   })
 
   it('shows loading while the API request is pending', () => {
@@ -336,10 +336,10 @@ describe('App', () => {
       screen.getByRole('button', { name: 'Закрыть карточку места' }),
     )
     expect(
-      screen.getByRole('img', {
+      screen.queryByRole('img', {
         name: 'Полный логотип «Русь пролетарская»',
       }),
-    ).toBeInTheDocument()
+    ).not.toBeInTheDocument()
   })
 
   it('keeps the map available when place details fail to load', async () => {

@@ -10,7 +10,6 @@ import {
 import type { GeocodingResult } from './api/geocoding'
 import './App.css'
 import AdminApp from './AdminApp'
-import rusNew36LogoUrl from './assets/rus-new36-final.png'
 import CuratedRoutesPanel from './components/CuratedRoutesPanel'
 import PlaceImageGallery from './components/PlaceImageGallery'
 import PlaceMaterials from './components/PlaceMaterials'
@@ -451,11 +450,6 @@ function PublicMapApp() {
             />
           ) : (
             <>
-              <img
-                className="overview-brand-mark"
-                src={rusNew36LogoUrl}
-                alt="Полный логотип «Русь пролетарская»"
-              />
               {isLoading && (
                 <div className="alert alert-light border mb-0" role="status">
                   Загружаем места…
