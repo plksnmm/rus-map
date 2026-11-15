@@ -75,8 +75,14 @@ describe('App', () => {
 
     expect(screen.getByText('Русь пролетарская')).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: 'Исследуй историю вокруг' }),
+      screen.getByRole('img', { name: 'Полный логотип «Русь пролетарская»' }),
     ).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: 'Логотип «Русь пролетарская»' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'Исследуй историю вокруг' }),
+    ).not.toBeInTheDocument()
     expect(
       await screen.findByRole('application', { name: 'Интерактивная карта' }),
     ).toBeInTheDocument()
@@ -132,7 +138,9 @@ describe('App', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Закрыть форму' }))
     expect(
-      await screen.findByRole('heading', { name: 'Исследуй историю вокруг' }),
+      await screen.findByRole('img', {
+        name: 'Полный логотип «Русь пролетарская»',
+      }),
     ).toBeInTheDocument()
   })
 
@@ -162,11 +170,8 @@ describe('App', () => {
 
     render(<App />)
 
-    expect(await screen.findByText('На карте мест:')).toHaveTextContent(
-      'На карте мест: 1',
-    )
-    expect(screen.queryByText('На карте: 1')).not.toBeInTheDocument()
-    expect(screen.queryByText('На карте: 1')).not.toBeInTheDocument()
+    expect(await screen.findByText('Выбрать место на карте')).toBeInTheDocument()
+    expect(screen.queryByText(/На карте мест:/)).not.toBeInTheDocument()
     expect(
       screen.getByRole('application', { name: 'Интерактивная карта' }),
     ).toHaveAttribute('data-place-count', '1')
@@ -331,7 +336,9 @@ describe('App', () => {
       screen.getByRole('button', { name: 'Закрыть карточку места' }),
     )
     expect(
-      screen.getByRole('heading', { name: 'Исследуй историю вокруг' }),
+      screen.getByRole('img', {
+        name: 'Полный логотип «Русь пролетарская»',
+      }),
     ).toBeInTheDocument()
   })
 

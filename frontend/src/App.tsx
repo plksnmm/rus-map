@@ -10,6 +10,7 @@ import {
 import type { GeocodingResult } from './api/geocoding'
 import './App.css'
 import AdminApp from './AdminApp'
+import rusNew36LogoUrl from './assets/rus-new36-final.png'
 import CuratedRoutesPanel from './components/CuratedRoutesPanel'
 import PlaceImageGallery from './components/PlaceImageGallery'
 import PlaceMaterials from './components/PlaceMaterials'
@@ -450,14 +451,11 @@ function PublicMapApp() {
             />
           ) : (
             <>
-              <div className="panel-kicker">Народный архив</div>
-              <h1 className="h5 mb-2 text-uppercase">
-                Исследуй историю вокруг
-              </h1>
-              <p className="text-secondary mb-3">
-                Здесь появятся памятники, заводы, культурные пространства и
-                маршруты.
-              </p>
+              <img
+                className="overview-brand-mark"
+                src={rusNew36LogoUrl}
+                alt="Полный логотип «Русь пролетарская»"
+              />
               {isLoading && (
                 <div className="alert alert-light border mb-0" role="status">
                   Загружаем места…
@@ -472,11 +470,6 @@ function PublicMapApp() {
               {!isLoading && !hasError && places.length === 0 && (
                 <div className="alert alert-light border mb-0" role="status">
                   На карте пока нет мест.
-                </div>
-              )}
-              {!isLoading && !hasError && places.length > 0 && (
-                <div className="place-count" role="status">
-                  На карте мест: <strong>{places.length}</strong>
                 </div>
               )}
             </>
