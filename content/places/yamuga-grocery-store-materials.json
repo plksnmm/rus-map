@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "place_id": "4fdbd278-7abb-422d-a87a-268e8737e0a8",
+  "materials": [
+    {
+      "id": "3b578288-e1df-44e7-85c7-9177e8b8a648",
+      "type": "external_link",
+      "status": "published",
+      "title": "Фильм «Магазин» — YouTube",
+      "source": "Документальный фильм Елизаветы Саввиной, 2025",
+      "revisions": [
+        {
+          "id": "cf5c4de9-78da-42f7-925e-33148a85dabf",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://www.youtube.com/watch?v=4QH7Ln-f-4I"
+        }
+      ]
+    },
+    {
+      "id": "a5f3644c-7537-4c12-a3e4-e6c3a6c38137",
+      "type": "external_link",
+      "status": "published",
+      "title": "Фильм «Магазин» — ВКонтакте",
+      "source": "Документальный фильм Елизаветы Саввиной, 2025",
+      "revisions": [
+        {
+          "id": "176f2381-e52a-4c31-94bf-6856f4683f05",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://vk.com/video-34866950_456242114"
+        }
+      ]
+    },
+    {
+      "id": "0acd59f6-e013-4dfd-9b75-6e73ff0f2918",
+      "type": "external_link",
+      "status": "published",
+      "title": "Интервью с Елизаветой Саввиной — «Сеанс»",
+      "source": "Журнал «Сеанс»",
+      "revisions": [
+        {
+          "id": "26625f72-44b6-42b8-9946-b97268251963",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://seance.ru/articles/magazin-elizavety-savvinoj/"
+        }
+      ]
+    },
+    {
+      "id": "12ef0fe4-c012-41f7-b69f-f68c4767275f",
+      "type": "external_link",
+      "status": "published",
+      "title": "Магазин на Яндекс Картах",
+      "source": "Адрес места",
+      "revisions": [
+        {
+          "id": "41d066c2-230a-4020-9885-2fcc6c440c2c",
+          "revision_number": 1,
+          "status": "published",
+          "url": "https://yandex.com/maps/1/moscow-and-moscow-oblast/house/derevnya_yamuga_30/Z08YcAFpTEQAQFtsfX95dHxlZw==/"
+        }
+      ]
+    }
+  ]
+}
